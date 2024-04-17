@@ -1,6 +1,11 @@
-#include "fsm.cpp"
+#include "fsm.h"
 
 void main() {
-    //error handling
-    //state switching
+    
+    fsm_init();
+
+    while(true) {
+        fsm_next();
+    }
+
 }
