@@ -1,5 +1,5 @@
-#include "canzero.h"
-#include "timestamp.h"
+#include "canzero/canzero.h"
+#include "util/timestamp.hpp"
 
 mgu_state idle_state_next(mgu_command cmd,
                             Duration time_since_last_transition) {

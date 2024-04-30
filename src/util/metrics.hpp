@@ -1,6 +1,5 @@
 #pragma once
 
-#include "math.h"
 #include <cmath>
 
 template <int s, int m, int kg, int A, int K, int mol, int cd> struct Metric {
@@ -282,28 +281,28 @@ operator/(const volatile Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a,
 
 template <int a_s, int a_m, int a_kg, int a_A, int a_K, int a_mol, int a_cd>
 static constexpr auto
-operator/(const float &b, Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a) {
+operator/(const float &b, const Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a) {
   return Metric<-a_s, -a_m, -a_kg, -a_A, -a_K, -a_mol, -a_cd>(
       b / static_cast<float>(a));
 }
 template <int a_s, int a_m, int a_kg, int a_A, int a_K, int a_mol, int a_cd>
 static constexpr auto
 operator/(const volatile float &b,
-          volatile Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a) {
+          const volatile Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a) {
   return Metric<-a_s, -a_m, -a_kg, -a_A, -a_K, -a_mol, -a_cd>(
       b / static_cast<float>(a));
 }
 template <int a_s, int a_m, int a_kg, int a_A, int a_K, int a_mol, int a_cd>
 static constexpr auto
 operator/(const float &b,
-          volatile Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a) {
+          const volatile Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a) {
   return Metric<-a_s, -a_m, -a_kg, -a_A, -a_K, -a_mol, -a_cd>(
       b / static_cast<float>(a));
 }
 template <int a_s, int a_m, int a_kg, int a_A, int a_K, int a_mol, int a_cd>
 static constexpr auto
 operator/(const volatile float &b,
-          Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a) {
+          const Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a) {
   return Metric<-a_s, -a_m, -a_kg, -a_A, -a_K, -a_mol, -a_cd>(
       b / static_cast<float>(a));
 }
@@ -672,8 +671,14 @@ constexpr Time operator""_ms(const unsigned long long v) {
 }
 constexpr Time operator""_us(const long double v) { return Time(v / 1e6); }
 constexpr Time operator""_us(const unsigned long long v) {
-  return Time(static_cast<float>(v) / 1e6);
+  return Time(static_cast<float>(v) / 1e9);
 }
+
+constexpr Time operator""_ns(const long double v) { return Time(v / 1e6); }
+constexpr Time operator""_ns(const unsigned long long v) {
+  return Time(static_cast<float>(v) / 1e9);
+}
+
 
 // Distance literals
 constexpr Distance operator""_km(const long double v) {

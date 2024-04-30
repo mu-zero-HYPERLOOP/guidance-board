@@ -1,0 +1,4 @@
+
+enum GuidanceBoardPin {
+  // TODO!
+};
