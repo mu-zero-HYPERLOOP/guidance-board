@@ -82,6 +82,6 @@ private:
   static std::optional<float> m_trig0;
   static std::optional<float> m_trig1;
 
-  static volatile uint32_t m_pwm_cycles;
-  static volatile uint32_t m_deadtime_cycles;
+  static volatile uint16_t m_pwm_cycles;
+  static volatile uint16_t m_deadtime_cycles;
 };

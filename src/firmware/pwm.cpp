@@ -228,46 +228,46 @@ static inline void smxctrl2_synchronize_pwms() {
   FLEXPWM4_SM0CTRL2 = FLEXPWM_SMCTRL2_CLK_SEL(0);
 }
 
-static inline void sm0_set_trig0_value(int32_t trig0_cnt) {
+static inline void sm0_set_trig0_value(int16_t trig0_cnt) {
 
   FLEXPWM4_SM0VAL4 = trig0_cnt;
 }
 
-static inline void sm0_set_trig1_value(int32_t trig1_cnt) {
+static inline void sm0_set_trig1_value(int16_t trig1_cnt) {
   FLEXPWM4_SM0VAL5 = trig1_cnt;
 }
 
-static inline void pwm4_sm2_set_duty_cycles(uint32_t cycles) {
+static inline void pwm4_sm2_set_duty_cycles(uint16_t cycles) {
   FLEXPWM4_SM2VAL2 = -cycles;
   FLEXPWM4_SM2VAL3 = cycles;
 }
 
-static inline void pwm3_sm1_set_duty_cycles(uint32_t cycles) {
+static inline void pwm3_sm1_set_duty_cycles(uint16_t cycles) {
   FLEXPWM3_SM1VAL2 = -cycles;
   FLEXPWM3_SM1VAL3 = cycles;
 }
 
-static inline void pwm1_sm3_set_duty_cycles(uint32_t cycles) {
+static inline void pwm1_sm3_set_duty_cycles(uint16_t cycles) {
   FLEXPWM1_SM3VAL2 = -cycles;
   FLEXPWM1_SM3VAL3 = cycles;
 }
 
-static inline void pwm2_sm0_set_duty_cycles(uint32_t cycles) {
+static inline void pwm2_sm0_set_duty_cycles(uint16_t cycles) {
   FLEXPWM2_SM0VAL2 = -cycles;
   FLEXPWM2_SM0VAL3 = cycles;
 }
 
-static inline void pwm2_sm2_set_duty_cycles(uint32_t cycles) {
+static inline void pwm2_sm2_set_duty_cycles(uint16_t cycles) {
   FLEXPWM2_SM2VAL2 = -cycles;
   FLEXPWM2_SM2VAL3 = cycles;
 }
 
-static inline void pwm2_sm3_set_duty_cycles(uint32_t cycles) {
+static inline void pwm2_sm3_set_duty_cycles(uint16_t cycles) {
   FLEXPWM2_SM3VAL2 = -cycles;
   FLEXPWM2_SM3VAL3 = cycles;
 }
 
-static inline void smx_center_aligned_max_value(uint32_t cycles) {
+static inline void smx_center_aligned_max_value(uint16_t cycles) {
   // Initalize PWM for a symetrical pulse around 0x0.
   //  - INIT is reload value (or start value)
   //  - VAL0 is the mid point
@@ -314,7 +314,7 @@ static inline void smx_center_aligned_max_value(uint32_t cycles) {
   FLEXPWM4_SM0VAL1 = cycles;
 }
 
-static inline void dtcnt_write_deadtime(const uint32_t cycles) {
+static inline void dtcnt_write_deadtime(const uint16_t cycles) {
   if constexpr (ENABLE_PWM1_SM3) {
     FLEXPWM1_SM3DTCNT0 = cycles;
     FLEXPWM1_SM3DTCNT1 = cycles;
@@ -349,13 +349,13 @@ static inline void dtcnt_write_deadtime(const uint32_t cycles) {
 } // namespace pwm_reg
 
 namespace conv {
-static inline std::tuple<uint32_t, int>
+static inline std::tuple<uint16_t, uint16_t>
 frequency_to_cycles(const Frequency &frequency) {
   float f2 = 2.0f * static_cast<float>(frequency);
-  uint32_t cycles =
-      static_cast<uint32_t>(static_cast<float>(F_BUS_ACTUAL) / f2 + 0.5f);
+  uint16_t cycles =
+      static_cast<uint16_t>(static_cast<float>(F_BUS_ACTUAL) / f2 + 0.5f);
 
-  int prescalar = 0;
+  uint16_t prescalar = 0;
   while (cycles > 32767 && prescalar < 7) {
     cycles /= 2.0f;
     prescalar += 1;
@@ -368,21 +368,21 @@ frequency_to_cycles(const Frequency &frequency) {
   return {cycles, prescalar};
 }
 
-static inline uint32_t deadtime_to_cycles(const Time &deadtime) {
+static inline uint16_t deadtime_to_cycles(const Time &deadtime) {
   float deadtime_ns = static_cast<float>(deadtime) * 1e9f;
-  return static_cast<uint32_t>(static_cast<float>(F_BUS_ACTUAL) * deadtime_ns *
+  return static_cast<uint16_t>(static_cast<float>(F_BUS_ACTUAL) * deadtime_ns *
                                1e-9f);
 }
 
-static inline int32_t trig_to_cnt(float trig, uint32_t cycles) {
+static inline int16_t trig_to_cnt(float trig, uint16_t cycles) {
   // cycles refers to the max value of the center aligned counter so half the
   // total amount of pwm cycles
-  uint32_t edge_algined_cycles = cycles * 2;
-  int32_t cnt = static_cast<uint32_t>(edge_algined_cycles * trig) - cycles;
+  uint16_t edge_algined_cycles = cycles * 2;
+  int16_t cnt = static_cast<uint16_t>(edge_algined_cycles * trig) - cycles;
   return cnt;
 }
-static inline uint32_t duty_to_duty_cycles(float duty, uint32_t cycles) {
-  return std::min(cycles, static_cast<uint32_t>(duty * cycles));
+static inline uint16_t duty_to_duty_cycles(float duty, uint16_t cycles) {
+  return std::min(cycles, static_cast<uint16_t>(duty * cycles));
 }
 } // namespace conv
 
@@ -564,6 +564,7 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
 
   const auto &[m_pwm_cycles, prescalar] =
       conv::frequency_to_cycles(m_frequency);
+
   m_deadtime_cycles = conv::deadtime_to_cycles(m_deadtime);
 
   // initalize Flex PWM modules
@@ -571,13 +572,19 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
   // description
 
   pwm_reg::clear_load_okay();
+
   pwm_reg::smxctrl_write_cycle_with_prescalar(false, prescalar);
+
   pwm_reg::smxctrl2_synchronize_pwms();
+
   pwm_reg::set_output_enable(m_outen);
+
   pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
                                            m_trig1.has_value());
+
   pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
                                 m_trig1.has_value() && m_trig1_inten);
+
   pwm_reg::dtcnt_write_deadtime(m_deadtime_cycles);
 
   pwm_reg::smx_center_aligned_max_value(m_pwm_cycles);
@@ -656,5 +663,5 @@ bool pwm::m_trig0_inten;
 bool pwm::m_trig1_inten;
 std::optional<float> pwm::m_trig0;
 std::optional<float> pwm::m_trig1;
-volatile uint32_t pwm::m_pwm_cycles;
-volatile uint32_t pwm::m_deadtime_cycles;
+volatile uint16_t pwm::m_pwm_cycles;
+volatile uint16_t pwm::m_deadtime_cycles;

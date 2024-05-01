@@ -5,6 +5,7 @@
 
 
 int main() {
+
   PwmBeginInfo pwmBeginInfo;
   pwmBeginInfo.enable_outputs = true;
   pwmBeginInfo.frequency = 20_kHz;
@@ -14,7 +15,6 @@ int main() {
   pwmBeginInfo.trig0 = std::nullopt;
   pwmBeginInfo.trig1 = std::nullopt;
   pwm::begin(pwmBeginInfo);
-  pwm::begin();
 
   while(true) {
   }
