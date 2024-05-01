@@ -28,6 +28,7 @@ void xbar::begin() {
     return;
   }
   CCM_CCGR2 |= CCM_CCGR2_XBAR1(CCM_CCGR_ON);
+  CCM_CCGR2 |= CCM_CCGR2_XBAR1(CCM_CCGR_ON);
   init = true;
   /* // PWM -> ADC_ETC_TRIG0 */
   /* xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_ADC_ETC_TRIG00); */

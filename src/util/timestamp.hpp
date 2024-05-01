@@ -1,7 +1,7 @@
 #pragma once
 
+#include "core_pins.h"
 #include "metrics.hpp"
-#include <chrono>
 #include <cstdint>
 
 class Timestamp {
@@ -23,10 +23,7 @@ class Timestamp {
 
 public:
   inline static Timestamp now() {
-    using namespace std::chrono;
-    milliseconds x =
-        duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-    return Timestamp(x.count());
+    return Timestamp(micros());
   }
 
   Timestamp(const Timestamp &o) : Timestamp(o.m_time_us) {}
@@ -99,6 +96,43 @@ public:
   constexpr Duration() : m_us(0) {}
   constexpr Duration(Time x)
       : m_us(static_cast<uint64_t>(static_cast<float>(x) * 1e6)) {}
+
+  constexpr Duration(const Duration &o) : m_us(o.m_us) {}
+  Duration(const volatile Duration &o) : m_us(o.m_us) {}
+  constexpr Duration(Duration &&o) : m_us(o.m_us) {}
+  Duration(volatile Duration &&o) : m_us(o.m_us) {}
+  constexpr Duration &operator=(const Duration &o) {
+    m_us = o.m_us;
+    return *this;
+  }
+  Duration &operator=(const volatile Duration &o) {
+    m_us = o.m_us;
+    return *this;
+  }
+  volatile Duration &operator=(const Duration &o) volatile {
+    m_us = o.m_us;
+    return *this;
+  }
+  volatile Duration &operator=(const volatile Duration &o) volatile {
+    m_us = o.m_us;
+    return *this;
+  }
+  Duration &operator=(Duration &&o) {
+    m_us = o.m_us;
+    return *this;
+  }
+  Duration &operator=(volatile Duration &&o) {
+    m_us = o.m_us;
+    return *this;
+  }
+  volatile Duration &operator=(Duration &&o) volatile {
+    m_us = o.m_us;
+    return *this;
+  }
+  volatile Duration &operator=(volatile Duration &&o) volatile {
+    m_us = o.m_us;
+    return *this;
+  }
 
   explicit operator uint64_t() const { return m_us; }
   explicit operator uint64_t() const volatile { return m_us; }

@@ -3,6 +3,6 @@
 
 namespace xbar {
   void begin();
-  void connect(unsigned int input, unsigned int output);
+  void connect(unsigned int source, unsigned int sink);
 };
 
