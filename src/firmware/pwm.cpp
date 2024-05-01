@@ -2,7 +2,7 @@
 
 #include "core_pins.h"
 #include "xbar.hpp"
-
+#include <tuple>
 #include <Arduino.h>
 #include <imxrt.h>
 
@@ -17,6 +17,8 @@ constexpr bool ENABLE_PWM3 = ENABLE_PWM3_SM1;
 constexpr bool ENABLE_PWM4 = ENABLE_PWM4_SM2;
 
 namespace pwm_reg {
+// see https://www.pjrc.com/teensy/IMXRT1060RM_rev3.pdf at p3135 for register
+// description
 
 static inline void clear_load_okay() {
   // Clear Load Okay -> no reload of PWM settings.
@@ -566,10 +568,6 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
       conv::frequency_to_cycles(m_frequency);
 
   m_deadtime_cycles = conv::deadtime_to_cycles(m_deadtime);
-
-  // initalize Flex PWM modules
-  // see https://www.pjrc.com/teensy/IMXRT1060RM_rev3.pdf at p3135 for register
-  // description
 
   pwm_reg::clear_load_okay();
 
