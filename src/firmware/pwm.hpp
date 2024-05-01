@@ -1,9 +1,7 @@
 #pragma once
 
 #include "util/metrics.hpp"
-#include "util/timestamp.hpp"
 #include <cstdint>
-#include <functional>
 #include <imxrt.h>
 #include <optional>
 
