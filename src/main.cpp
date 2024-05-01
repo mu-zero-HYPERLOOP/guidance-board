@@ -1,7 +1,7 @@
 
 
 #include "firmware/pwm.hpp"
-#include <usb_serial.h>
+#include <Arduino.h>
 
 
 int main() {

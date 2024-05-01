@@ -33,30 +33,73 @@ static inline void clear_load_okay() {
     FLEXPWM4_MCTRL |= FLEXPWM_MCTRL_CLDOK(0x0F);
   }
 }
-static inline void smxctrl_write_full_cycle_with_prescalar(int prescalar) {
+static inline void smxctrl_write_cycle_with_prescalar(bool fullcycle,
+                                                      int prescalar) {
   // SMxCTRL:
   //  - FULL : Full Cycle Reload enabled.
   //  - PRSC : Prescalar (3bit) : PWM Clock Frequency is f = f_clk / (2 <<
   //  Prescalar - 1).
-  if constexpr (ENABLE_PWM1) {
-    FLEXPWM1_SM3CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
+  if constexpr (ENABLE_PWM1_SM3) {
+    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
+    if (fullcycle) {
+      ctrl |= FLEXPWM_SMCTRL_FULL;
+    } else {
+      ctrl |= FLEXPWM_SMCTRL_HALF;
+    }
+    FLEXPWM1_SM3CTRL = ctrl;
   }
   if constexpr (ENABLE_PWM2_SM0) {
-    FLEXPWM2_SM0CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
+    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
+    if (fullcycle) {
+      ctrl |= FLEXPWM_SMCTRL_FULL;
+    } else {
+      ctrl |= FLEXPWM_SMCTRL_HALF;
+    }
+    FLEXPWM2_SM0CTRL = ctrl;
   }
   if constexpr (ENABLE_PWM2_SM2) {
-    FLEXPWM2_SM2CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
+    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
+    if (fullcycle) {
+      ctrl |= FLEXPWM_SMCTRL_FULL;
+    } else {
+      ctrl |= FLEXPWM_SMCTRL_HALF;
+    }
+    FLEXPWM2_SM2CTRL = ctrl;
   }
   if constexpr (ENABLE_PWM2_SM3) {
-    FLEXPWM2_SM3CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
+    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
+    if (fullcycle) {
+      ctrl |= FLEXPWM_SMCTRL_FULL;
+    } else {
+      ctrl |= FLEXPWM_SMCTRL_HALF;
+    }
+    FLEXPWM2_SM3CTRL = ctrl;
   }
   if constexpr (ENABLE_PWM3_SM1) {
-    FLEXPWM3_SM1CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
+    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
+    if (fullcycle) {
+      ctrl |= FLEXPWM_SMCTRL_FULL;
+    } else {
+      ctrl |= FLEXPWM_SMCTRL_HALF;
+    }
+    FLEXPWM3_SM1CTRL = ctrl;
   }
   if constexpr (ENABLE_PWM4_SM2) {
-    FLEXPWM4_SM2CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
+    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
+    if (fullcycle) {
+      ctrl |= FLEXPWM_SMCTRL_FULL;
+    } else {
+      ctrl |= FLEXPWM_SMCTRL_HALF;
+    }
+    FLEXPWM4_SM2CTRL = ctrl;
   }
-  FLEXPWM4_SM0CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
+  uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
+  if (fullcycle) {
+    ctrl |= FLEXPWM_SMCTRL_FULL;
+  } else {
+    ctrl |= FLEXPWM_SMCTRL_HALF;
+  }
+  FLEXPWM4_SM0CTRL = ctrl;
 }
 
 static inline void set_load_okay() {
@@ -326,7 +369,9 @@ frequency_to_cycles(const Frequency &frequency) {
 }
 
 static inline uint32_t deadtime_to_cycles(const Time &deadtime) {
-  return (static_cast<float>(F_BUS_ACTUAL * static_cast<float>(deadtime)));
+  float deadtime_ns = static_cast<float>(deadtime) * 1e9f;
+  return static_cast<uint32_t>(static_cast<float>(F_BUS_ACTUAL) * deadtime_ns *
+                               1e-9f);
 }
 
 static inline int32_t trig_to_cnt(float trig, uint32_t cycles) {
@@ -450,7 +495,7 @@ void pwm::frequency(const Frequency &frequency) {
   const auto &[m_pwm_cycles, prescalar] =
       conv::frequency_to_cycles(m_frequency);
   pwm_reg::clear_load_okay();
-  pwm_reg::smxctrl_write_full_cycle_with_prescalar(prescalar);
+  pwm_reg::smxctrl_write_cycle_with_prescalar(false, prescalar);
   pwm_reg::smx_center_aligned_max_value(m_pwm_cycles);
   if (m_trig0.has_value()) {
     pwm_reg::sm0_set_trig0_value(
@@ -526,7 +571,7 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
   // description
 
   pwm_reg::clear_load_okay();
-  pwm_reg::smxctrl_write_full_cycle_with_prescalar(prescalar);
+  pwm_reg::smxctrl_write_cycle_with_prescalar(false, prescalar);
   pwm_reg::smxctrl2_synchronize_pwms();
   pwm_reg::set_output_enable(m_outen);
   pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
