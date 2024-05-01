@@ -2,9 +2,10 @@
 
 #include "core_pins.h"
 #include "xbar.hpp"
-#include <tuple>
 #include <Arduino.h>
 #include <imxrt.h>
+#include <tuple>
+#include <algorithm>
 
 __attribute__((weak)) void pwm_trig0_isr() {}
 
