@@ -22,7 +22,11 @@ ExponentialMovingAverage<Time> g_adc_time_filter(0.1, 1_s);
 
 float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R;
 
-float out, out_d, out_dd, in, in_d, in_dd; // delayed outputs
+float out, out_d, out_dd, in, in_d, in_dd, error; // delayed in/outputs current
+float error_disp, error_disp_d;
+float integrator, integrator_disp;
+float i_target;
+float disp_target;
 
 
 void pwm_trig0_isr() {
@@ -61,42 +65,73 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   disp_meas_MAG_R = 3.3 * disp_meas_MAG_R / 4096.0 / 120.0; // sense current
   disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 25.0) / 0.016 + 25.0; // map 4...20mA to 25...50mm
+  disp_meas_MAG_R = disp_meas_MAG_R - 29;
+  // distance control
 
-  // current control
-  float P = 0.2;
-  float ITs = 0;
-  float D = 0;
-  float N = 10;
-  float i_target = 2;
-  float Ts = 1/20000.0;
+  float P = 1.5;
+  float ITs = 0.0005 - (disp_target-7)*0.0001;
+  float D = 0.0006;
+  // // float N = 1000;
+  // disp_target = 7.4; // temporary
+  error_disp_d = error_disp;
 
-  float A_coef = N*Ts - 2;
-  float B_coef = 1 - N*Ts;
-  float C_coef = P + D*N;
-  float D_coef = P*(N*Ts - 2) - 2*D*N;
-  float E_coef = P*(1-N*Ts) + ITs*N*Ts + D*N;
+  error_disp = 0.7 * error_disp - 0.3 * (disp_target - disp_meas_MAG_R);
 
-  float error = i_target - i_meas_R;
+  integrator_disp += error_disp * ITs;
 
-  in_dd = in_d;
-  in_d = in;
-  out_dd = out_d;
-  out_d = out;
+  float derivative_disp = D * (error_disp - error_disp_d) * 20000;
 
-  in = error;
-  // out = C_coef*in + D_coef*in_d + E_coef*in_dd - A_coef*out_d - B_coef*out_dd;
-
-  out = error*4;
-  if(out > 22.5) {
-    out = 22.5;
-  } else if(out < 0) {
-    out = 0;
+  if(integrator_disp < -5) {
+    integrator_disp = -5;
+  }else if(integrator_disp > 10) {
+    integrator_disp = 10;
   }
 
-  float control = out/22.5;
+  i_target = P*error_disp + integrator_disp + derivative_disp;
+
+  if(i_target > 20) {
+    i_target = 20;
+  }else if(i_target < -4) {
+    i_target = -4;
+  }
+
+  // i_target = i_target / 0.75;
+
+  // current control
+  P = 2; // 4
+  ITs = 0.2; // 0.06
+  // float i_target = 5.2 / 0.75; // temporary
+
+  in_d = in;
+
+  error = 0.7 * error + 0.3 * (i_target / 0.75 - i_meas_R); // EMA
+  in = error;
+
+  integrator = integrator + in * ITs;
+  if(integrator > 10) {
+    integrator = 10;
+  }else if(integrator < -10) {
+    integrator = -10;
+  }
+  
+  out = P*in + integrator;
+  // out = error*4;
+  if(out > 40) {
+    out = 40;
+  }
+  if(i_meas_R > 0.5) {
+    if(out < -20) {
+      out = -20;
+    }
+  }else{
+    if(out < 0) {
+      out = 0;
+    }
+  }
+
+  float control = out/45;
 
 
-  // distance control
 
 
   // write outputs
@@ -116,13 +151,14 @@ void adc_etc_done1_isr(AdcTrigRes res) {
 
 
 int main() {
+  disp_target = 8;
 
   Serial.begin(9600);
 
   pinMode(GuidanceBoardPin::SDC_TRIG, OUTPUT);
   pinMode(GuidanceBoardPin::PRECHARGE_DONE, OUTPUT);
 
-  /* delay(2000); */
+  delay(5000);
   Serial.printf("Hello, World\n");
 
   PwmBeginInfo pwmBeginInfo;
@@ -198,9 +234,17 @@ int main() {
     // Serial.printf("ADC Convertion time = %fus\n", static_cast<float>(g_adc_time_filter.get()) * 1e6);
     // Serial.printf("Time between triggers = %fus\n", static_cast<float>(g_trig_time_filter.get()) * 1e6);
     
-    Serial.printf("I_left: %f  -  I_right: %f  -  DISP_left: %f  -  DISP_right: %f \n",
-                    i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R);
-
+    // Serial.printf("I_left: %f  -  I_right: %f  -  DISP_left: %f  -  DISP_right: %f \n",
+    //                 i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R);
+    // Serial.printf("I_right: %f  -  Error: %f  -  I_Target: %f  -  DISP_right: %f \n",
+    //                 i_meas_R, in_d, i_target, disp_meas_MAG_R);
+    
+    Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
+                    disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
+    disp_target -= 0.02 / 20;
+    if(disp_target < 7) {
+      disp_target = 7;
+    }
     delay(50);
   }
 }
