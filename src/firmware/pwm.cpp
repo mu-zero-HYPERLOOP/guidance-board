@@ -660,23 +660,36 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
   // Selects which module is connected to the pins, in this case it is the
   // flexpwm module the assigned values are from the datasheet chapter 11.6.xx
   // and dont follow an obvious rule i think
-  *(portConfigRegister(2)) = 1;
-  *(portConfigRegister(3)) = 1;
 
-  *(portConfigRegister(28)) = 1;
-  *(portConfigRegister(29)) = 1;
+  if constexpr (ENABLE_PWM4_SM2) {
+    *(portConfigRegister(2)) = 1;
+    *(portConfigRegister(3)) = 1;
+  }
 
-  *(portConfigRegister(7)) = 6;
-  *(portConfigRegister(8)) = 6;
+  if constexpr (ENABLE_PWM3_SM1) {
+    *(portConfigRegister(28)) = 1;
+    *(portConfigRegister(29)) = 1;
+  }
 
-  *(portConfigRegister(4)) = 1;
-  *(portConfigRegister(33)) = 1;
+  if constexpr (ENABLE_PWM1_SM3) {
+    *(portConfigRegister(7)) = 6;
+    *(portConfigRegister(8)) = 6;
+  }
 
-  *(portConfigRegister(6)) = 2;
-  *(portConfigRegister(9)) = 2;
+  if constexpr (ENABLE_PWM2_SM0) {
+    *(portConfigRegister(4)) = 1;
+    *(portConfigRegister(33)) = 1;
+  }
 
-  *(portConfigRegister(36)) = 6;
-  *(portConfigRegister(37)) = 6;
+  if constexpr (ENABLE_PWM2_SM2) {
+    *(portConfigRegister(6)) = 2;
+    *(portConfigRegister(9)) = 2;
+  }
+
+  if constexpr (ENABLE_PWM2_SM3) {
+    *(portConfigRegister(36)) = 6;
+    *(portConfigRegister(37)) = 6;
+  }
 
   // for some reason the PWM submodules in the XBAR inputs are labeled 1-4
   // instead of 0-3 like everywhere else so FLEXPWM4_PWM1 is submodule 0 of the

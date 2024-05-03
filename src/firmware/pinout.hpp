@@ -47,6 +47,11 @@ enum GuidanceBoardPin : uint8_t {
 };
 
 
+enum GuidanceBoardCurrentGains : uint8_t {
+  GAIN_I_LEFT = 20,
+  GAIN_I_RIGHT = 40,
+
+};
 
 //////////////////////////// PWM Pins ////////////////////////////////
 
