@@ -413,6 +413,7 @@ static inline uint16_t duty_to_cmp(float duty, uint16_t cycles) {
 void pwm::enable_output() {
   if (m_outen)
     return;
+  m_outen = true;
   pwm_reg::clear_load_okay();
   pwm_reg::set_output_enable(m_outen);
   pwm_reg::set_load_okay();
@@ -421,6 +422,7 @@ void pwm::enable_output() {
 void pwm::disable_output() {
   if (!m_outen)
     return;
+  m_outen = false;
   pwm_reg::clear_load_okay();
   pwm_reg::set_output_enable(m_outen);
   pwm_reg::set_load_okay();
