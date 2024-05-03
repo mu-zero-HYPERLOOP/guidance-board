@@ -536,8 +536,8 @@ void pwm::frequency(const Frequency &frequency) {
 }
 
 void pwm::write_control() {
-  Serial.printf("control = %f %u %u\n", m_control.duty42, m_pwm_cycles, 
-      conv::duty_to_cmp(m_control.duty42, m_pwm_cycles));
+  // Serial.printf("control = %f %u %u\n", m_control.duty42, m_pwm_cycles, 
+      // conv::duty_to_cmp(m_control.duty42, m_pwm_cycles));
   if constexpr (ENABLE_PWM4_SM2) {
     pwm_reg::pwm4_sm2_set_duty_cycles(
         conv::duty_to_cmp(m_control.duty42, m_pwm_cycles));
