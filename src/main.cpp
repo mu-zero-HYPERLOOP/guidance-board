@@ -9,7 +9,9 @@
 #include "util/ema.hpp"
 #include "util/timestamp.hpp"
 #include "util/timimg.hpp"
+#include "firmware/control_transition.hpp"
 #include <Arduino.h>
+
 
 volatile IntervalTiming g_done0_timing;
 volatile IntervalTiming g_done1_timing;
@@ -18,6 +20,9 @@ volatile Timing g_adc_timing;
 ExponentialMovingAverage<Time> g_trig_time_filter(0.1, 1_s);
 volatile Timing g_trig_timing;
 ExponentialMovingAverage<Time> g_adc_time_filter(0.1, 1_s);
+
+bool error_flag = false;
+int main_counter = 0;
 
 
 float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R;
@@ -66,33 +71,51 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_MAG_R = 3.3 * disp_meas_MAG_R / 4096.0 / 120.0; // sense current
   disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 25.0) / 0.016 + 25.0; // map 4...20mA to 25...50mm
   disp_meas_MAG_R = disp_meas_MAG_R - 29;
+
+
+  // error detection
+  if(disp_meas_MAG_R < 3 && disp_meas_MAG_R > 0) {
+    // too close -> error
+    digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW);
+    pwm::disable_output();
+    error_flag = true;
+  }
+
+  // transition handling
+  disp_target = airgap_transition::step();
+
   // distance control
 
-  float P = 1.5;
-  float ITs = 0.0005 - (disp_target-7)*0.0001;
-  float D = 0.0006;
+  if(!error_flag) {
+
+  float P = 11; // 9
+  // float ITs = 0.0005 - (disp_target-7)*0.0001;
+  float ITs = 0.002; // 0.002
+  float D = 0.03; // 0.02
   // // float N = 1000;
   // disp_target = 7.4; // temporary
   error_disp_d = error_disp;
 
-  error_disp = 0.7 * error_disp - 0.3 * (disp_target - disp_meas_MAG_R);
+  error_disp = 0.9 * error_disp - 0.1 * (disp_target - disp_meas_MAG_R);
 
   integrator_disp += error_disp * ITs;
 
   float derivative_disp = D * (error_disp - error_disp_d) * 20000;
 
-  if(integrator_disp < -5) {
-    integrator_disp = -5;
+  if(integrator_disp < 0) {
+    integrator_disp = 0;
   }else if(integrator_disp > 10) {
     integrator_disp = 10;
   }
 
   i_target = P*error_disp + integrator_disp + derivative_disp;
 
-  if(i_target > 20) {
-    i_target = 20;
+  if(i_target > 50) {
+    i_target = 50;
+    digitalWrite(LED_BUILTIN, HIGH);
   }else if(i_target < -4) {
     i_target = -4;
+    // digitalWrite(LED_BUILTIN, HIGH);
   }
 
   // i_target = i_target / 0.75;
@@ -104,7 +127,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   in_d = in;
 
-  error = 0.7 * error + 0.3 * (i_target / 0.75 - i_meas_R); // EMA
+  error = 0.5 * error + 0.5 * (i_target / 0.75 - i_meas_R); // EMA
   in = error;
 
   integrator = integrator + in * ITs;
@@ -132,13 +155,12 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   float control = out/45;
 
 
-
-
   // write outputs
   PwmControl isr_control;
   isr_control.duty13 = 0.5 + control/2;
   isr_control.duty31 = 0.5 - control/2;
   pwm::control(isr_control);
+  }
 
 }
 
@@ -151,12 +173,14 @@ void adc_etc_done1_isr(AdcTrigRes res) {
 
 
 int main() {
-  disp_target = 8;
+  disp_target = 10;
 
   Serial.begin(9600);
 
   pinMode(GuidanceBoardPin::SDC_TRIG, OUTPUT);
   pinMode(GuidanceBoardPin::PRECHARGE_DONE, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
 
   delay(5000);
   Serial.printf("Hello, World\n");
@@ -170,6 +194,8 @@ int main() {
   pwmBeginInfo.trig0 = 0.0f;
   pwmBeginInfo.trig1 = 0.25f;
   pwm::begin(pwmBeginInfo);
+
+  Serial.println("enable not-aus");
 
   TrigChainInfo chains[3];
   chains[0].trig_num = TRIG0;
@@ -219,7 +245,9 @@ int main() {
   xbar::connect(pwm::TRIG0_SIGNAL_SOURCE, AdcEtc::TRIG0_SIGNAL_SINK);
   xbar::connect(pwm::TRIG1_SIGNAL_SOURCE, AdcEtc::TRIG1_SIGNAL_SINK);
 
-
+  // init transition
+  airgap_transition::init(10);
+  delay(5000),
   // "precharge"
   delay(1000);
   digitalWrite(GuidanceBoardPin::SDC_TRIG, HIGH);
@@ -241,10 +269,22 @@ int main() {
     
     Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
                     disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
-    disp_target -= 0.02 / 20;
-    if(disp_target < 7) {
-      disp_target = 7;
+    // disp_target -= 0.2 / 20;
+    // if(disp_target < 6) {
+    //   disp_target = 6;
+    // }
+    // digitalWrite(LED_BUILTIN, LOW);
+
+    if(main_counter == 200) {
+      // after 10s
+      airgap_transition::start_transition(6, 5);
     }
+    if(main_counter == 400) {
+      airgap_transition::start_transition(8, 5);
+      main_counter = 0;
+    }
+
+    main_counter++;
     delay(50);
   }
 }
