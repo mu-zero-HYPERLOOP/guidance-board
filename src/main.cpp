@@ -277,10 +277,10 @@ int main() {
 
     if(main_counter == 200) {
       // after 10s
-      airgap_transition::start_transition(6, 5);
+      airgap_transition::start_transition(6, 6);
     }
     if(main_counter == 400) {
-      airgap_transition::start_transition(8, 5);
+      airgap_transition::start_transition(8, 6);
       main_counter = 0;
     }
 

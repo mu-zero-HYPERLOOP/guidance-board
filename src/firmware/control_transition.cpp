@@ -7,9 +7,11 @@ void airgap_transition::init(float airgap_start) {
 }
 
 void airgap_transition::start_transition(float target_airgap, float time) {
-    m_airgap_end = target_airgap;
-    m_step_cycles = (int)(20000.0 * time / 101.0);
-    m_in_transition = true;
+    if(!m_in_transition) {
+        m_airgap_end = target_airgap;
+        m_step_cycles = (int)(20000.0 * time / 101.0);
+        m_in_transition = true;
+    }
 }
 
 float airgap_transition::step() {
