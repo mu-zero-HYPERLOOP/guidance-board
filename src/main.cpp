@@ -12,6 +12,7 @@
 #include "firmware/control_transition.hpp"
 #include <Arduino.h>
 
+#define MONITOR_BUFFER_LENGTH 10000
 
 volatile IntervalTiming g_done0_timing;
 volatile IntervalTiming g_done1_timing;
@@ -21,7 +22,13 @@ ExponentialMovingAverage<Time> g_trig_time_filter(0.1, 1_s);
 volatile Timing g_trig_timing;
 ExponentialMovingAverage<Time> g_adc_time_filter(0.1, 1_s);
 
-bool error_flag = false;
+volatile bool error_flag = false;
+volatile bool monitor_flag = false;
+volatile bool monitor_done_flag = false;
+
+volatile float monitor_buffer[MONITOR_BUFFER_LENGTH];
+volatile int monitor_counter = 0;
+
 int main_counter = 0;
 
 
@@ -30,6 +37,7 @@ float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R;
 float out, out_d, out_dd, in, in_d, in_dd, error; // delayed in/outputs current
 float error_disp, error_disp_d;
 float integrator, integrator_disp;
+float state_deriv;
 float i_target;
 float disp_target;
 
@@ -74,7 +82,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
 
   // error detection
-  if(disp_meas_MAG_R < 3 && disp_meas_MAG_R > 0) {
+  if(disp_meas_MAG_R < 3.5 && disp_meas_MAG_R > 0) {
     // too close -> error
     digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW);
     pwm::disable_output();
@@ -91,16 +99,18 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   float P = 11; // 9
   // float ITs = 0.0005 - (disp_target-7)*0.0001;
   float ITs = 0.002; // 0.002
-  float D = 0.03; // 0.02
-  // // float N = 1000;
+  float D = 0.04; // 0.02
+  float N = 1000;
   // disp_target = 7.4; // temporary
   error_disp_d = error_disp;
 
-  error_disp = 0.9 * error_disp - 0.1 * (disp_target - disp_meas_MAG_R);
+  error_disp = 0.8 * error_disp - 0.2 * (disp_target - disp_meas_MAG_R);
 
   integrator_disp += error_disp * ITs;
 
-  float derivative_disp = D * (error_disp - error_disp_d) * 20000;
+  // float derivative_disp = D * (error_disp - error_disp_d) * 20000; // standard implementation of derivative
+  float derivative_disp = (D * error_disp - state_deriv) * N; // filtered implementation of derivative
+  state_deriv += derivative_disp / 20000;
 
   if(integrator_disp < 0) {
     integrator_disp = 0;
@@ -109,6 +119,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   }
 
   i_target = P*error_disp + integrator_disp + derivative_disp;
+
 
   if(i_target > 50) {
     i_target = 50;
@@ -122,7 +133,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   // current control
   P = 2; // 4
-  ITs = 0.2; // 0.06
+  ITs = 0.4; // 0.06
   // float i_target = 5.2 / 0.75; // temporary
 
   in_d = in;
@@ -160,6 +171,24 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   isr_control.duty13 = 0.5 + control/2;
   isr_control.duty31 = 0.5 - control/2;
   pwm::control(isr_control);
+  }
+
+  
+  if(monitor_flag) {
+    monitor_buffer[monitor_counter] = i_target;
+    monitor_counter++;
+    monitor_buffer[monitor_counter] = i_meas_R;
+    monitor_counter++;
+    monitor_buffer[monitor_counter] = disp_meas_MAG_R;
+    monitor_counter++;
+    monitor_buffer[monitor_counter] = error_disp;
+    monitor_counter++;
+    monitor_buffer[monitor_counter] = out;
+    monitor_counter++;
+    if(monitor_counter >= MONITOR_BUFFER_LENGTH) {
+      monitor_flag = false;
+      monitor_done_flag = true;
+    }
   }
 
 }
@@ -267,20 +296,32 @@ int main() {
     // Serial.printf("I_right: %f  -  Error: %f  -  I_Target: %f  -  DISP_right: %f \n",
     //                 i_meas_R, in_d, i_target, disp_meas_MAG_R);
     
-    Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
-                    disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
+    // Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
+    //                 disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
+    Serial.printf("Disp_Targ: %f - DISP_R: %f - Out: %f - mon-cnt: %u\n",
+                    disp_target, disp_meas_MAG_R, out, monitor_counter);
+
     // disp_target -= 0.2 / 20;
     // if(disp_target < 6) {
     //   disp_target = 6;
     // }
     // digitalWrite(LED_BUILTIN, LOW);
+    if(monitor_done_flag) {
+      for(int i=0; i<MONITOR_BUFFER_LENGTH; i++) {
+        Serial.printf("%f,", monitor_buffer[i]);
+      }
+      while(1); //lock
+    }
 
     if(main_counter == 200) {
       // after 10s
-      airgap_transition::start_transition(6, 6);
+      digitalWrite(LED_BUILTIN, LOW);
+      airgap_transition::start_transition(6, 4);
     }
     if(main_counter == 400) {
-      airgap_transition::start_transition(8, 6);
+      digitalWrite(LED_BUILTIN, LOW);
+      monitor_flag = true;
+      airgap_transition::start_transition(6.5, 0);
       main_counter = 0;
     }
 
