@@ -36,12 +36,12 @@ float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R;
 
 float out, out_d, out_dd, in, in_d, in_dd, error; // delayed in/outputs current
 float error_disp, error_disp_d;
-float integrator, integrator_disp;
+float integrator_current, integrator_disp;
 float state_deriv;
 float i_target;
 float disp_target;
 
-float target_list[5] = {6.1, 6.2, 6.3, 6.4, 6.5};
+float target_list[5] = {6.1, 6.15, 6.2, 6.25, 6.3};
 int target_counter = 0;
 
 
@@ -89,6 +89,8 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     // too close -> error
     digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW);
     pwm::disable_output();
+    integrator_disp = 0;
+    integrator_current = 0;
     error_flag = true;
   }
 
@@ -135,7 +137,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // i_target = i_target / 0.75;
 
   // current control
-  P = 2; // 4
+  P = 4; // 4
   ITs = 0.4; // 0.06
   // float i_target = 5.2 / 0.75; // temporary
 
@@ -144,21 +146,21 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   error = 0.5 * error + 0.5 * (i_target / 0.75 - i_meas_R); // EMA
   in = error;
 
-  integrator = integrator + in * ITs;
-  if(integrator > 10) {
-    integrator = 10;
-  }else if(integrator < -10) {
-    integrator = -10;
+  integrator_current = integrator_current + in * ITs;
+  if(integrator_current > 10) {
+    integrator_current = 10;
+  }else if(integrator_current < -10) {
+    integrator_current = -10;
   }
   
-  out = P*in + integrator;
+  out = P*in + integrator_current;
   // out = error*4;
   if(out > 40) {
     out = 40;
   }
   if(i_meas_R > 0.5) {
-    if(out < -20) {
-      out = -20;
+    if(out < -40) {
+      out = -40;
     }
   }else{
     if(out < 0) {
