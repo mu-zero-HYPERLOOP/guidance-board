@@ -26,8 +26,8 @@ volatile bool error_flag = false;
 volatile bool monitor_flag = false;
 volatile bool monitor_done_flag = false;
 
-volatile float monitor_buffer[MONITOR_BUFFER_LENGTH];
-volatile int monitor_counter = 0;
+// volatile float monitor_buffer[MONITOR_BUFFER_LENGTH];
+// volatile int monitor_counter = 0;
 
 int main_counter = 0;
 
@@ -40,6 +40,9 @@ float integrator, integrator_disp;
 float state_deriv;
 float i_target;
 float disp_target;
+
+float target_list[5] = {6.1, 6.2, 6.3, 6.4, 6.5};
+int target_counter = 0;
 
 
 void pwm_trig0_isr() {
@@ -174,22 +177,22 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   }
 
   
-  if(monitor_flag) {
-    monitor_buffer[monitor_counter] = i_target;
-    monitor_counter++;
-    monitor_buffer[monitor_counter] = i_meas_R;
-    monitor_counter++;
-    monitor_buffer[monitor_counter] = disp_meas_MAG_R;
-    monitor_counter++;
-    monitor_buffer[monitor_counter] = error_disp;
-    monitor_counter++;
-    monitor_buffer[monitor_counter] = out;
-    monitor_counter++;
-    if(monitor_counter >= MONITOR_BUFFER_LENGTH) {
-      monitor_flag = false;
-      monitor_done_flag = true;
-    }
-  }
+  // if(monitor_flag) {
+  //   monitor_buffer[monitor_counter] = i_target;
+  //   monitor_counter++;
+  //   monitor_buffer[monitor_counter] = i_meas_R;
+  //   monitor_counter++;
+  //   monitor_buffer[monitor_counter] = disp_meas_MAG_R;
+  //   monitor_counter++;
+  //   monitor_buffer[monitor_counter] = error_disp;
+  //   monitor_counter++;
+  //   monitor_buffer[monitor_counter] = out;
+  //   monitor_counter++;
+  //   if(monitor_counter >= MONITOR_BUFFER_LENGTH) {
+  //     monitor_flag = false;
+  //     monitor_done_flag = true;
+  //   }
+  // }
 
 }
 
@@ -276,6 +279,7 @@ int main() {
 
   // init transition
   airgap_transition::init(10);
+  Serial.println("Enable Not-Aus");
   delay(5000),
   // "precharge"
   delay(1000);
@@ -284,6 +288,12 @@ int main() {
   digitalWrite(GuidanceBoardPin::PRECHARGE_DONE, HIGH);
   delay(1000);
   pwm::enable_output();
+
+  delay(1000);
+  // initial startup
+  airgap_transition::start_transition(6, 4);
+  Serial.println("startup");
+  delay(4000);
 
   while (true) {
     // Serial.printf("DONE0 Frequency = %fHz, DONE1 Frequency = %fHz\n", static_cast<float>(g_done0_timing.frequency()),
@@ -298,31 +308,38 @@ int main() {
     
     // Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
     //                 disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
-    Serial.printf("Disp_Targ: %f - DISP_R: %f - Out: %f - mon-cnt: %u\n",
-                    disp_target, disp_meas_MAG_R, out, monitor_counter);
+    Serial.printf("Disp_Targ: %f - DISP_R: %f - Out: %f \n",
+                    disp_target, disp_meas_MAG_R, out);
 
     // disp_target -= 0.2 / 20;
     // if(disp_target < 6) {
     //   disp_target = 6;
     // }
     // digitalWrite(LED_BUILTIN, LOW);
-    if(monitor_done_flag) {
-      for(int i=0; i<MONITOR_BUFFER_LENGTH; i++) {
-        Serial.printf("%f,", monitor_buffer[i]);
-      }
-      while(1); //lock
+    
+    if(error_flag) {
+      // run failed prematurely
+      Serial.printf("Maximum step for this controller: %u", target_counter);
+      while(1); // lock
     }
 
-    if(main_counter == 200) {
-      // after 10s
+    if(main_counter == 100) {
+      // after 5s step to target
       digitalWrite(LED_BUILTIN, LOW);
-      airgap_transition::start_transition(6, 4);
+      airgap_transition::start_transition(target_list[target_counter], 0);
     }
-    if(main_counter == 400) {
+    if(main_counter == 200) {
+      // after 5s step to starting position
       digitalWrite(LED_BUILTIN, LOW);
-      monitor_flag = true;
-      airgap_transition::start_transition(6.5, 0);
+      airgap_transition::start_transition(6, 0);
       main_counter = 0;
+      target_counter++;
+      if(target_counter >= 5) {
+        // all steps complete
+        target_counter = 0;
+        
+        // TODO: change control parameters based on results
+      }
     }
 
     main_counter++;
