@@ -13,12 +13,12 @@ static constexpr bool ENABLE_PWM3_SM1 = true;  // pins 29, 28  - RIGHT_L  - W1
 static constexpr bool ENABLE_PWM1_SM3 = true;  // pins 8 , 7   - RIGHT_R  - V1
 
 struct PwmControl {
-  float duty20 = 0.5f; // range [0,1]
-  float duty22 = 0.5f;
-  float duty23 = 0.5f;
-  float duty42 = 0.5f;
-  float duty31 = 0.5f;
-  float duty13 = 0.5f;
+  float duty20 = 0.0f; // range [0,1]
+  float duty22 = 0.0f;
+  float duty23 = 0.0f;
+  float duty42 = 0.0f;
+  float duty31 = 0.0f;
+  float duty13 = 0.0f;
 };
 
 struct PwmBeginInfo {

@@ -28,11 +28,14 @@ volatile bool monitor_done_flag = false;
 
 volatile float monitor_buffer[MONITOR_BUFFER_LENGTH];
 volatile int monitor_counter = 0;
+volatile int monitor_subcounter = 0;
+int error_counter = 0;
 
 int main_counter = 0;
 
 
 float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R;
+float disp_filtered_MAG_R;
 
 float out, out_d, out_dd, in, in_d, in_dd, error; // delayed in/outputs current
 float error_disp, error_disp_d;
@@ -40,6 +43,17 @@ float integrator, integrator_disp;
 float state_deriv;
 float i_target;
 float disp_target;
+
+
+float clamp(float in, float min, float max) {
+  if(in > max) {
+    return max;
+  }
+  if(in < min) {
+    return min;
+  }
+  return in;
+}
 
 
 void pwm_trig0_isr() {
@@ -80,13 +94,25 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 25.0) / 0.016 + 25.0; // map 4...20mA to 25...50mm
   disp_meas_MAG_R = disp_meas_MAG_R - 29;
 
+  disp_filtered_MAG_R = 0.9 * disp_filtered_MAG_R + 0.1 * disp_meas_MAG_R;
 
   // error detection
-  if(disp_meas_MAG_R < 3.5 && disp_meas_MAG_R > 0) {
+  if(disp_filtered_MAG_R < 3 && disp_filtered_MAG_R > 0) {
     // too close -> error
-    digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW);
-    pwm::disable_output();
-    error_flag = true;
+    error_counter++;
+    if(error_counter > 100) {
+      digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW);
+      pwm::disable_output();
+
+      // reset control to default
+      PwmControl error_control;
+      pwm::control(error_control);
+      error_flag = true;
+    }
+  } else {
+    if(error_counter > 0) {
+      error_counter--;
+    }
   }
 
   // transition handling
@@ -96,15 +122,21 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   if(!error_flag) {
 
-  float P = 11; // 9
+  float P = 10; // 9
   // float ITs = 0.0005 - (disp_target-7)*0.0001;
-  float ITs = 0.002; // 0.002
-  float D = 0.04; // 0.02
+  float ITs = 0.004; // 0.002
+  float D = 0.045; // 0.02
   float N = 1000;
   // disp_target = 7.4; // temporary
   error_disp_d = error_disp;
 
-  error_disp = 0.8 * error_disp - 0.2 * (disp_target - disp_meas_MAG_R);
+  error_disp = 0.9 * error_disp - 0.1 * (disp_target - disp_meas_MAG_R);
+  // if(error_disp > 0.9) {
+  //   error_disp = 0.9;
+  // }
+  // if(error_disp < -0.9) {
+  //   error_disp = -0.9;
+  // }
 
   integrator_disp += error_disp * ITs;
 
@@ -119,11 +151,16 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   }
 
   i_target = P*error_disp + integrator_disp + derivative_disp;
+  if(i_target > 0) {
+    i_target = 2.64575 * sqrt(i_target);
+    i_target = i_target * (disp_filtered_MAG_R) / 6;
+  }
+  
 
 
   if(i_target > 50) {
     i_target = 50;
-    digitalWrite(LED_BUILTIN, HIGH);
+    // digitalWrite(LED_BUILTIN, HIGH);
   }else if(i_target < -4) {
     i_target = -4;
     // digitalWrite(LED_BUILTIN, HIGH);
@@ -132,7 +169,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // i_target = i_target / 0.75;
 
   // current control
-  P = 2; // 4
+  P = 8; // 4
   ITs = 0.4; // 0.06
   // float i_target = 5.2 / 0.75; // temporary
 
@@ -141,7 +178,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   error = 0.5 * error + 0.5 * (i_target / 0.75 - i_meas_R); // EMA
   in = error;
 
-  integrator = integrator + in * ITs;
+  integrator = integrator + clamp(in * ITs, -0.05, 0.05);
   if(integrator > 10) {
     integrator = 10;
   }else if(integrator < -10) {
@@ -154,8 +191,8 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     out = 40;
   }
   if(i_meas_R > 0.5) {
-    if(out < -20) {
-      out = -20;
+    if(out < -40) {
+      out = -40;
     }
   }else{
     if(out < 0) {
@@ -175,19 +212,26 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   
   if(monitor_flag) {
-    monitor_buffer[monitor_counter] = i_target;
-    monitor_counter++;
-    monitor_buffer[monitor_counter] = i_meas_R;
-    monitor_counter++;
-    monitor_buffer[monitor_counter] = disp_meas_MAG_R;
-    monitor_counter++;
-    monitor_buffer[monitor_counter] = error_disp;
-    monitor_counter++;
-    monitor_buffer[monitor_counter] = out;
-    monitor_counter++;
-    if(monitor_counter >= MONITOR_BUFFER_LENGTH) {
-      monitor_flag = false;
-      monitor_done_flag = true;
+    if(monitor_subcounter == 0) {
+      monitor_buffer[monitor_counter] = i_target;
+      monitor_counter++;
+      monitor_buffer[monitor_counter] = i_meas_R;
+      monitor_counter++;
+      monitor_buffer[monitor_counter] = disp_meas_MAG_R;
+      monitor_counter++;
+      monitor_buffer[monitor_counter] = error_disp;
+      monitor_counter++;
+      monitor_buffer[monitor_counter] = out;
+      monitor_counter++;
+
+      if(monitor_counter >= MONITOR_BUFFER_LENGTH) {
+        monitor_flag = false;
+        monitor_done_flag = true;
+      }
+    }
+    monitor_subcounter++;
+    if(monitor_subcounter >= 2) {
+      monitor_subcounter = 0;
     }
   }
 
@@ -276,6 +320,8 @@ int main() {
 
   // init transition
   airgap_transition::init(10);
+  pwm::enable_output();
+  
   delay(5000),
   // "precharge"
   delay(1000);
@@ -313,15 +359,15 @@ int main() {
       while(1); //lock
     }
 
-    if(main_counter == 200) {
-      // after 10s
+    if(main_counter == 100) {
+      // after 5s
       digitalWrite(LED_BUILTIN, LOW);
-      airgap_transition::start_transition(6, 4);
+      airgap_transition::start_transition(6.2, 4);
     }
-    if(main_counter == 400) {
+    if(main_counter == 300) {
       digitalWrite(LED_BUILTIN, LOW);
       monitor_flag = true;
-      airgap_transition::start_transition(6.5, 0);
+      airgap_transition::start_transition(6, 0);
       main_counter = 0;
     }
 
