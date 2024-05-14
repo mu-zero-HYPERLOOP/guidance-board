@@ -1,5 +1,3 @@
-
-
 #include "core_pins.h"
 #include "firmware/adc_etc.hpp"
 #include "firmware/pwm.hpp"
@@ -25,7 +23,7 @@ bool error_flag = false;
 int main_counter = 0;
 
 
-float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R;
+float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R, disp_meas_LIM_L, disp_meas_LIM_R;
 
 float out, out_d, out_dd, in, in_d, in_dd, error; // delayed in/outputs current
 float error_disp, error_disp_d;
@@ -58,19 +56,37 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_MAG_L = res.trig_res<4,0>(); // DISP_SENS_MAG_L
   disp_meas_MAG_R = res.trig_res<4,1>(); // DISP_SENS_MAG_R
 
+  disp_meas_LIM_L = res.trig_res<1,0>(); // DISP_SENS_LIM_L
+  disp_meas_LIM_R = res.trig_res<1,1>(); // DISP_SENS_LIM_R
+
   // convert to actual values
+
+  // current measurement for LEFT and RIGHT magnets
   i_meas_L = 3.3 * i_meas_L / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
   i_meas_L = (i_meas_L - 2.5) / GuidanceBoardCurrentGains::GAIN_I_LEFT / 0.001; // current in amps
 
   i_meas_R = 3.3 * i_meas_R / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
   i_meas_R = -(i_meas_R - 2.5) / GuidanceBoardCurrentGains::GAIN_I_RIGHT / 0.001; // current in amps
 
-  disp_meas_MAG_L = 3.3 * disp_meas_MAG_R / 4096.0 / 120; // sense current
-  disp_meas_MAG_L = (disp_meas_MAG_L - 0.004) * (50.0 - 25.0) / 0.016 + 25.0; // map 4...20mA to 25...50mm
+  // displacement measurement for LEFT and RIGHT magnets
+  disp_meas_MAG_L = 3.3 * disp_meas_MAG_L / 4096.0 / 120; // sense current
+  disp_meas_MAG_L = (disp_meas_MAG_L - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
+  disp_meas_MAG_L = disp_meas_MAG_L - 29; // TODO: update MGU displacement offset
 
   disp_meas_MAG_R = 3.3 * disp_meas_MAG_R / 4096.0 / 120.0; // sense current
-  disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 25.0) / 0.016 + 25.0; // map 4...20mA to 25...50mm
-  disp_meas_MAG_R = disp_meas_MAG_R - 29;
+  disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
+  disp_meas_MAG_R = disp_meas_MAG_R - 29; // TODO: update MGU displacement offset
+
+  /*
+  // displacement measurement for LIM rotor LEFT and RIGHT side
+  disp_meas_LIM_L = 3.3 * disp_meas_LIM_L / 4096.0 / 120; // sense current
+  disp_meas_LIM_L = (disp_meas_LIM_L - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
+  disp_meas_LIM_L = disp_meas_LIM_L - 29; // TODO: update LIM displacement offset
+
+  disp_meas_LIM_R = 3.3 * disp_meas_LIM_R / 4096.0 / 120.0; // sense current
+  disp_meas_LIM_R = (disp_meas_LIM_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
+  disp_meas_LIM_R = disp_meas_LIM_R - 29; // TODO: update LIM displacement offset
+  */
 
 
   // error detection
@@ -219,12 +235,13 @@ int main() {
   chains[1].intr = NONE;
 
   chains[2].trig_num = TRIG1;
-  int chain1_pins[] = {0,1,2};
+  int chain1_pins[] = {GuidanceBoardPin::DISP_SENS_LIM_L,
+                        GuidanceBoardPin::DISP_SENS_LIM_R};
   chains[2].read_pins = chain1_pins;
-  chains[2].chain_length = 3;
+  chains[2].chain_length = 2;
   chains[2].chain_priority = 0;
   chains[2].software_trig = false;
-  chains[2].trig_sync = false;
+  chains[2].trig_sync = true;
   chains[2].intr = DONE1;
 
 
