@@ -22,7 +22,8 @@ ExponentialMovingAverage<Time> g_adc_time_filter(0.1, 1_s);
 bool error_flag = false;
 int main_counter = 0;
 
-
+float offset;
+float target_offset;
 float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R, disp_meas_LIM_L, disp_meas_LIM_R;
 
 float out, out_d, out_dd, in, in_d, in_dd, error; // delayed in/outputs current
@@ -77,7 +78,6 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
   disp_meas_MAG_R = disp_meas_MAG_R - 29; // TODO: update MGU displacement offset
 
-  /*
   // displacement measurement for LIM rotor LEFT and RIGHT side
   disp_meas_LIM_L = 3.3 * disp_meas_LIM_L / 4096.0 / 120; // sense current
   disp_meas_LIM_L = (disp_meas_LIM_L - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
@@ -86,8 +86,16 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_LIM_R = 3.3 * disp_meas_LIM_R / 4096.0 / 120.0; // sense current
   disp_meas_LIM_R = (disp_meas_LIM_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
   disp_meas_LIM_R = disp_meas_LIM_R - 29; // TODO: update LIM displacement offset
-  */
 
+
+  // calculate offset from center of track based on airgaps
+  // LIM airgaps:
+  // min:       3mm
+  // nominal:   7mm
+  // max:       11mm
+
+  offset = (disp_meas_LIM_L - disp_meas_LIM_R) / 2;
+  target_offset = 0;
 
   // error detection
   if(disp_meas_MAG_R < 3 && disp_meas_MAG_R > 0) {
@@ -97,10 +105,9 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     error_flag = true;
   }
 
-  // transition handling
-  disp_target = airgap_transition::step();
+  ///////////////////////////// distance control /////////////////////////////
 
-  // distance control
+  // TODO: update PID values and EMA alphas
 
   if(!error_flag) {
 
@@ -136,7 +143,10 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   // i_target = i_target / 0.75;
 
-  // current control
+  ///////////////////////////// current control /////////////////////////////
+
+  // TODO: update switch case for current control and PI values and EMA alphas
+
   P = 2; // 4
   ITs = 0.2; // 0.06
   // float i_target = 5.2 / 0.75; // temporary
