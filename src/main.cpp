@@ -74,18 +74,18 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // g_done0_timing.tick();
 
   // get raw values
-  i_meas_L = res.trig_res<0,0>(); // I_MAG_L
-  i_meas_R = res.trig_res<0,1>(); // I_MAG_R
+  // i_meas_L = res.trig_res<0,0>(); // I_MAG_L
+  i_meas_R = res.trig_res<0,0>(); // I_MAG_R
   
-  disp_meas_MAG_L = res.trig_res<4,0>(); // DISP_SENS_MAG_L
-  disp_meas_MAG_R = res.trig_res<4,1>(); // DISP_SENS_MAG_R
+  // disp_meas_MAG_L = res.trig_res<4,0>(); // DISP_SENS_MAG_L
+  disp_meas_MAG_R = res.trig_res<4,0>(); // DISP_SENS_MAG_R
 
   // convert to actual values
   i_meas_L = 3.3 * i_meas_L / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
   i_meas_L = (i_meas_L - 2.5) / GuidanceBoardCurrentGains::GAIN_I_LEFT / 0.001; // current in amps
 
   i_meas_R = 3.3 * i_meas_R / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
-  i_meas_R = -(i_meas_R - 2.5) / GuidanceBoardCurrentGains::GAIN_I_RIGHT / 0.001; // current in amps
+  i_meas_R = -(i_meas_R - 2.5) / GuidanceBoardCurrentGains::GAIN_I_LEFT / 0.001; // current in amps
 
   disp_meas_MAG_L = 3.3 * disp_meas_MAG_R / 4096.0 / 120; // sense current
   disp_meas_MAG_L = (disp_meas_MAG_L - 0.004) * (50.0 - 25.0) / 0.016 + 25.0; // map 4...20mA to 25...50mm
@@ -205,8 +205,10 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   // write outputs
   PwmControl isr_control;
-  isr_control.duty13 = 0.5 + control/2;
-  isr_control.duty31 = 0.5 - control/2;
+  // isr_control.duty13 = 0.5 + control/2;
+  // isr_control.duty31 = 0.5 - control/2;
+  isr_control.duty42 = 0.5 + control/2;
+  isr_control.duty22 = 0.5 - control/2;
   pwm::control(isr_control);
   }
 
@@ -362,11 +364,11 @@ int main() {
     if(main_counter == 100) {
       // after 5s
       digitalWrite(LED_BUILTIN, LOW);
-      airgap_transition::start_transition(6.2, 4);
+      airgap_transition::start_transition(6, 8);
     }
     if(main_counter == 300) {
       digitalWrite(LED_BUILTIN, LOW);
-      monitor_flag = true;
+      // monitor_flag = true;
       airgap_transition::start_transition(6, 0);
       main_counter = 0;
     }
