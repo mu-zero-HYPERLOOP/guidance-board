@@ -22,15 +22,36 @@ ExponentialMovingAverage<Time> g_adc_time_filter(0.1, 1_s);
 bool error_flag = false;
 int main_counter = 0;
 
+
+// define clamp function (use to refactor code, once clamp in code works, e.g. clamp integrator_disp, clamp i_target, etc.)
+float clamp(float in, float min, float max) {
+  if(in > max) {
+    return max;
+  }
+  if(in < min) {
+    return min;
+  }
+  return in;
+}
+
+
+// displacement parameters
 float offset;
 float target_offset;
-float i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R, disp_meas_LIM_L, disp_meas_LIM_R;
-
-float out, out_d, out_dd, in, in_d, in_dd, error; // delayed in/outputs current
+float disp_meas_MAG_L, disp_meas_MAG_R, disp_meas_LIM_L, disp_meas_LIM_R;
 float error_disp, error_disp_d;
-float integrator, integrator_disp;
-float i_target;
-float disp_target;
+float integrator_disp;
+float derivative_disp;
+float i_target; // PWM output (target current)
+
+
+// current parameters
+float i_meas_L, i_meas_R;
+float error_current;
+float error_current_L;
+float error_current_R;
+float integrator_current;
+float v_target; // PWM output (target voltage)
 
 
 void pwm_trig0_isr() {
@@ -50,7 +71,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // g_adc_time_filter.push(static_cast<Time>(g_adc_timing.time()));
   // g_done0_timing.tick();
 
-  // get raw values
+  // get raw values for current and displacement measurements
   i_meas_L = res.trig_res<0,0>(); // I_MAG_L
   i_meas_R = res.trig_res<0,1>(); // I_MAG_R
   
@@ -59,6 +80,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   disp_meas_LIM_L = res.trig_res<1,0>(); // DISP_SENS_LIM_L
   disp_meas_LIM_R = res.trig_res<1,1>(); // DISP_SENS_LIM_R
+
 
   // convert to actual values
 
@@ -89,97 +111,98 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
 
   // calculate offset from center of track based on airgaps
+  // method: subtract both displacement measurements and divide by two
+  // positive offset -> pod shifts to the left -> right magnet needs current
+  // negative offset -> pod shifts to the right -> left magnet needs current
+  // goal: offset = 0 -> pod stays in the middle
+  // 
   // LIM airgaps:
-  // min:       3mm
-  // nominal:   7mm
-  // max:       11mm
+  // min:       3 mm
+  // nominal:   7 mm
+  // max:       11 mm
 
   offset = (disp_meas_LIM_L - disp_meas_LIM_R) / 2;
   target_offset = 0;
 
-  // error detection
-  if(disp_meas_MAG_R < 3 && disp_meas_MAG_R > 0) {
+  // error detection (not sure if this is correct)
+  if((disp_meas_LIM_R < 3 && disp_meas_LIM_R > 0) || (disp_meas_LIM_L < 3 && disp_meas_LIM_L > 0)) {
     // too close -> error
     digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW);
     pwm::disable_output();
     error_flag = true;
   }
 
-  ///////////////////////////// distance control /////////////////////////////
-
-  // TODO: update PID values and EMA alphas
+  //////////////////////////////// distance control ////////////////////////////////
 
   if(!error_flag) {
 
-  float P = 11; // 9
-  // float ITs = 0.0005 - (disp_target-7)*0.0001;
-  float ITs = 0.002; // 0.002
-  float D = 0.03; // 0.02
-  // // float N = 1000;
-  // disp_target = 7.4; // temporary
+  float P = 1.2; 
+  float ITs = 0.01; 
+  float D = 0.33; 
+
   error_disp_d = error_disp;
-
-  error_disp = 0.9 * error_disp - 0.1 * (disp_target - disp_meas_MAG_R);
-
+  error_disp = 0.9 * error_disp - 0.1 * (target_offset - offset); // displacement EMA with alpha 0.9
   integrator_disp += error_disp * ITs;
+  derivative_disp = D * (error_disp - error_disp_d) * 20000; // 20kHz PWM frequency
 
-  float derivative_disp = D * (error_disp - error_disp_d) * 20000;
-
-  if(integrator_disp < 0) {
-    integrator_disp = 0;
-  }else if(integrator_disp > 10) {
-    integrator_disp = 10;
+  // clamp integrator (min = -30, max = 30)
+  if(integrator_disp > 30) {
+    integrator_disp = 30;
+  } else if (integrator_disp < -30) {
+    integrator_disp = -30;
   }
 
+  // PID to calculate target current
   i_target = P*error_disp + integrator_disp + derivative_disp;
 
-  if(i_target > 50) {
-    i_target = 50;
-    digitalWrite(LED_BUILTIN, HIGH);
-  }else if(i_target < -4) {
-    i_target = -4;
-    // digitalWrite(LED_BUILTIN, HIGH);
+  // clamp i_target (min = -40, max = 40)
+  if(i_target > 40) {
+    i_target = 40;
+  } else if (i_target < -40) {
+    i_target = -40;
   }
 
-  // i_target = i_target / 0.75;
+  //////////////////////////////// current control ////////////////////////////////
 
-  ///////////////////////////// current control /////////////////////////////
+  P = 1.3; 
+  ITs = 0.75; 
 
-  // TODO: update switch case for current control and PI values and EMA alphas
+  // is this part correct? (-i_target)
+  error_current_L = 0.5 * error_current_L + 0.5 * (- i_target - i_meas_L); // curent EMA with alpha 0.5 (invert i_target)
+  error_current_R = 0.5 * error_current_R + 0.5 * (i_target - i_meas_R); // current EMA with alpha 0.5
 
-  P = 2; // 4
-  ITs = 0.2; // 0.06
-  // float i_target = 5.2 / 0.75; // temporary
+  // Switch case to select error current based on polarity of output PID (i_target)
+  if (i_target > 0) {
+    error_current = error_current_R;
 
-  in_d = in;
+  } else if (i_target < 0) {
+    error_current = error_current_L;
 
-  error = 0.5 * error + 0.5 * (i_target / 0.75 - i_meas_R); // EMA
-  in = error;
-
-  integrator = integrator + in * ITs;
-  if(integrator > 10) {
-    integrator = 10;
-  }else if(integrator < -10) {
-    integrator = -10;
+  } else {
+    error_current = 0;
   }
   
-  out = P*in + integrator;
-  // out = error*4;
-  if(out > 40) {
-    out = 40;
+  integrator_current += error_current * ITs;
+
+  // clamp integrator (min = -10, max = 10)
+  if(integrator_current > 10) {
+    integrator_current = 10;
+  }else if(integrator_current < -10) {
+    integrator_current = -10;
   }
-  if(i_meas_R > 0.5) {
-    if(out < -20) {
-      out = -20;
-    }
-  }else{
-    if(out < 0) {
-      out = 0;
-    }
+  
+  // PID to calculate target voltage
+  v_target = P*error_current + integrator_current;
+
+  // clamp target voltage (min = 0, max = 40)
+  if(v_target > 40) {
+    v_target = 40;
+  } else if (v_target < 0) {
+    v_target = 0;
   }
 
-  float control = out/45;
-
+  // set output of target voltage to PWM
+  float control = v_target/45;
 
   // write outputs
   PwmControl isr_control;
@@ -199,8 +222,6 @@ void adc_etc_done1_isr(AdcTrigRes res) {
 
 
 int main() {
-  disp_target = 10;
-
   Serial.begin(9600);
 
   pinMode(GuidanceBoardPin::SDC_TRIG, OUTPUT);
@@ -209,7 +230,7 @@ int main() {
   digitalWrite(LED_BUILTIN, LOW);
 
   delay(5000);
-  Serial.printf("Hello, World\n");
+  Serial.printf("Guidance Test Start\n");
 
   PwmBeginInfo pwmBeginInfo;
   pwmBeginInfo.enable_outputs = false;
@@ -221,7 +242,7 @@ int main() {
   pwmBeginInfo.trig1 = 0.25f;
   pwm::begin(pwmBeginInfo);
 
-  Serial.println("enable not-aus");
+  Serial.println("Enable Not-Aus");
 
   TrigChainInfo chains[3];
   chains[0].trig_num = TRIG0;
@@ -283,25 +304,21 @@ int main() {
   delay(1000);
   pwm::enable_output();
 
-  while (true) {
-    // Serial.printf("DONE0 Frequency = %fHz, DONE1 Frequency = %fHz\n", static_cast<float>(g_done0_timing.frequency()),
-    //     static_cast<float>(g_done1_timing.frequency()));
-    // Serial.printf("ADC Convertion time = %fus\n", static_cast<float>(g_adc_time_filter.get()) * 1e6);
-    // Serial.printf("Time between triggers = %fus\n", static_cast<float>(g_trig_time_filter.get()) * 1e6);
-    
-    // Serial.printf("I_left: %f  -  I_right: %f  -  DISP_left: %f  -  DISP_right: %f \n",
-    //                 i_meas_L, i_meas_R, disp_meas_MAG_L, disp_meas_MAG_R);
+  while (true) {    
+    // Serial.printf("I_left: %f  -  I_right: %f  -  DISP_LIM_left: %f  -  DISP_LIM_right: %f \n",
+    //               i_meas_L, i_meas_R, disp_meas_LIM_L, disp_meas_LIM_R);
     // Serial.printf("I_right: %f  -  Error: %f  -  I_Target: %f  -  DISP_right: %f \n",
     //                 i_meas_R, in_d, i_target, disp_meas_MAG_R);
     
-    Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
-                    disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
+    // Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
+    //                 disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
     // disp_target -= 0.2 / 20;
     // if(disp_target < 6) {
     //   disp_target = 6;
     // }
     // digitalWrite(LED_BUILTIN, LOW);
 
+    /*
     if(main_counter == 200) {
       // after 10s
       airgap_transition::start_transition(6, 6);
@@ -310,6 +327,11 @@ int main() {
       airgap_transition::start_transition(8, 6);
       main_counter = 0;
     }
+
+    */
+
+    Serial.printf("Measured Offset: %f - Target Current: %f - Target Voltage: %f \n", 
+                  offset, i_target, v_target);
 
     main_counter++;
     delay(50);
