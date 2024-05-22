@@ -53,6 +53,7 @@ float error_current_R;
 float integrator_current;
 float v_target; // PWM output (target voltage)
 
+float control_L, control_R;
 
 void pwm_trig0_isr() {
   // g_adc_timing.start();
@@ -201,13 +202,29 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     v_target = 0;
   }
 
-  // set output of target voltage to PWM
-  float control = v_target/45;
+  // set output of target voltage to PWM (is this part correct?)
+  if (i_target > 0) {
+    control_R = v_target/ 45;
+    control_L = 0;
+
+  } else if (i_target < 0) {
+    control_L = v_target/ 45;
+    control_R = 0;
+
+  } else {
+    control_L = 0;
+    control_R = 0;
+  }
 
   // write outputs
   PwmControl isr_control;
-  isr_control.duty13 = 0.5 + control/2;
-  isr_control.duty31 = 0.5 - control/2;
+  isr_control.duty13 = 0.5 + control_R/2; // RIGHT_R
+  isr_control.duty31 = 0.5 - control_R/2; // RIGHT_L
+
+  isr_control.duty42 = 0.5 + control_L/2; // LEFT_R
+  isr_control.duty22 = 0.5 - control_L/2; // LEFT_L
+
+
   pwm::control(isr_control);
   }
 
