@@ -1,9 +1,8 @@
 #pragma once
 
-#include "util/ema.hpp"
-#include "util/metrics.hpp"
-#include "util/timestamp.hpp"
-#include <Arduino.h>
+#include "util/ema.h"
+#include "util/metrics.h"
+#include "util/timestamp.h"
 
 struct Timing {
   inline Timing() : m_start(Timestamp::now()) {}

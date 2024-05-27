@@ -1,6 +1,6 @@
 #pragma once
 
-#include "util/timestamp.hpp"
+#include "util/timestamp.h"
 class Interval {
 public:
   explicit Interval(Time period) : m_period(period), m_last(Timestamp::now()) {}
