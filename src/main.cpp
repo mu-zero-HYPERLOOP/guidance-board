@@ -322,19 +322,6 @@ int main() {
   pwm::enable_output();
 
   while (true) {    
-    // Serial.printf("I_left: %f  -  I_right: %f  -  DISP_LIM_left: %f  -  DISP_LIM_right: %f \n",
-    //               i_meas_L, i_meas_R, disp_meas_LIM_L, disp_meas_LIM_R);
-    // Serial.printf("I_right: %f  -  Error: %f  -  I_Target: %f  -  DISP_right: %f \n",
-    //                 i_meas_R, in_d, i_target, disp_meas_MAG_R);
-    
-    // Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
-    //                 disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
-    // disp_target -= 0.2 / 20;
-    // if(disp_target < 6) {
-    //   disp_target = 6;
-    // }
-    // digitalWrite(LED_BUILTIN, LOW);
-
     /*
     if(main_counter == 200) {
       // after 10s
@@ -344,11 +331,18 @@ int main() {
       airgap_transition::start_transition(8, 6);
       main_counter = 0;
     }
-
     */
 
-    Serial.printf("Measured Offset: %f - Target Current: %f - Target Voltage: %f \n", 
-                  offset, i_target, v_target);
+
+    // uncomment this for guidance control check
+    // Serial.printf("Measured Offset: %f - Target Current: %f - Target Voltage: %f \n", 
+    //               offset, i_target, v_target);
+
+
+    // add displacement test for TESTBENCH without any control first, just to check the offset
+    // comment out control part, for now just test the offset value, make sure it's in the middle
+    Serial.printf("Left: %f - Right: %f - Offset: %f \n", 
+                  disp_meas_LIM_L, disp_meas_LIM_R, offset);
 
     main_counter++;
     delay(50);
