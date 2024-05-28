@@ -1,4 +1,4 @@
-#include "xbar.hpp"
+#include "xbar.h"
 
 #include <cinttypes>
 #include <imxrt.h>
@@ -27,7 +27,6 @@ void xbar::begin() {
   if (init) {
     return;
   }
-  CCM_CCGR2 |= CCM_CCGR2_XBAR1(CCM_CCGR_ON);
   CCM_CCGR2 |= CCM_CCGR2_XBAR1(CCM_CCGR_ON);
   init = true;
   /* // PWM -> ADC_ETC_TRIG0 */

@@ -1,29 +1,17 @@
-#include "pwm.hpp"
+#include "pwm.h"
 
 #include "core_pins.h"
-#include "xbar.hpp"
+#include "imxrt.h"
+#include "xbar.h"
+
 #include <Arduino.h>
+#include <cwchar>
+#include <functional>
 #include <imxrt.h>
-#include <tuple>
-#include <algorithm>
 
+__attribute__((weak)) void pwm_trig0_isr() {}
 
-__attribute__((weak)) void pwm_trig0_isr() {
-
-}
-void pwm_isr_trig0_redirect() {
-  FLEXPWM4_SM0STS |= FLEXPWM_SMSTS_CMPF(4); // Clear interrupt flag
-  pwm_trig0_isr();
-}
-
-__attribute__((weak)) void pwm_trig1_isr() {
-
-}
-void pwm_isr_trig1_redirect() {
-  FLEXPWM4_SM2STS |= FLEXPWM_SMSTS_CMPF(8); // Clear interrupt flag
-  pwm_trig1_isr();
-}
-
+__attribute__((weak)) void pwm_trig1_isr() {}
 
 constexpr bool ENABLE_PWM1 = ENABLE_PWM1_SM3;
 constexpr bool ENABLE_PWM2 =
@@ -32,8 +20,6 @@ constexpr bool ENABLE_PWM3 = ENABLE_PWM3_SM1;
 constexpr bool ENABLE_PWM4 = ENABLE_PWM4_SM2;
 
 namespace pwm_reg {
-// see https://www.pjrc.com/teensy/IMXRT1060RM_rev3.pdf at p3135 for register
-// description
 
 static inline void clear_load_okay() {
   // Clear Load Okay -> no reload of PWM settings.
@@ -50,73 +36,30 @@ static inline void clear_load_okay() {
     FLEXPWM4_MCTRL |= FLEXPWM_MCTRL_CLDOK(0x0F);
   }
 }
-static inline void smxctrl_write_cycle_with_prescalar(bool fullcycle,
-                                                      int prescalar) {
+static inline void smxctrl_write_full_cycle_with_prescalar(int prescalar) {
   // SMxCTRL:
   //  - FULL : Full Cycle Reload enabled.
   //  - PRSC : Prescalar (3bit) : PWM Clock Frequency is f = f_clk / (2 <<
   //  Prescalar - 1).
-  if constexpr (ENABLE_PWM1_SM3) {
-    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
-    if (fullcycle) {
-      ctrl |= FLEXPWM_SMCTRL_FULL;
-    } else {
-      ctrl |= FLEXPWM_SMCTRL_HALF;
-    }
-    FLEXPWM1_SM3CTRL = ctrl;
+  if constexpr (ENABLE_PWM1) {
+    FLEXPWM1_SM3CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
   }
   if constexpr (ENABLE_PWM2_SM0) {
-    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
-    if (fullcycle) {
-      ctrl |= FLEXPWM_SMCTRL_FULL;
-    } else {
-      ctrl |= FLEXPWM_SMCTRL_HALF;
-    }
-    FLEXPWM2_SM0CTRL = ctrl;
+    FLEXPWM2_SM0CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
   }
   if constexpr (ENABLE_PWM2_SM2) {
-    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
-    if (fullcycle) {
-      ctrl |= FLEXPWM_SMCTRL_FULL;
-    } else {
-      ctrl |= FLEXPWM_SMCTRL_HALF;
-    }
-    FLEXPWM2_SM2CTRL = ctrl;
+    FLEXPWM2_SM2CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
   }
   if constexpr (ENABLE_PWM2_SM3) {
-    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
-    if (fullcycle) {
-      ctrl |= FLEXPWM_SMCTRL_FULL;
-    } else {
-      ctrl |= FLEXPWM_SMCTRL_HALF;
-    }
-    FLEXPWM2_SM3CTRL = ctrl;
+    FLEXPWM2_SM3CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
   }
   if constexpr (ENABLE_PWM3_SM1) {
-    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
-    if (fullcycle) {
-      ctrl |= FLEXPWM_SMCTRL_FULL;
-    } else {
-      ctrl |= FLEXPWM_SMCTRL_HALF;
-    }
-    FLEXPWM3_SM1CTRL = ctrl;
+    FLEXPWM3_SM1CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
   }
   if constexpr (ENABLE_PWM4_SM2) {
-    uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
-    if (fullcycle) {
-      ctrl |= FLEXPWM_SMCTRL_FULL;
-    } else {
-      ctrl |= FLEXPWM_SMCTRL_HALF;
-    }
-    FLEXPWM4_SM2CTRL = ctrl;
+    FLEXPWM4_SM2CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
   }
-  uint16_t ctrl = FLEXPWM_SMCTRL_PRSC(prescalar);
-  if (fullcycle) {
-    ctrl |= FLEXPWM_SMCTRL_FULL;
-  } else {
-    ctrl |= FLEXPWM_SMCTRL_HALF;
-  }
-  FLEXPWM4_SM0CTRL = ctrl;
+  FLEXPWM4_SM0CTRL = FLEXPWM_SMCTRL_FULL | FLEXPWM_SMCTRL_PRSC(prescalar);
 }
 
 static inline void set_load_okay() {
@@ -138,7 +81,7 @@ static inline void set_output_enable(bool enable_outputs) {
   if constexpr (ENABLE_PWM1) {
     if (enable_outputs) {
       FLEXPWM1_OUTEN =
-          FLEXPWM_OUTEN_PWMB_EN(0b1000) | FLEXPWM_OUTEN_PWMA_EN(0b1000);
+          FLEXPWM_OUTEN_PWMB_EN(0b0100) | FLEXPWM_OUTEN_PWMA_EN(0b100);
     } else {
       FLEXPWM1_OUTEN = 0x0;
     }
@@ -147,13 +90,13 @@ static inline void set_output_enable(bool enable_outputs) {
     if (enable_outputs) {
       uint16_t outen = 0; //<- should be consteval on -O2
       if (ENABLE_PWM2_SM0) {
-        outen |= FLEXPWM_OUTEN_PWMB_EN(0b0001) | FLEXPWM_OUTEN_PWMA_EN(0b0001);
+        outen |= FLEXPWM_OUTEN_PWMB_EN(0b0000) | FLEXPWM_OUTEN_PWMA_EN(0b0000);
       }
       if (ENABLE_PWM2_SM2) {
-        outen |= FLEXPWM_OUTEN_PWMB_EN(0b0100) | FLEXPWM_OUTEN_PWMA_EN(0b0100);
+        outen |= FLEXPWM_OUTEN_PWMB_EN(0b0010) | FLEXPWM_OUTEN_PWMA_EN(0b0010);
       }
       if (ENABLE_PWM2_SM3) {
-        outen |= FLEXPWM_OUTEN_PWMB_EN(0b1000) | FLEXPWM_OUTEN_PWMA_EN(0b1000);
+        outen |= FLEXPWM_OUTEN_PWMB_EN(0b0100) | FLEXPWM_OUTEN_PWMA_EN(0b0100);
       }
       FLEXPWM2_OUTEN = outen;
     } else {
@@ -179,35 +122,27 @@ static inline void set_output_enable(bool enable_outputs) {
 }
 
 static inline void sm0_interrupt_enable(bool trig0, bool trig1) {
+  uint16_t inten = 0;
   if (trig0) {
-    FLEXPWM4_SM0INTEN |= FLEXPWM_SMINTEN_CMPIE(0b010000);
-    NVIC_ENABLE_IRQ(IRQ_FLEXPWM4_0);
-  }else {
-    FLEXPWM4_SM0INTEN &= ~FLEXPWM_SMINTEN_CMPIE(0b010000);
-    NVIC_DISABLE_IRQ(IRQ_FLEXPWM4_0);
+    inten |= FLEXPWM_SMINTEN_CMPIE(0b010000);
   }
   if (trig1) {
-    FLEXPWM4_SM2INTEN |= FLEXPWM_SMINTEN_CMPIE(0b100000);
-    NVIC_ENABLE_IRQ(IRQ_FLEXPWM4_2);
-  }else {
-    FLEXPWM4_SM2INTEN &= ~FLEXPWM_SMINTEN_CMPIE(0b100000);
-    NVIC_DISABLE_IRQ(IRQ_FLEXPWM4_2);
+    inten |= FLEXPWM_SMINTEN_CMPIE(0b100000);
   }
+  FLEXPWM4_SM2INTEN |= inten;
 }
 
 static inline void sm0tctrl_enable_output_triggers(bool trig0, bool trig1) {
+  uint16_t tctrl = 0;
   if (trig0) {
     // Raises TRIG0, when SM0_CNT == SM0_VAL4
-    FLEXPWM4_SM0TCTRL |= FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b010000);
-  }else {
-    FLEXPWM4_SM0TCTRL &= ~FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b010000);
+    tctrl |= FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b010000);
   }
   if (trig1) {
     // Raises TRIG1, when SM0_CNT == SM0_VAL5
-    FLEXPWM4_SM2TCTRL |= FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b100000);
-  }else {
-    FLEXPWM4_SM2TCTRL &= ~FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b100000);
+    tctrl |= FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b100000);
   }
+  FLEXPWM4_SM0TCTRL = tctrl;
 }
 
 static inline void smxctrl2_synchronize_pwms() {
@@ -253,45 +188,46 @@ static inline void smxctrl2_synchronize_pwms() {
   FLEXPWM4_SM0CTRL2 = FLEXPWM_SMCTRL2_CLK_SEL(0);
 }
 
-static inline void sm0_set_trig0_value(int16_t trig0_cnt) {
+static inline void sm0_set_trig0_value(int32_t trig0_cnt) {
+
   FLEXPWM4_SM0VAL4 = trig0_cnt;
 }
 
-static inline void sm0_set_trig1_value(int16_t trig1_cnt) {
-  FLEXPWM4_SM2VAL5 = trig1_cnt;
+static inline void sm0_set_trig1_value(int32_t trig1_cnt) {
+  FLEXPWM4_SM0VAL5 = trig1_cnt;
 }
 
-static inline void pwm4_sm2_set_duty_cycles(uint16_t cycles) {
+static inline void pwm4_sm2_set_duty_cycles(uint32_t cycles) {
   FLEXPWM4_SM2VAL2 = -cycles;
   FLEXPWM4_SM2VAL3 = cycles;
 }
 
-static inline void pwm3_sm1_set_duty_cycles(uint16_t cycles) {
+static inline void pwm3_sm1_set_duty_cycles(uint32_t cycles) {
   FLEXPWM3_SM1VAL2 = -cycles;
   FLEXPWM3_SM1VAL3 = cycles;
 }
 
-static inline void pwm1_sm3_set_duty_cycles(uint16_t cycles) {
+static inline void pwm1_sm3_set_duty_cycles(uint32_t cycles) {
   FLEXPWM1_SM3VAL2 = -cycles;
   FLEXPWM1_SM3VAL3 = cycles;
 }
 
-static inline void pwm2_sm0_set_duty_cycles(uint16_t cycles) {
+static inline void pwm2_sm0_set_duty_cycles(uint32_t cycles) {
   FLEXPWM2_SM0VAL2 = -cycles;
   FLEXPWM2_SM0VAL3 = cycles;
 }
 
-static inline void pwm2_sm2_set_duty_cycles(uint16_t cycles) {
+static inline void pwm2_sm2_set_duty_cycles(uint32_t cycles) {
   FLEXPWM2_SM2VAL2 = -cycles;
   FLEXPWM2_SM2VAL3 = cycles;
 }
 
-static inline void pwm2_sm3_set_duty_cycles(uint16_t cycles) {
+static inline void pwm2_sm3_set_duty_cycles(uint32_t cycles) {
   FLEXPWM2_SM3VAL2 = -cycles;
   FLEXPWM2_SM3VAL3 = cycles;
 }
 
-static inline void smx_center_aligned_max_value(uint16_t cycles) {
+static inline void smx_center_aligned_max_value(uint32_t cycles) {
   // Initalize PWM for a symetrical pulse around 0x0.
   //  - INIT is reload value (or start value)
   //  - VAL0 is the mid point
@@ -338,7 +274,7 @@ static inline void smx_center_aligned_max_value(uint16_t cycles) {
   FLEXPWM4_SM0VAL1 = cycles;
 }
 
-static inline void dtcnt_write_deadtime(const uint16_t cycles) {
+static inline void dtcnt_write_deadtime(const uint32_t cycles) {
   if constexpr (ENABLE_PWM1_SM3) {
     FLEXPWM1_SM3DTCNT0 = cycles;
     FLEXPWM1_SM3DTCNT1 = cycles;
@@ -373,13 +309,13 @@ static inline void dtcnt_write_deadtime(const uint16_t cycles) {
 } // namespace pwm_reg
 
 namespace conv {
-static inline std::tuple<uint16_t, uint16_t>
+static inline std::tuple<uint32_t, int>
 frequency_to_cycles(const Frequency &frequency) {
   float f2 = 2.0f * static_cast<float>(frequency);
-  uint16_t cycles =
+  uint32_t cycles =
       static_cast<uint32_t>(static_cast<float>(F_BUS_ACTUAL) / f2 + 0.5f);
 
-  uint16_t prescalar = 0;
+  int prescalar = 0;
   while (cycles > 32767 && prescalar < 7) {
     cycles /= 2.0f;
     prescalar += 1;
@@ -392,21 +328,19 @@ frequency_to_cycles(const Frequency &frequency) {
   return {cycles, prescalar};
 }
 
-static inline uint16_t deadtime_to_cycles(const Time &deadtime) {
-  float deadtime_ns = static_cast<float>(deadtime) * 1e9f;
-  return static_cast<uint16_t>(static_cast<float>(F_BUS_ACTUAL) * deadtime_ns *
-                               1e-9f);
+static inline uint32_t deadtime_to_cycles(const Time &deadtime) {
+  return (static_cast<float>(F_BUS_ACTUAL * static_cast<float>(deadtime)));
 }
 
-static inline int16_t trig_to_cnt(float trig, uint16_t cycles) {
+static inline int32_t trig_to_cnt(float trig, uint32_t cycles) {
   // cycles refers to the max value of the center aligned counter so half the
   // total amount of pwm cycles
-  uint16_t edge_algined_cycles = cycles * 2;
-  int16_t cnt = static_cast<uint16_t>(edge_algined_cycles * trig) - cycles;
+  uint32_t edge_algined_cycles = cycles * 2;
+  int32_t cnt = static_cast<uint32_t>(edge_algined_cycles * trig) - cycles;
   return cnt;
 }
-static inline uint16_t duty_to_cmp(float duty, uint16_t cycles) {
-  return std::min(cycles, static_cast<uint16_t>(duty * cycles));
+static inline uint32_t duty_to_duty_cycles(float duty, uint32_t cycles) {
+  return std::min(cycles, static_cast<uint32_t>(duty * cycles));
 }
 } // namespace conv
 
@@ -433,21 +367,9 @@ void pwm::trig0(const std::optional<float> &trig0) {
     return;
   }
   m_trig0 = trig0;
+  m_enable_trig0 = trig0.has_value();
   pwm_reg::clear_load_okay();
-  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
-                                           m_trig1.has_value());
-  pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
-                                m_trig1.has_value() && m_trig1_inten);
-  if (m_trig0.has_value()) {
-    pwm_reg::sm0_set_trig0_value(
-        conv::trig_to_cnt(m_trig0.value(), m_pwm_cycles));
-  }
-
-  if (m_trig1.has_value()) {
-    pwm_reg::sm0_set_trig1_value(
-        conv::trig_to_cnt(m_trig1.value(), m_pwm_cycles));
-  }
-  pwm_reg::set_load_okay();
+  write_trigs(true);
 }
 
 void pwm::trig1(const std::optional<float> &trig1) {
@@ -455,22 +377,37 @@ void pwm::trig1(const std::optional<float> &trig1) {
     return;
   }
   m_trig1 = trig1;
+  m_enable_trig1 = m_trig1.has_value();
+  write_trigs(true);
+}
 
-  pwm_reg::clear_load_okay();
-  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
-                                           m_trig1.has_value());
-  pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
-                                m_trig1.has_value() && m_trig1_inten);
-  if (m_trig0.has_value()) {
-    pwm_reg::sm0_set_trig0_value(
-        conv::trig_to_cnt(m_trig0.value(), m_pwm_cycles));
+void pwm::enable_trig0() {
+  if (m_enable_trig0) {
+    return;
   }
-
-  if (m_trig1.has_value()) {
-    pwm_reg::sm0_set_trig1_value(
-        conv::trig_to_cnt(m_trig1.value(), m_pwm_cycles));
+  m_enable_trig0 = true;
+  write_trigs(true);
+}
+void pwm::disable_trig0() {
+  if (!m_enable_trig0) {
+    return;
   }
-  pwm_reg::set_load_okay();
+  m_enable_trig0 = false;
+  write_trigs(true);
+}
+void pwm::enable_trig1() {
+  if (m_enable_trig1) {
+    return;
+  }
+  m_enable_trig0 = true;
+  write_trigs(true);
+}
+void pwm::disable_trig1() {
+  if (!m_enable_trig1) {
+    return;
+  }
+  m_enable_trig1 = false;
+  write_trigs(true);
 }
 
 void pwm::enable_trig0_interrupt() {
@@ -478,10 +415,7 @@ void pwm::enable_trig0_interrupt() {
     return;
   }
   m_trig0_inten = true;
-  pwm_reg::clear_load_okay();
-  pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
-                                m_trig1.has_value() && m_trig1_inten);
-  pwm_reg::set_load_okay();
+  write_trigs(true);
 }
 
 void pwm::disable_trig0_interrupt() {
@@ -489,10 +423,7 @@ void pwm::disable_trig0_interrupt() {
     return;
   }
   m_trig0_inten = false;
-  pwm_reg::clear_load_okay();
-  pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
-                                m_trig1.has_value() && m_trig1_inten);
-  pwm_reg::set_load_okay();
+  write_trigs(true);
 }
 
 void pwm::enable_trig1_interrupt() {
@@ -500,10 +431,7 @@ void pwm::enable_trig1_interrupt() {
     return;
   }
   m_trig1_inten = true;
-  pwm_reg::clear_load_okay();
-  pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
-                                m_trig1.has_value() && m_trig1_inten);
-  pwm_reg::set_load_okay();
+  write_trigs(true);
 }
 
 void pwm::disable_trig1_interrupt() {
@@ -511,56 +439,72 @@ void pwm::disable_trig1_interrupt() {
     return;
   }
   m_trig1_inten = false;
-  pwm_reg::clear_load_okay();
-  pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
-                                m_trig1.has_value() && m_trig1_inten);
-  pwm_reg::set_load_okay();
+  write_trigs(true);
 }
 
 void pwm::frequency(const Frequency &frequency) {
   const auto &[m_pwm_cycles, prescalar] =
       conv::frequency_to_cycles(m_frequency);
   pwm_reg::clear_load_okay();
-  pwm_reg::smxctrl_write_cycle_with_prescalar(false, prescalar);
+  pwm_reg::smxctrl_write_full_cycle_with_prescalar(prescalar);
   pwm_reg::smx_center_aligned_max_value(m_pwm_cycles);
-  if (m_trig0.has_value()) {
-    pwm_reg::sm0_set_trig0_value(
-        conv::trig_to_cnt(m_trig0.value(), m_pwm_cycles));
-  }
-  if (m_trig1.has_value()) {
-    pwm_reg::sm0_set_trig1_value(
-        conv::trig_to_cnt(m_trig1.value(), m_pwm_cycles));
-  }
-  write_control();
+  write_trigs(false);
+  write_control(false);
   pwm_reg::set_load_okay();
 }
 
-void pwm::write_control() {
-  Serial.printf("control = %f %u %u\n", m_control.duty42, m_pwm_cycles, 
-      conv::duty_to_cmp(m_control.duty42, m_pwm_cycles));
+void pwm::write_trigs(bool lock) {
+  if (lock) {
+  }
+  pwm_reg::sm0tctrl_enable_output_triggers(
+      m_trig0.has_value() && m_enable_trig0,
+      m_trig1.has_value() && m_enable_trig1);
+  pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
+                                m_trig1.has_value() && m_trig1_inten);
+  if (m_trig0.has_value() && m_enable_trig0) {
+    pwm_reg::sm0_set_trig0_value(
+        conv::trig_to_cnt(m_trig0.value(), m_pwm_cycles));
+  }
+
+  if (m_trig1.has_value() && m_enable_trig1) {
+    pwm_reg::sm0_set_trig1_value(
+        conv::trig_to_cnt(m_trig1.value(), m_pwm_cycles));
+  }
+  if (lock) {
+    pwm_reg::set_load_okay();
+  }
+}
+
+void pwm::write_control(bool lock) {
+  if (lock) {
+    pwm_reg::clear_load_okay();
+  }
   if constexpr (ENABLE_PWM4_SM2) {
     pwm_reg::pwm4_sm2_set_duty_cycles(
-        conv::duty_to_cmp(m_control.duty42, m_pwm_cycles));
+        conv::duty_to_duty_cycles(m_control.duty42, m_pwm_cycles));
   }
   if constexpr (ENABLE_PWM3_SM1) {
     pwm_reg::pwm3_sm1_set_duty_cycles(
-        conv::duty_to_cmp(m_control.duty31, m_pwm_cycles));
+        conv::duty_to_duty_cycles(m_control.duty31, m_pwm_cycles));
   }
   if constexpr (ENABLE_PWM1_SM3) {
     pwm_reg::pwm1_sm3_set_duty_cycles(
-        conv::duty_to_cmp(m_control.duty13, m_pwm_cycles));
+        conv::duty_to_duty_cycles(m_control.duty13, m_pwm_cycles));
   }
   if constexpr (ENABLE_PWM2_SM0) {
     pwm_reg::pwm2_sm0_set_duty_cycles(
-        conv::duty_to_cmp(m_control.duty20, m_pwm_cycles));
+        conv::duty_to_duty_cycles(m_control.duty20, m_pwm_cycles));
   }
   if constexpr (ENABLE_PWM2_SM2) {
     pwm_reg::pwm2_sm2_set_duty_cycles(
-        conv::duty_to_cmp(m_control.duty22, m_pwm_cycles));
+        conv::duty_to_duty_cycles(m_control.duty22, m_pwm_cycles));
   }
   if constexpr (ENABLE_PWM2_SM3) {
     pwm_reg::pwm2_sm3_set_duty_cycles(
-        conv::duty_to_cmp(m_control.duty23, m_pwm_cycles));
+        conv::duty_to_duty_cycles(m_control.duty23, m_pwm_cycles));
+  }
+  if (lock) {
+    pwm_reg::set_load_okay();
   }
 }
 
@@ -573,88 +517,40 @@ void pwm::deadtime(const Time &deadtime) {
 
 void pwm::control(const PwmControl &control) {
   m_control = control;
-  pwm_reg::clear_load_okay();
-  write_control();
-  pwm_reg::set_load_okay();
+  write_control(true);
 }
 
 void pwm::begin(const PwmBeginInfo &beginInfo) {
   xbar::begin(); //<- only requires that xbar is initalized
-  if constexpr (ENABLE_PWM1_SM3) {
-    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
-                  XBARA1_OUT_FLEXPWM1_PWM3_EXT_SYNC);
-  }
-  if constexpr (ENABLE_PWM2_SM0) {
-    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
-                  XBARA1_OUT_FLEXPWM2_PWM0_EXT_SYNC);
-  }
-  if constexpr (ENABLE_PWM4_SM2) {
-    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
-                  XBARA1_OUT_FLEXPWM2_PWM2_EXT_SYNC);
-  }
-  if constexpr (ENABLE_PWM2_SM3) {
-    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
-                  XBARA1_OUT_FLEXPWM2_PWM3_EXT_SYNC);
-  }
-  if constexpr (ENABLE_PWM3) {
-    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
-                  XBARA1_OUT_FLEXPWM3_EXT_SYNC1);
-  }
-  if constexpr (ENABLE_PWM4) {
-    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
-                  XBARA1_OUT_FLEXPWM4_EXT_SYNC2);
-  }
-
   m_frequency = beginInfo.frequency;
   m_deadtime = beginInfo.deadtime;
   m_outen = beginInfo.enable_outputs;
   m_trig0 = beginInfo.trig0;
+  m_enable_trig0 = beginInfo.trig0.has_value();
   m_trig0_inten = beginInfo.enable_trig0_interrupt;
   m_trig1 = beginInfo.trig1;
+  m_enable_trig1 = beginInfo.trig1.has_value();
   m_trig1_inten = beginInfo.enable_trig1_interrupt;
   m_control = beginInfo.control;
-  
-  attachInterruptVector(IRQ_FLEXPWM4_0, pwm_isr_trig0_redirect);
-  attachInterruptVector(IRQ_FLEXPWM4_2, pwm_isr_trig1_redirect);
 
-  const auto &[pwm_cycles, prescalar] =
+  const auto &[m_pwm_cycles, prescalar] =
       conv::frequency_to_cycles(m_frequency);
-  m_pwm_cycles = pwm_cycles;
-
   m_deadtime_cycles = conv::deadtime_to_cycles(m_deadtime);
 
+  // initalize Flex PWM modules
+  // see https://www.pjrc.com/teensy/IMXRT1060RM_rev3.pdf at p3135 for register
+  // description
 
   pwm_reg::clear_load_okay();
-
-  pwm_reg::smxctrl_write_cycle_with_prescalar(true, prescalar);
-
+  pwm_reg::smxctrl_write_full_cycle_with_prescalar(prescalar);
   pwm_reg::smxctrl2_synchronize_pwms();
-
   pwm_reg::set_output_enable(m_outen);
-
-  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
-                                           m_trig1.has_value());
-
-  pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
-                                m_trig1.has_value() && m_trig1_inten);
-
   pwm_reg::dtcnt_write_deadtime(m_deadtime_cycles);
 
   pwm_reg::smx_center_aligned_max_value(m_pwm_cycles);
 
-  if (m_trig0.has_value()) {
-    pwm_reg::sm0_set_trig0_value(
-        conv::trig_to_cnt(m_trig0.value(), m_pwm_cycles));
-  }
-
-  if (m_trig1.has_value()) {
-    pwm_reg::sm0_set_trig1_value(
-        conv::trig_to_cnt(m_trig1.value(), m_pwm_cycles));
-  }
-  
-
-  write_control();
-
+  write_trigs(false);
+  write_control(false);
 
   // Update pin configuration
   // Selects which module is connected to the pins, in this case it is the
@@ -681,6 +577,30 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
   // for some reason the PWM submodules in the XBAR inputs are labeled 1-4
   // instead of 0-3 like everywhere else so FLEXPWM4_PWM1 is submodule 0 of the
   // flexpwm 4 module
+  if constexpr (ENABLE_PWM1_SM3) {
+    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
+                  XBARA1_OUT_FLEXPWM1_PWM3_EXT_SYNC);
+  }
+  if constexpr (ENABLE_PWM2_SM0) {
+    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
+                  XBARA1_OUT_FLEXPWM2_PWM0_EXT_SYNC);
+  }
+  if constexpr (ENABLE_PWM4_SM2) {
+    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
+                  XBARA1_OUT_FLEXPWM2_PWM2_EXT_SYNC);
+  }
+  if constexpr (ENABLE_PWM2_SM3) {
+    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
+                  XBARA1_OUT_FLEXPWM2_PWM3_EXT_SYNC);
+  }
+  if constexpr (ENABLE_PWM3) {
+    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
+                  XBARA1_OUT_FLEXPWM3_EXT_SYNC1);
+  }
+  if constexpr (ENABLE_PWM4) {
+    xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0,
+                  XBARA1_OUT_FLEXPWM4_EXT_SYNC2);
+  }
 
   // Load Okay -> reload setting again
   pwm_reg::set_load_okay();
@@ -694,5 +614,10 @@ bool pwm::m_trig0_inten;
 bool pwm::m_trig1_inten;
 std::optional<float> pwm::m_trig0;
 std::optional<float> pwm::m_trig1;
-volatile uint16_t pwm::m_pwm_cycles;
-volatile uint16_t pwm::m_deadtime_cycles;
+bool pwm::m_enable_trig0;
+bool pwm::m_enable_trig1;
+volatile uint32_t pwm::m_pwm_cycles;
+volatile uint32_t pwm::m_deadtime_cycles;
+
+int pwm::TRIG0_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0;
+int pwm::TRIG1_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG1;

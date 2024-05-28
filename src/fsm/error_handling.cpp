@@ -1,8 +1,32 @@
-#include "fsm/error_handling.hpp"
+#include "fsm/error_handling.h"
 #include "canzero/canzero.h"
+#include <array>
 
-mgu_command handle_errors(mgu_state state, mgu_command cmd,
-                             Duration time_since_last_transition) {
+guidance_command fsm::error_handling::approve(guidance_command cmd) {
 
-    return cmd;
+  if (canzero_get_error_level_mcu_temperature() == error_level_ERROR) {
+    return guidance_command_DISARM45;
+  }
+
+  error_level error_levels[] = {
+      canzero_get_error_level_mcu_temperature(),
+      canzero_get_error_level_magnet_temperature_left(),
+      canzero_get_error_level_magnet_temperature_right(),
+  };
+
+  for (size_t i = 0; i < sizeof(error_levels) / sizeof(error_level); ++i) {
+    if (error_levels[i] == error_level_ERROR) {
+      return guidance_command_DISARM45;
+    }
+  }
+
+  if (guidance_command_DISARM45 != cmd) {
+    for (size_t i = 0; i < sizeof(error_levels) / sizeof(error_level); ++i) {
+      if (error_levels[i] == error_level_WARNING) {
+        return guidance_command_STOP;
+      }
+    }
+  }
+
+  return cmd;
 }

@@ -1,6 +1,7 @@
 #pragma once
-#include "imxrt.h"
-
+#include "firmware/pinout.h"
+#include "util/metrics.h"
+#include <cinttypes>
 
 enum DoneInterrupt:uint8_t {
   NONE = 0b00,
@@ -55,7 +56,7 @@ enum AdcEtcTrigger:uint8_t {
 struct TrigChainInfo {
   AdcEtcTrigger trig_num = TRIG0;
   int chain_length = 1;
-  int* read_pins = nullptr;
+  ain_pin* read_pins = nullptr;
   bool trig_sync = false;
   int chain_priority = 0;
   bool software_trig = false;
@@ -80,24 +81,19 @@ struct AdcEtcBeginInfo {
 
 struct AdcTrigRes {
   // get result of conversion for trigger T in chain segment S
-  template<int T, int S>
-  static uint16_t trig_res() {
-    volatile uint32_t* result_base = &IMXRT_ADC_ETC.TRIG[T].RESULT_1_0 + (S / 2);
-    if (S % 2) {
-      return (*result_base >> 16) & 0xfff;
-    } else {
-      return *result_base & 0xfff;
-    }
-  }
+  Voltage trig_res(AdcEtcTrigger trig, int segment);
 };
 
+namespace adc_etc {
+  extern int TRIG0_SIGNAL_SINK;
+  extern int TRIG1_SIGNAL_SINK;
 
-struct AdcEtc {
-  static constexpr int TRIG0_SIGNAL_SINK = XBARA1_OUT_ADC_ETC_TRIG00;
-  static constexpr int TRIG1_SIGNAL_SINK = XBARA1_OUT_ADC_ETC_TRIG01;
-  static bool adc_initialized;
-  static void begin(AdcEtcBeginInfo &info);
-  static uint16_t readSingle(int pin);
-
-
-};
+  void begin(const AdcEtcBeginInfo& beginInfo);
+  Voltage read_single(ain_pin pin);
+}
+/* struct AdcEtc { */
+/*   static bool adc_initialized; */
+/*   static void begin(AdcEtcBeginInfo &info); */
+/*   static uint16_t readSingle(int pin); */
+/*  */
+/* }; */
