@@ -78,7 +78,6 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   i_meas_L = res.trig_res<0, 0>(); // I_MAG_L
   i_meas_R = res.trig_res<4, 0>(); // I_MAG_R
 
-
   disp_meas_MAG_L = res.trig_res<0, 1>(); // DISP_SENS_MAG_L
   disp_meas_MAG_R = res.trig_res<4, 1>(); // DISP_SENS_MAG_R
 
@@ -89,34 +88,26 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // convert to actual values
 
   // current measurement for LEFT and RIGHT magnets
-  i_meas_L = 3.3 * i_meas_L / 4096.0 / 1.5 /
-             0.4; // voltage at input of isolation amplifier
-  i_meas_L = (i_meas_L - 2.5) / GuidanceBoardCurrentGains::GAIN_I_LEFT /
-             0.001; // current in amps
+  i_meas_L = 3.3 * i_meas_L / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
+  i_meas_L = (i_meas_L - 2.5) / GuidanceBoardCurrentGains::GAIN_I_LEFT / 0.001; // current in amps
 
 
-  i_meas_R = 3.3 * i_meas_R / 4096.0 / 1.5 /
-             0.4; // voltage at input of isolation amplifier
-  i_meas_R = -(i_meas_R - 2.5) / GuidanceBoardCurrentGains::GAIN_I_RIGHT /
-             0.001; // current in amps
+  i_meas_R = 3.3 * i_meas_R / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
+  i_meas_R = -(i_meas_R - 2.5) / GuidanceBoardCurrentGains::GAIN_I_RIGHT / 0.001; // current in amps
 
   // displacement measurement for LEFT and RIGHT magnets
   disp_meas_MAG_L = 3.3 * disp_meas_MAG_L / (4096.0 * 120); // sense current
-  disp_meas_MAG_L = (disp_meas_MAG_L - 0.004) * (50.0 - 20.0) / 0.016 +
-                    20.0; // map 4...20mA to 20...50mm
+  disp_meas_MAG_L = (disp_meas_MAG_L - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
 
   disp_meas_MAG_R = 3.3 * disp_meas_MAG_R / 4096.0 / 120.0; // sense current
-  disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 20.0) / 0.016 +
-                    20.0; // map 4...20mA to 20...50mm
+  disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
 
   // displacement measurement for LIM rotor LEFT and RIGHT side
   disp_meas_LIM_L = 3.3 * disp_meas_LIM_L / 4096.0 / 120; // sense current
-  disp_meas_LIM_L = (disp_meas_LIM_L - 0.004) * (50.0 - 20.0) / 0.016 +
-                    20.0; // map 4...20mA to 20...50mm
+  disp_meas_LIM_L = (disp_meas_LIM_L - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
 
   disp_meas_LIM_R = 3.3 * disp_meas_LIM_R / 4096.0 / 120.0; // sense current
-  disp_meas_LIM_R = (disp_meas_LIM_R - 0.004) * (50.0 - 20.0) / 0.016 +
-                    20.0; // map 4...20mA to 20...50mm
+  disp_meas_LIM_R = (disp_meas_LIM_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
 
   lim_l.push(disp_meas_LIM_L);
   lim_r.push(disp_meas_LIM_R);
@@ -152,22 +143,18 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   offset = (disp_meas_LIM_L - disp_meas_LIM_R) / 2;
   target_offset = 0;
 
-  //////////////////////////////// distance control
-  ///////////////////////////////////
+  //////////////////////////////// distance control ///////////////////////////////////
 
   if (!error_flag) {
 
-    float P = 1.2;
-    float ITs = 0.01;
-    float D = 0.33;
+    float P = 1.2; // P = 1.3 for pod
+    float ITs = 0.01; // I = 0.02 for pod
+    float D = 0.33; // D = 0.9 for pod 
 
     error_disp_d = error_disp;
-    error_disp =
-        0.9 * error_disp -
-        0.1 * (target_offset - offset); // displacement EMA with alpha 0.9
+    error_disp = 0.9 * error_disp - 0.1 * (target_offset - offset); // displacement EMA with alpha 0.9
     integrator_disp += error_disp * ITs;
-    derivative_disp =
-        D * (error_disp - error_disp_d) * 20000; // 20kHz PWM frequency
+    derivative_disp = D * (error_disp - error_disp_d) * 20000; // 20kHz PWM frequency
 
     // clamp integrator (min = -30, max = 30)
     if (integrator_disp > 30) {
@@ -186,19 +173,13 @@ void adc_etc_done0_isr(AdcTrigRes res) {
       i_target = -40;
     }
 
-    //////////////////////////////// current control
-    ///////////////////////////////////
-
+    //////////////////////////////// current control ///////////////////////////////////
     P = 1.3;
     ITs = 0.75;
 
     // is this part correct? (-i_target)
-    error_current_L =
-        0.5 * error_current_L +
-        0.5 * (-i_target -
-               i_meas_L); // curent EMA with alpha 0.5 (invert i_target)
-    error_current_R = 0.5 * error_current_R +
-                      0.5 * (i_target - i_meas_R); // current EMA with alpha 0.5
+    error_current_L = 0.5 * error_current_L + 0.5 * (-i_target - i_meas_L); // curent EMA with alpha 0.5 (invert i_target)
+    error_current_R = 0.5 * error_current_R + 0.5 * (i_target - i_meas_R); // current EMA with alpha 0.5
 
     // Switch case to select error current based on polarity of output PID
     // (i_target)
@@ -231,9 +212,10 @@ void adc_etc_done0_isr(AdcTrigRes res) {
       v_target = 0;
     }
 
+    i_target = 0;
+    v_target = 0;
+
     // set output of target voltage to PWM (is this part correct?)
-    i_target = 1;
-    v_target = 1;
     if (i_target > 0) {
       control_R = v_target / 45;
       control_L = 0;
@@ -247,9 +229,22 @@ void adc_etc_done0_isr(AdcTrigRes res) {
       control_R = 0;
     }
 
-
+    // initial test
     control_R = 0.0;
-    control_L = 0.2;
+    control_L = 0.0;
+
+    /*
+    0.1 Duty 2.65A
+    0.125 Duty 3.6A
+    0.13 Duty 3.72A
+    0.14 Duty 4.12A
+    0.15 Duty 4.51A
+    0.16 Duty 4.91A
+    0.2 Duty 6.45A
+    */
+
+
+
     // write outputs
     PwmControl isr_control;
     isr_control.duty13 = 0.5 + control_R / 2; // RIGHT_R
@@ -367,27 +362,24 @@ int main() {
     // }
     // digitalWrite(LED_BUILTIN, LOW);
 
-    /*
-    if(main_counter == 200) {
-      // after 10s
-      airgap_transition::start_transition(6, 6);
-    }
-    if(main_counter == 400) {
-      airgap_transition::start_transition(8, 6);
-      main_counter = 0;
-    }
-    */
 
+
+    /*
     Serial.printf("error flag %u\n", error_flag);
-    
+  
     Serial.printf("airgap_left %f \nairgap_right %f\n", lim_l.get(), lim_r.get());
 
     Serial.printf(
-        "Measured Offset: %f - Target Current: %f - Target Voltage: %f \n",
+        "Measured Offset: %f - Target Current: %f - Target Voltage: %f \n ",
         offset, i_target, v_target);
-    Serial.flush();
+    */
 
-    main_counter++;
+    Serial.printf("Control_L: %f - Control_R: %f \n ",
+                    control_L, control_R);
+
+    Serial.printf("Current left: %f - Current right: %f  - Target current: %f \n \n",
+                    i_meas_L, i_meas_R, i_target);
+
     delay(50);
   }
 }
