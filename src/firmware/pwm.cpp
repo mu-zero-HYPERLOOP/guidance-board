@@ -518,8 +518,9 @@ void pwm::disable_trig1_interrupt() {
 }
 
 void pwm::frequency(const Frequency &frequency) {
-  const auto &[m_pwm_cycles, prescalar] =
+  const auto &[pwm_cycles, prescalar] =
       conv::frequency_to_cycles(m_frequency);
+  m_pwm_cycles = pwm_cycles;
   pwm_reg::clear_load_okay();
   pwm_reg::smxctrl_write_cycle_with_prescalar(false, prescalar);
   pwm_reg::smx_center_aligned_max_value(m_pwm_cycles);

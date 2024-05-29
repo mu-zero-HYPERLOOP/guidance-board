@@ -71,7 +71,7 @@ enum GuidanceBoardCurrentGains : uint8_t {
 // RIGHT_HIN_L: Pin8 HIGH
 // RIGHT_LIN_L: Pin7 LOW
 
-// FlexPWM1 Module3
+// FlexPWM3 Module1
 // RIGHT_HIN_R: Pin29 HIGH
 // RIGHT_LIN_R: Pin28 LOW
 
