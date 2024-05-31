@@ -13,12 +13,12 @@ static constexpr bool ENABLE_PWM3_SM1 = true;
 static constexpr bool ENABLE_PWM1_SM3 = true;
 
 struct PwmControl {
-  float duty20 = 0.0f; // range [0,1]
-  float duty22 = 0.0f;
-  float duty23 = 0.0f;
-  float duty42 = 0.0f;
-  float duty31 = 0.0f;
-  float duty13 = 0.0f;
+  float duty20 = 0.5f; // range [0,1]
+  float duty22 = 0.5f;
+  float duty23 = 0.5f;
+  float duty42 = 0.5f;
+  float duty31 = 0.5f;
+  float duty13 = 0.5f;
 };
 
 struct PwmBeginInfo {
@@ -58,6 +58,12 @@ public:
   static void disable_trig0();
   static void enable_trig1();
   static void disable_trig1();
+  static inline bool trig0_is_enabled() {
+    return m_enable_trig0 && m_trig0.has_value();
+  }
+  static inline bool trig1_is_enabled(){
+    return m_enable_trig1 && m_trig1.has_value();
+  }
 
   static void enable_trig0_interrupt();
   static void disable_trig0_interrupt();

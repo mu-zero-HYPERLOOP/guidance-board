@@ -18,14 +18,16 @@ void fsm::finish_init() {
 }
 
 void fsm::update() {
-  Timestamp now = Timestamp::now();
-  Duration time_since_last_transition = now - fsm_last_transition;
-
-  guidance_command cmd = error_handling::approve(canzero_get_command());
 
   guidance_state state;
   guidance_state next_state;
   do {
+
+    Timestamp now = Timestamp::now();
+    Duration time_since_last_transition = now - fsm_last_transition;
+
+    guidance_command cmd = error_handling::approve(canzero_get_command());
+
     state = canzero_get_state();
     switch (state) {
     case guidance_state_INIT:
@@ -54,5 +56,4 @@ void fsm::update() {
       canzero_update_continue(canzero_get_time());
     }
   } while (next_state != state);
-
 }

@@ -69,24 +69,66 @@ include CMakeFiles/guidance-board.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/guidance-board.dir/flags.make
 
-CMakeFiles/guidance-board.dir/mock/main.cpp.o: CMakeFiles/guidance-board.dir/flags.make
-CMakeFiles/guidance-board.dir/mock/main.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/mock/main.cpp
-CMakeFiles/guidance-board.dir/mock/main.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/guidance-board.dir/mock/main.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/mock/main.cpp.o -MF CMakeFiles/guidance-board.dir/mock/main.cpp.o.d -o CMakeFiles/guidance-board.dir/mock/main.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/mock/main.cpp
+CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/adc_etc.cpp
+CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o -MF CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o.d -o CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/adc_etc.cpp
 
-CMakeFiles/guidance-board.dir/mock/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/mock/main.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/mock/main.cpp > CMakeFiles/guidance-board.dir/mock/main.cpp.i
+CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/adc_etc.cpp > CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.i
 
-CMakeFiles/guidance-board.dir/mock/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/mock/main.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/mock/main.cpp -o CMakeFiles/guidance-board.dir/mock/main.cpp.s
+CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/adc_etc.cpp -o CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.s
+
+CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/guidance_board.cpp
+CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o -MF CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o.d -o CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/guidance_board.cpp
+
+CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/guidance_board.cpp > CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.i
+
+CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/guidance_board.cpp -o CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.s
+
+CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/pwm.cpp
+CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o -MF CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o.d -o CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/pwm.cpp
+
+CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/pwm.cpp > CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.i
+
+CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/pwm.cpp -o CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.s
+
+CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/xbar.cpp
+CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o -MF CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o.d -o CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/xbar.cpp
+
+CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/xbar.cpp > CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.i
+
+CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/mock/firmware/xbar.cpp -o CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.s
 
 CMakeFiles/guidance-board.dir/mock/can.cpp.o: CMakeFiles/guidance-board.dir/flags.make
 CMakeFiles/guidance-board.dir/mock/can.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/mock/can.cpp
 CMakeFiles/guidance-board.dir/mock/can.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/guidance-board.dir/mock/can.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/guidance-board.dir/mock/can.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/mock/can.cpp.o -MF CMakeFiles/guidance-board.dir/mock/can.cpp.o.d -o CMakeFiles/guidance-board.dir/mock/can.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/mock/can.cpp
 
 CMakeFiles/guidance-board.dir/mock/can.cpp.i: cmake_force
@@ -100,7 +142,7 @@ CMakeFiles/guidance-board.dir/mock/can.cpp.s: cmake_force
 CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o: CMakeFiles/guidance-board.dir/flags.make
 CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/canzero/canzero.cpp
 CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o -MF CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o.d -o CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/canzero/canzero.cpp
 
 CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.i: cmake_force
@@ -111,21 +153,315 @@ CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/canzero/canzero.cpp -o CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.s
 
+CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/arming45.cpp
+CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o -MF CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o.d -o CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/arming45.cpp
+
+CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/arming45.cpp > CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.i
+
+CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/arming45.cpp -o CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.s
+
+CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/control.cpp
+CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o -MF CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o.d -o CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/control.cpp
+
+CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/control.cpp > CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.i
+
+CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/control.cpp -o CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.s
+
+CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/idle.cpp
+CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o -MF CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o.d -o CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/idle.cpp
+
+CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/idle.cpp > CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.i
+
+CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/idle.cpp -o CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.s
+
+CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/init.cpp
+CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o -MF CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o.d -o CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/init.cpp
+
+CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/init.cpp > CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.i
+
+CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/init.cpp -o CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.s
+
+CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/precharge.cpp
+CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o -MF CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o.d -o CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/precharge.cpp
+
+CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/precharge.cpp > CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.i
+
+CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/precharge.cpp -o CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.s
+
+CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/ready.cpp
+CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o -MF CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o.d -o CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/ready.cpp
+
+CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/ready.cpp > CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.i
+
+CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/states/ready.cpp -o CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.s
+
+CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/error_handling.cpp
+CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o -MF CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o.d -o CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/error_handling.cpp
+
+CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/error_handling.cpp > CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.i
+
+CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/error_handling.cpp -o CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.s
+
+CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/fsm.cpp
+CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o -MF CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o.d -o CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/fsm.cpp
+
+CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/fsm.cpp > CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.i
+
+CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/fsm/fsm.cpp -o CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.s
+
+CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/input_current.cpp
+CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o -MF CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o.d -o CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/input_current.cpp
+
+CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/input_current.cpp > CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.i
+
+CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/input_current.cpp -o CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.s
+
+CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/magnet_temperatures.cpp
+CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o -MF CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o.d -o CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/magnet_temperatures.cpp
+
+CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/magnet_temperatures.cpp > CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.i
+
+CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/magnet_temperatures.cpp -o CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.s
+
+CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/mcu_temperature.cpp
+CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o -MF CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o.d -o CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/mcu_temperature.cpp
+
+CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/mcu_temperature.cpp > CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.i
+
+CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/mcu_temperature.cpp -o CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.s
+
+CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/vdc.cpp
+CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o -MF CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o.d -o CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/vdc.cpp
+
+CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/vdc.cpp > CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.i
+
+CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/sensors/vdc.cpp -o CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.s
+
+CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/adc_isr.cpp
+CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o -MF CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o.d -o CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/adc_isr.cpp
+
+CMakeFiles/guidance-board.dir/src/adc_isr.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/adc_isr.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/adc_isr.cpp > CMakeFiles/guidance-board.dir/src/adc_isr.cpp.i
+
+CMakeFiles/guidance-board.dir/src/adc_isr.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/adc_isr.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/adc_isr.cpp -o CMakeFiles/guidance-board.dir/src/adc_isr.cpp.s
+
+CMakeFiles/guidance-board.dir/src/assert_err.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/assert_err.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/assert_err.cpp
+CMakeFiles/guidance-board.dir/src/assert_err.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/guidance-board.dir/src/assert_err.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/assert_err.cpp.o -MF CMakeFiles/guidance-board.dir/src/assert_err.cpp.o.d -o CMakeFiles/guidance-board.dir/src/assert_err.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/assert_err.cpp
+
+CMakeFiles/guidance-board.dir/src/assert_err.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/assert_err.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/assert_err.cpp > CMakeFiles/guidance-board.dir/src/assert_err.cpp.i
+
+CMakeFiles/guidance-board.dir/src/assert_err.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/assert_err.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/assert_err.cpp -o CMakeFiles/guidance-board.dir/src/assert_err.cpp.s
+
+CMakeFiles/guidance-board.dir/src/control.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/control.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/control.cpp
+CMakeFiles/guidance-board.dir/src/control.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/guidance-board.dir/src/control.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/control.cpp.o -MF CMakeFiles/guidance-board.dir/src/control.cpp.o.d -o CMakeFiles/guidance-board.dir/src/control.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/control.cpp
+
+CMakeFiles/guidance-board.dir/src/control.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/control.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/control.cpp > CMakeFiles/guidance-board.dir/src/control.cpp.i
+
+CMakeFiles/guidance-board.dir/src/control.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/control.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/control.cpp -o CMakeFiles/guidance-board.dir/src/control.cpp.s
+
+CMakeFiles/guidance-board.dir/src/main.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/main.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/main.cpp
+CMakeFiles/guidance-board.dir/src/main.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/guidance-board.dir/src/main.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/main.cpp.o -MF CMakeFiles/guidance-board.dir/src/main.cpp.o.d -o CMakeFiles/guidance-board.dir/src/main.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/main.cpp
+
+CMakeFiles/guidance-board.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/main.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/main.cpp > CMakeFiles/guidance-board.dir/src/main.cpp.i
+
+CMakeFiles/guidance-board.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/main.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/main.cpp -o CMakeFiles/guidance-board.dir/src/main.cpp.s
+
+CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/pwm_brake.cpp
+CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o -MF CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o.d -o CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/pwm_brake.cpp
+
+CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/pwm_brake.cpp > CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.i
+
+CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/pwm_brake.cpp -o CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.s
+
+CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o: CMakeFiles/guidance-board.dir/flags.make
+CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o: /Users/karlsassie/Documents/muzero/guidance-board/src/sdc_brake.cpp
+CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o: CMakeFiles/guidance-board.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o -MF CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o.d -o CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o -c /Users/karlsassie/Documents/muzero/guidance-board/src/sdc_brake.cpp
+
+CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/karlsassie/Documents/muzero/guidance-board/src/sdc_brake.cpp > CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.i
+
+CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/karlsassie/Documents/muzero/guidance-board/src/sdc_brake.cpp -o CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.s
+
 # Object files for target guidance-board
 guidance__board_OBJECTS = \
-"CMakeFiles/guidance-board.dir/mock/main.cpp.o" \
+"CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o" \
+"CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o" \
+"CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o" \
+"CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o" \
 "CMakeFiles/guidance-board.dir/mock/can.cpp.o" \
-"CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o"
+"CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/assert_err.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/control.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/main.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o" \
+"CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o"
 
 # External object files for target guidance-board
 guidance__board_EXTERNAL_OBJECTS =
 
-guidance-board: CMakeFiles/guidance-board.dir/mock/main.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o
 guidance-board: CMakeFiles/guidance-board.dir/mock/can.cpp.o
 guidance-board: CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/assert_err.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/control.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/main.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o
+guidance-board: CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o
 guidance-board: CMakeFiles/guidance-board.dir/build.make
 guidance-board: CMakeFiles/guidance-board.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable guidance-board"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Linking CXX executable guidance-board"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/guidance-board.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

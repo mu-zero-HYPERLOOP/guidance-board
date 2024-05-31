@@ -4,17 +4,21 @@
 #include "pwm_brake.h"
 #include "sdc_brake.h"
 
+constexpr Duration MIN_PRECHARGE_TIME = 1_s;
+constexpr Duration MAX_PRECHARGE_TIME = 5_s;
+constexpr Voltage REQUIRED_VDC_VOLTAGE = 40_V;
+
 guidance_state fsm::states::precharge(guidance_command cmd, Duration time_since_last_transition) {
   
   if (guidance_command_DISARM45 == cmd) {
     return guidance_state_IDLE;
   }
 
-  if (time_since_last_transition > 3_s && canzero_get_vdc_voltage() > 40) {
+  if (time_since_last_transition > MIN_PRECHARGE_TIME && canzero_get_vdc_voltage() > static_cast<float>(REQUIRED_VDC_VOLTAGE)) {
     return guidance_state_READY;
   }
 
-  if (time_since_last_transition > 5_s) {
+  if (time_since_last_transition > MAX_PRECHARGE_TIME) {
     return guidance_state_IDLE; // we might want to set a error flag here.
   }
 

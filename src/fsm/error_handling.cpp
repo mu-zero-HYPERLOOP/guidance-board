@@ -1,6 +1,5 @@
 #include "fsm/error_handling.h"
 #include "canzero/canzero.h"
-#include <array>
 
 guidance_command fsm::error_handling::approve(guidance_command cmd) {
 
@@ -20,6 +19,10 @@ guidance_command fsm::error_handling::approve(guidance_command cmd) {
     }
   }
 
+  if (canzero_get_error_arming_failed() == error_flag_ERROR) {
+    return guidance_command_DISARM45;
+  }
+
   if (guidance_command_DISARM45 != cmd) {
     for (size_t i = 0; i < sizeof(error_levels) / sizeof(error_level); ++i) {
       if (error_levels[i] == error_level_WARNING) {
@@ -27,6 +30,7 @@ guidance_command fsm::error_handling::approve(guidance_command cmd) {
       }
     }
   }
+
 
   return cmd;
 }

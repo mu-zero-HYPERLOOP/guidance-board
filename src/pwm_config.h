@@ -4,7 +4,7 @@
 #include "firmware/pwm.h"
 
 
-static PwmBeginInfo pwm_config() {
+static void pwm_config() {
   PwmBeginInfo pwmBeginInfo;
   pwmBeginInfo.enable_outputs = false;
   pwmBeginInfo.frequency = 20_kHz;
@@ -13,5 +13,5 @@ static PwmBeginInfo pwm_config() {
   pwmBeginInfo.enable_trig1_interrupt = false;
   pwmBeginInfo.trig0 = 0.0f;
   pwmBeginInfo.trig1 = std::nullopt;
-  return pwmBeginInfo;
+  pwm::begin(pwmBeginInfo);
 }

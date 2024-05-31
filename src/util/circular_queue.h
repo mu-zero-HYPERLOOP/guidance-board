@@ -26,6 +26,7 @@ public:
       return true;
     }
     m_buffer[++m_back].value = v;
+    return true;
   }
 
   std::optional<T> dequeue() {

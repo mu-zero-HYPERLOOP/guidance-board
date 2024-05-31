@@ -649,9 +649,13 @@ operator!=(const volatile Metric<a_s, a_m, a_kg, a_A, a_K, a_mol, a_cd> &a,
 }
 
 typedef Metric<1, 0, 0, 0, 0, 0, 0> Time;
+// Unit Time.
 typedef Metric<0, 1, 0, 0, 0, 0, 0> Distance;
+// Unit kg.
 typedef Metric<0, 0, 1, 0, 0, 0, 0> Weight;
+// Unit: Ampere
 typedef Metric<0, 0, 0, 1, 0, 0, 0> Current;
+// Unit : Kelvin
 typedef Metric<0, 0, 0, 0, 1, 0, 0> Temperature;
 typedef Metric<-1, 0, 0, 0, 0, 0, 0> Frequency;
 typedef Metric<-2, 1, 1, 0, 0, 0, 0> Force;

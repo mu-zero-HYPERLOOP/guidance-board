@@ -6,12 +6,7 @@
 namespace guidance_board {
 
 
-struct BeginInfo { 
-  PwmBeginInfo pwmBeginInfo;
-  AdcEtcBeginInfo adcBeginInfo;
-};
-
-void begin(const BeginInfo& beginInfo);
+void begin();
 
 Voltage sync_read(ain_pin);
 

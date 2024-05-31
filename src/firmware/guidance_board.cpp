@@ -8,10 +8,8 @@ constexpr size_t MAX_AIN_PERIODIC_JOBS = 2;
 
 static AinScheduler<MAX_AIN_PERIODIC_JOBS> ain_scheduler;
 
-void FLASHMEM guidance_board::begin(const BeginInfo &beginInfo) {
+void FLASHMEM guidance_board::begin() {
   xbar::begin();
-  pwm::begin(beginInfo.pwmBeginInfo);
-  adc_etc::begin(beginInfo.adcBeginInfo);
 }
 
 Voltage FASTRUN guidance_board::sync_read(ain_pin pin) {

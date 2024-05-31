@@ -153,29 +153,149 @@ mock/can.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/can.cpp.s
 .PHONY : mock/can.cpp.s
 
-mock/main.o: mock/main.cpp.o
-.PHONY : mock/main.o
+mock/firmware/adc_etc.o: mock/firmware/adc_etc.cpp.o
+.PHONY : mock/firmware/adc_etc.o
 
 # target to build an object file
-mock/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/main.cpp.o
-.PHONY : mock/main.cpp.o
+mock/firmware/adc_etc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.o
+.PHONY : mock/firmware/adc_etc.cpp.o
 
-mock/main.i: mock/main.cpp.i
-.PHONY : mock/main.i
+mock/firmware/adc_etc.i: mock/firmware/adc_etc.cpp.i
+.PHONY : mock/firmware/adc_etc.i
 
 # target to preprocess a source file
-mock/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/main.cpp.i
-.PHONY : mock/main.cpp.i
+mock/firmware/adc_etc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.i
+.PHONY : mock/firmware/adc_etc.cpp.i
 
-mock/main.s: mock/main.cpp.s
-.PHONY : mock/main.s
+mock/firmware/adc_etc.s: mock/firmware/adc_etc.cpp.s
+.PHONY : mock/firmware/adc_etc.s
 
 # target to generate assembly for a file
-mock/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/main.cpp.s
-.PHONY : mock/main.cpp.s
+mock/firmware/adc_etc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/adc_etc.cpp.s
+.PHONY : mock/firmware/adc_etc.cpp.s
+
+mock/firmware/guidance_board.o: mock/firmware/guidance_board.cpp.o
+.PHONY : mock/firmware/guidance_board.o
+
+# target to build an object file
+mock/firmware/guidance_board.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.o
+.PHONY : mock/firmware/guidance_board.cpp.o
+
+mock/firmware/guidance_board.i: mock/firmware/guidance_board.cpp.i
+.PHONY : mock/firmware/guidance_board.i
+
+# target to preprocess a source file
+mock/firmware/guidance_board.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.i
+.PHONY : mock/firmware/guidance_board.cpp.i
+
+mock/firmware/guidance_board.s: mock/firmware/guidance_board.cpp.s
+.PHONY : mock/firmware/guidance_board.s
+
+# target to generate assembly for a file
+mock/firmware/guidance_board.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/guidance_board.cpp.s
+.PHONY : mock/firmware/guidance_board.cpp.s
+
+mock/firmware/pwm.o: mock/firmware/pwm.cpp.o
+.PHONY : mock/firmware/pwm.o
+
+# target to build an object file
+mock/firmware/pwm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.o
+.PHONY : mock/firmware/pwm.cpp.o
+
+mock/firmware/pwm.i: mock/firmware/pwm.cpp.i
+.PHONY : mock/firmware/pwm.i
+
+# target to preprocess a source file
+mock/firmware/pwm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.i
+.PHONY : mock/firmware/pwm.cpp.i
+
+mock/firmware/pwm.s: mock/firmware/pwm.cpp.s
+.PHONY : mock/firmware/pwm.s
+
+# target to generate assembly for a file
+mock/firmware/pwm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/pwm.cpp.s
+.PHONY : mock/firmware/pwm.cpp.s
+
+mock/firmware/xbar.o: mock/firmware/xbar.cpp.o
+.PHONY : mock/firmware/xbar.o
+
+# target to build an object file
+mock/firmware/xbar.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.o
+.PHONY : mock/firmware/xbar.cpp.o
+
+mock/firmware/xbar.i: mock/firmware/xbar.cpp.i
+.PHONY : mock/firmware/xbar.i
+
+# target to preprocess a source file
+mock/firmware/xbar.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.i
+.PHONY : mock/firmware/xbar.cpp.i
+
+mock/firmware/xbar.s: mock/firmware/xbar.cpp.s
+.PHONY : mock/firmware/xbar.s
+
+# target to generate assembly for a file
+mock/firmware/xbar.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/mock/firmware/xbar.cpp.s
+.PHONY : mock/firmware/xbar.cpp.s
+
+src/adc_isr.o: src/adc_isr.cpp.o
+.PHONY : src/adc_isr.o
+
+# target to build an object file
+src/adc_isr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/adc_isr.cpp.o
+.PHONY : src/adc_isr.cpp.o
+
+src/adc_isr.i: src/adc_isr.cpp.i
+.PHONY : src/adc_isr.i
+
+# target to preprocess a source file
+src/adc_isr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/adc_isr.cpp.i
+.PHONY : src/adc_isr.cpp.i
+
+src/adc_isr.s: src/adc_isr.cpp.s
+.PHONY : src/adc_isr.s
+
+# target to generate assembly for a file
+src/adc_isr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/adc_isr.cpp.s
+.PHONY : src/adc_isr.cpp.s
+
+src/assert_err.o: src/assert_err.cpp.o
+.PHONY : src/assert_err.o
+
+# target to build an object file
+src/assert_err.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/assert_err.cpp.o
+.PHONY : src/assert_err.cpp.o
+
+src/assert_err.i: src/assert_err.cpp.i
+.PHONY : src/assert_err.i
+
+# target to preprocess a source file
+src/assert_err.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/assert_err.cpp.i
+.PHONY : src/assert_err.cpp.i
+
+src/assert_err.s: src/assert_err.cpp.s
+.PHONY : src/assert_err.s
+
+# target to generate assembly for a file
+src/assert_err.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/assert_err.cpp.s
+.PHONY : src/assert_err.cpp.s
 
 src/canzero/canzero.o: src/canzero/canzero.cpp.o
 .PHONY : src/canzero/canzero.o
@@ -201,6 +321,390 @@ src/canzero/canzero.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/canzero/canzero.cpp.s
 .PHONY : src/canzero/canzero.cpp.s
 
+src/control.o: src/control.cpp.o
+.PHONY : src/control.o
+
+# target to build an object file
+src/control.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/control.cpp.o
+.PHONY : src/control.cpp.o
+
+src/control.i: src/control.cpp.i
+.PHONY : src/control.i
+
+# target to preprocess a source file
+src/control.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/control.cpp.i
+.PHONY : src/control.cpp.i
+
+src/control.s: src/control.cpp.s
+.PHONY : src/control.s
+
+# target to generate assembly for a file
+src/control.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/control.cpp.s
+.PHONY : src/control.cpp.s
+
+src/fsm/error_handling.o: src/fsm/error_handling.cpp.o
+.PHONY : src/fsm/error_handling.o
+
+# target to build an object file
+src/fsm/error_handling.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.o
+.PHONY : src/fsm/error_handling.cpp.o
+
+src/fsm/error_handling.i: src/fsm/error_handling.cpp.i
+.PHONY : src/fsm/error_handling.i
+
+# target to preprocess a source file
+src/fsm/error_handling.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.i
+.PHONY : src/fsm/error_handling.cpp.i
+
+src/fsm/error_handling.s: src/fsm/error_handling.cpp.s
+.PHONY : src/fsm/error_handling.s
+
+# target to generate assembly for a file
+src/fsm/error_handling.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/error_handling.cpp.s
+.PHONY : src/fsm/error_handling.cpp.s
+
+src/fsm/fsm.o: src/fsm/fsm.cpp.o
+.PHONY : src/fsm/fsm.o
+
+# target to build an object file
+src/fsm/fsm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.o
+.PHONY : src/fsm/fsm.cpp.o
+
+src/fsm/fsm.i: src/fsm/fsm.cpp.i
+.PHONY : src/fsm/fsm.i
+
+# target to preprocess a source file
+src/fsm/fsm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.i
+.PHONY : src/fsm/fsm.cpp.i
+
+src/fsm/fsm.s: src/fsm/fsm.cpp.s
+.PHONY : src/fsm/fsm.s
+
+# target to generate assembly for a file
+src/fsm/fsm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/fsm.cpp.s
+.PHONY : src/fsm/fsm.cpp.s
+
+src/fsm/states/arming45.o: src/fsm/states/arming45.cpp.o
+.PHONY : src/fsm/states/arming45.o
+
+# target to build an object file
+src/fsm/states/arming45.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.o
+.PHONY : src/fsm/states/arming45.cpp.o
+
+src/fsm/states/arming45.i: src/fsm/states/arming45.cpp.i
+.PHONY : src/fsm/states/arming45.i
+
+# target to preprocess a source file
+src/fsm/states/arming45.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.i
+.PHONY : src/fsm/states/arming45.cpp.i
+
+src/fsm/states/arming45.s: src/fsm/states/arming45.cpp.s
+.PHONY : src/fsm/states/arming45.s
+
+# target to generate assembly for a file
+src/fsm/states/arming45.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/arming45.cpp.s
+.PHONY : src/fsm/states/arming45.cpp.s
+
+src/fsm/states/control.o: src/fsm/states/control.cpp.o
+.PHONY : src/fsm/states/control.o
+
+# target to build an object file
+src/fsm/states/control.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.o
+.PHONY : src/fsm/states/control.cpp.o
+
+src/fsm/states/control.i: src/fsm/states/control.cpp.i
+.PHONY : src/fsm/states/control.i
+
+# target to preprocess a source file
+src/fsm/states/control.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.i
+.PHONY : src/fsm/states/control.cpp.i
+
+src/fsm/states/control.s: src/fsm/states/control.cpp.s
+.PHONY : src/fsm/states/control.s
+
+# target to generate assembly for a file
+src/fsm/states/control.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/control.cpp.s
+.PHONY : src/fsm/states/control.cpp.s
+
+src/fsm/states/idle.o: src/fsm/states/idle.cpp.o
+.PHONY : src/fsm/states/idle.o
+
+# target to build an object file
+src/fsm/states/idle.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.o
+.PHONY : src/fsm/states/idle.cpp.o
+
+src/fsm/states/idle.i: src/fsm/states/idle.cpp.i
+.PHONY : src/fsm/states/idle.i
+
+# target to preprocess a source file
+src/fsm/states/idle.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.i
+.PHONY : src/fsm/states/idle.cpp.i
+
+src/fsm/states/idle.s: src/fsm/states/idle.cpp.s
+.PHONY : src/fsm/states/idle.s
+
+# target to generate assembly for a file
+src/fsm/states/idle.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/idle.cpp.s
+.PHONY : src/fsm/states/idle.cpp.s
+
+src/fsm/states/init.o: src/fsm/states/init.cpp.o
+.PHONY : src/fsm/states/init.o
+
+# target to build an object file
+src/fsm/states/init.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.o
+.PHONY : src/fsm/states/init.cpp.o
+
+src/fsm/states/init.i: src/fsm/states/init.cpp.i
+.PHONY : src/fsm/states/init.i
+
+# target to preprocess a source file
+src/fsm/states/init.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.i
+.PHONY : src/fsm/states/init.cpp.i
+
+src/fsm/states/init.s: src/fsm/states/init.cpp.s
+.PHONY : src/fsm/states/init.s
+
+# target to generate assembly for a file
+src/fsm/states/init.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/init.cpp.s
+.PHONY : src/fsm/states/init.cpp.s
+
+src/fsm/states/precharge.o: src/fsm/states/precharge.cpp.o
+.PHONY : src/fsm/states/precharge.o
+
+# target to build an object file
+src/fsm/states/precharge.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.o
+.PHONY : src/fsm/states/precharge.cpp.o
+
+src/fsm/states/precharge.i: src/fsm/states/precharge.cpp.i
+.PHONY : src/fsm/states/precharge.i
+
+# target to preprocess a source file
+src/fsm/states/precharge.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.i
+.PHONY : src/fsm/states/precharge.cpp.i
+
+src/fsm/states/precharge.s: src/fsm/states/precharge.cpp.s
+.PHONY : src/fsm/states/precharge.s
+
+# target to generate assembly for a file
+src/fsm/states/precharge.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/precharge.cpp.s
+.PHONY : src/fsm/states/precharge.cpp.s
+
+src/fsm/states/ready.o: src/fsm/states/ready.cpp.o
+.PHONY : src/fsm/states/ready.o
+
+# target to build an object file
+src/fsm/states/ready.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.o
+.PHONY : src/fsm/states/ready.cpp.o
+
+src/fsm/states/ready.i: src/fsm/states/ready.cpp.i
+.PHONY : src/fsm/states/ready.i
+
+# target to preprocess a source file
+src/fsm/states/ready.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.i
+.PHONY : src/fsm/states/ready.cpp.i
+
+src/fsm/states/ready.s: src/fsm/states/ready.cpp.s
+.PHONY : src/fsm/states/ready.s
+
+# target to generate assembly for a file
+src/fsm/states/ready.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/fsm/states/ready.cpp.s
+.PHONY : src/fsm/states/ready.cpp.s
+
+src/main.o: src/main.cpp.o
+.PHONY : src/main.o
+
+# target to build an object file
+src/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
+
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
+
+# target to preprocess a source file
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
+
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
+
+# target to generate assembly for a file
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
+
+src/pwm_brake.o: src/pwm_brake.cpp.o
+.PHONY : src/pwm_brake.o
+
+# target to build an object file
+src/pwm_brake.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.o
+.PHONY : src/pwm_brake.cpp.o
+
+src/pwm_brake.i: src/pwm_brake.cpp.i
+.PHONY : src/pwm_brake.i
+
+# target to preprocess a source file
+src/pwm_brake.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.i
+.PHONY : src/pwm_brake.cpp.i
+
+src/pwm_brake.s: src/pwm_brake.cpp.s
+.PHONY : src/pwm_brake.s
+
+# target to generate assembly for a file
+src/pwm_brake.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/pwm_brake.cpp.s
+.PHONY : src/pwm_brake.cpp.s
+
+src/sdc_brake.o: src/sdc_brake.cpp.o
+.PHONY : src/sdc_brake.o
+
+# target to build an object file
+src/sdc_brake.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.o
+.PHONY : src/sdc_brake.cpp.o
+
+src/sdc_brake.i: src/sdc_brake.cpp.i
+.PHONY : src/sdc_brake.i
+
+# target to preprocess a source file
+src/sdc_brake.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.i
+.PHONY : src/sdc_brake.cpp.i
+
+src/sdc_brake.s: src/sdc_brake.cpp.s
+.PHONY : src/sdc_brake.s
+
+# target to generate assembly for a file
+src/sdc_brake.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sdc_brake.cpp.s
+.PHONY : src/sdc_brake.cpp.s
+
+src/sensors/input_current.o: src/sensors/input_current.cpp.o
+.PHONY : src/sensors/input_current.o
+
+# target to build an object file
+src/sensors/input_current.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.o
+.PHONY : src/sensors/input_current.cpp.o
+
+src/sensors/input_current.i: src/sensors/input_current.cpp.i
+.PHONY : src/sensors/input_current.i
+
+# target to preprocess a source file
+src/sensors/input_current.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.i
+.PHONY : src/sensors/input_current.cpp.i
+
+src/sensors/input_current.s: src/sensors/input_current.cpp.s
+.PHONY : src/sensors/input_current.s
+
+# target to generate assembly for a file
+src/sensors/input_current.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/input_current.cpp.s
+.PHONY : src/sensors/input_current.cpp.s
+
+src/sensors/magnet_temperatures.o: src/sensors/magnet_temperatures.cpp.o
+.PHONY : src/sensors/magnet_temperatures.o
+
+# target to build an object file
+src/sensors/magnet_temperatures.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.o
+.PHONY : src/sensors/magnet_temperatures.cpp.o
+
+src/sensors/magnet_temperatures.i: src/sensors/magnet_temperatures.cpp.i
+.PHONY : src/sensors/magnet_temperatures.i
+
+# target to preprocess a source file
+src/sensors/magnet_temperatures.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.i
+.PHONY : src/sensors/magnet_temperatures.cpp.i
+
+src/sensors/magnet_temperatures.s: src/sensors/magnet_temperatures.cpp.s
+.PHONY : src/sensors/magnet_temperatures.s
+
+# target to generate assembly for a file
+src/sensors/magnet_temperatures.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/magnet_temperatures.cpp.s
+.PHONY : src/sensors/magnet_temperatures.cpp.s
+
+src/sensors/mcu_temperature.o: src/sensors/mcu_temperature.cpp.o
+.PHONY : src/sensors/mcu_temperature.o
+
+# target to build an object file
+src/sensors/mcu_temperature.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.o
+.PHONY : src/sensors/mcu_temperature.cpp.o
+
+src/sensors/mcu_temperature.i: src/sensors/mcu_temperature.cpp.i
+.PHONY : src/sensors/mcu_temperature.i
+
+# target to preprocess a source file
+src/sensors/mcu_temperature.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.i
+.PHONY : src/sensors/mcu_temperature.cpp.i
+
+src/sensors/mcu_temperature.s: src/sensors/mcu_temperature.cpp.s
+.PHONY : src/sensors/mcu_temperature.s
+
+# target to generate assembly for a file
+src/sensors/mcu_temperature.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/mcu_temperature.cpp.s
+.PHONY : src/sensors/mcu_temperature.cpp.s
+
+src/sensors/vdc.o: src/sensors/vdc.cpp.o
+.PHONY : src/sensors/vdc.o
+
+# target to build an object file
+src/sensors/vdc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.o
+.PHONY : src/sensors/vdc.cpp.o
+
+src/sensors/vdc.i: src/sensors/vdc.cpp.i
+.PHONY : src/sensors/vdc.i
+
+# target to preprocess a source file
+src/sensors/vdc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.i
+.PHONY : src/sensors/vdc.cpp.i
+
+src/sensors/vdc.s: src/sensors/vdc.cpp.s
+.PHONY : src/sensors/vdc.s
+
+# target to generate assembly for a file
+src/sensors/vdc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/guidance-board.dir/build.make CMakeFiles/guidance-board.dir/src/sensors/vdc.cpp.s
+.PHONY : src/sensors/vdc.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -213,12 +717,75 @@ help:
 	@echo "... mock/can.o"
 	@echo "... mock/can.i"
 	@echo "... mock/can.s"
-	@echo "... mock/main.o"
-	@echo "... mock/main.i"
-	@echo "... mock/main.s"
+	@echo "... mock/firmware/adc_etc.o"
+	@echo "... mock/firmware/adc_etc.i"
+	@echo "... mock/firmware/adc_etc.s"
+	@echo "... mock/firmware/guidance_board.o"
+	@echo "... mock/firmware/guidance_board.i"
+	@echo "... mock/firmware/guidance_board.s"
+	@echo "... mock/firmware/pwm.o"
+	@echo "... mock/firmware/pwm.i"
+	@echo "... mock/firmware/pwm.s"
+	@echo "... mock/firmware/xbar.o"
+	@echo "... mock/firmware/xbar.i"
+	@echo "... mock/firmware/xbar.s"
+	@echo "... src/adc_isr.o"
+	@echo "... src/adc_isr.i"
+	@echo "... src/adc_isr.s"
+	@echo "... src/assert_err.o"
+	@echo "... src/assert_err.i"
+	@echo "... src/assert_err.s"
 	@echo "... src/canzero/canzero.o"
 	@echo "... src/canzero/canzero.i"
 	@echo "... src/canzero/canzero.s"
+	@echo "... src/control.o"
+	@echo "... src/control.i"
+	@echo "... src/control.s"
+	@echo "... src/fsm/error_handling.o"
+	@echo "... src/fsm/error_handling.i"
+	@echo "... src/fsm/error_handling.s"
+	@echo "... src/fsm/fsm.o"
+	@echo "... src/fsm/fsm.i"
+	@echo "... src/fsm/fsm.s"
+	@echo "... src/fsm/states/arming45.o"
+	@echo "... src/fsm/states/arming45.i"
+	@echo "... src/fsm/states/arming45.s"
+	@echo "... src/fsm/states/control.o"
+	@echo "... src/fsm/states/control.i"
+	@echo "... src/fsm/states/control.s"
+	@echo "... src/fsm/states/idle.o"
+	@echo "... src/fsm/states/idle.i"
+	@echo "... src/fsm/states/idle.s"
+	@echo "... src/fsm/states/init.o"
+	@echo "... src/fsm/states/init.i"
+	@echo "... src/fsm/states/init.s"
+	@echo "... src/fsm/states/precharge.o"
+	@echo "... src/fsm/states/precharge.i"
+	@echo "... src/fsm/states/precharge.s"
+	@echo "... src/fsm/states/ready.o"
+	@echo "... src/fsm/states/ready.i"
+	@echo "... src/fsm/states/ready.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
+	@echo "... src/pwm_brake.o"
+	@echo "... src/pwm_brake.i"
+	@echo "... src/pwm_brake.s"
+	@echo "... src/sdc_brake.o"
+	@echo "... src/sdc_brake.i"
+	@echo "... src/sdc_brake.s"
+	@echo "... src/sensors/input_current.o"
+	@echo "... src/sensors/input_current.i"
+	@echo "... src/sensors/input_current.s"
+	@echo "... src/sensors/magnet_temperatures.o"
+	@echo "... src/sensors/magnet_temperatures.i"
+	@echo "... src/sensors/magnet_temperatures.s"
+	@echo "... src/sensors/mcu_temperature.o"
+	@echo "... src/sensors/mcu_temperature.i"
+	@echo "... src/sensors/mcu_temperature.s"
+	@echo "... src/sensors/vdc.o"
+	@echo "... src/sensors/vdc.i"
+	@echo "... src/sensors/vdc.s"
 .PHONY : help
 
 

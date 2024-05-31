@@ -455,6 +455,7 @@ void pwm::frequency(const Frequency &frequency) {
 
 void pwm::write_trigs(bool lock) {
   if (lock) {
+    pwm_reg::clear_load_okay();
   }
   pwm_reg::sm0tctrl_enable_output_triggers(
       m_trig0.has_value() && m_enable_trig0,

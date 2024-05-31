@@ -1,7 +1,6 @@
 #include <array>
 #include <cassert>
 #include <cmath>
-#include <cstdio>
 #include <stddef.h>
 #include <type_traits>
 #include <utility>
