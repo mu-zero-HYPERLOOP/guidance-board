@@ -75,6 +75,21 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // g_done0_timing.tick();
 
   // get raw values for current and displacement measurements
+
+  // configuration 1
+
+  i_meas_L = res.trig_res<0, 0>(); // I_MAG_L
+  i_meas_R = res.trig_res<0, 1>(); // I_MAG_R
+
+  disp_meas_MAG_L = res.trig_res<4, 0>(); // DISP_SENS_MAG_L
+  disp_meas_MAG_R = res.trig_res<4, 1>(); // DISP_SENS_MAG_R
+  disp_meas_LIM_L = res.trig_res<4, 2>(); // DISP_SENS_MAG_L
+  disp_meas_LIM_R = res.trig_res<4, 3>(); // DISP_SENS_MAG_R
+
+  /*
+
+  configuration 2
+
   i_meas_L = res.trig_res<0, 0>(); // I_MAG_L
   i_meas_R = res.trig_res<4, 0>(); // I_MAG_R
 
@@ -85,12 +100,13 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_LIM_R = res.trig_res<4, 2>(); // DISP_SENS_LIM_R
 
 
+  */
+
   // convert to actual values
 
   // current measurement for LEFT and RIGHT magnets
   i_meas_L = 3.3 * i_meas_L / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
   i_meas_L = (i_meas_L - 2.5) / GuidanceBoardCurrentGains::GAIN_I_LEFT / 0.001; // current in amps
-
 
   i_meas_R = 3.3 * i_meas_R / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
   i_meas_R = -(i_meas_R - 2.5) / GuidanceBoardCurrentGains::GAIN_I_RIGHT / 0.001; // current in amps
@@ -124,7 +140,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // max:       11 mm
 
 
-  // error detection (not sure if this is correct)
+  // error detection
   /* if ((disp_meas_LIM_R < 33 || disp_meas_LIM_R > 39) && */
   /*     (disp_meas_LIM_L < 33 || disp_meas_LIM_L > 39)) { */
   /*   // too close -> error */
@@ -134,6 +150,18 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   /*   Serial.printf("ERROR\n"); */
   /*   error_flag = true; */
   /* } */
+
+  /*
+  // error detection for current
+  if (i_meas_L < -20 || i_meas_L > 20 || i_meas_R < -20 || i_meas_R > 20) { 
+    digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW);
+    pwm::disable_output();
+    pwm::trig0(std::nullopt);
+    Serial.printf("ERROR\n");
+    error_flag = true;
+  }
+  */
+
   // min MAG displacement : 32.0
   // max MAG displacement: 40.0
 
@@ -229,6 +257,15 @@ void adc_etc_done0_isr(AdcTrigRes res) {
       control_R = 0;
     }
 
+    // limit the duty cycle  
+    if (control_L > 0.9) { 
+      control_L = 0.9;
+    }
+    if (control_R > 0.9) { 
+      control_R = 0.9;
+    }
+    
+
     // initial test
     control_R = 0.0;
     control_L = 0.0;
@@ -285,6 +322,10 @@ int main() {
 
   Serial.println("Enable Not-Aus");
 
+  /*
+
+  configuration 1
+
   TrigChainInfo chains[2];
   chains[0].trig_num = TRIG0;
   int chain0_pins[] = {GuidanceBoardPin::I_MAG_L,
@@ -308,6 +349,34 @@ int main() {
   chains[1].trig_sync = false;
   chains[1].intr = NONE;
 
+  */
+
+  // configuration 2
+
+  TrigChainInfo chains[2];
+  chains[0].trig_num = TRIG0;
+  int chain0_pins[] = {GuidanceBoardPin::I_MAG_L,
+                       GuidanceBoardPin::I_MAG_R};
+  chains[0].read_pins = chain0_pins;
+  chains[0].chain_length = sizeof(chain0_pins) / sizeof(int);
+  chains[0].chain_priority = 0;
+  chains[0].software_trig = false;
+  chains[0].trig_sync = true;
+  chains[0].intr = NONE;
+
+  chains[1].trig_num = TRIG4;
+  int chain4_pins[] = {GuidanceBoardPin::DISP_SENS_MAG_L,
+                       GuidanceBoardPin::DISP_SENS_MAG_R,
+                       GuidanceBoardPin::DISP_SENS_LIM_L,
+                       GuidanceBoardPin::DISP_SENS_LIM_R};
+  chains[1].read_pins = chain4_pins;
+  chains[1].chain_length = sizeof(chain4_pins) / sizeof(int);
+  chains[1].chain_priority = 0;
+  chains[1].software_trig = false;
+  chains[1].trig_sync = false;
+  chains[1].intr = DONE0;
+
+
   AdcEtcBeginInfo adcBeginInfo;
   adcBeginInfo.adc1_avg = HwAvg::SAMPLE_8;
   adcBeginInfo.adc1_clock_div = AdcClockDivider::NO_DIV;
@@ -325,11 +394,9 @@ int main() {
   xbar::connect(pwm::TRIG0_SIGNAL_SOURCE, AdcEtc::TRIG0_SIGNAL_SINK);
   /* xbar::connect(pwm::TRIG1_SIGNAL_SOURCE, AdcEtc::TRIG1_SIGNAL_SINK); */
 
-  // init transition
-  airgap_transition::init(10);
-  delay(5000),
-      // "precharge"
-      delay(1000);
+  delay(5000);
+  // "precharge"
+  delay(1000);
   digitalWrite(GuidanceBoardPin::SDC_TRIG, HIGH);
   delay(1000);
   digitalWrite(GuidanceBoardPin::PRECHARGE_DONE, HIGH);
