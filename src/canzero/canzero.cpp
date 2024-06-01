@@ -116,17 +116,17 @@ static void canzero_serialize_canzero_message_guidance_board_front_stream_voltag
     vdc_voltage_0 = 0xFFFF;
   }
   ((uint32_t*)data)[0] = vdc_voltage_0;
-  uint32_t current_left_16 = ((msg->m_current_left - 0) / 0.0007629510948348211) + 0.5f;
+  uint32_t current_left_16 = ((msg->m_current_left - -25) / 0.0007629510948348211) + 0.5f;
   if (current_left_16 > 0xFFFF) {
     current_left_16 = 0xFFFF;
   }
   ((uint32_t*)data)[0] |= current_left_16 << 16;
-  uint32_t current_right_32 = ((msg->m_current_right - 0) / 0.0007629510948348211) + 0.5f;
+  uint32_t current_right_32 = ((msg->m_current_right - -25) / 0.0007629510948348211) + 0.5f;
   if (current_right_32 > 0xFFFF) {
     current_right_32 = 0xFFFF;
   }
   ((uint32_t*)data)[1] = current_right_32;
-  uint32_t input_current_48 = ((msg->m_input_current - 0) / 0.0007629510948348211) + 0.5f;
+  uint32_t input_current_48 = ((msg->m_input_current - -25) / 0.0007629510948348211) + 0.5f;
   if (input_current_48 > 0xFFFF) {
     input_current_48 = 0xFFFF;
   }
@@ -763,21 +763,21 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
     break;
   }
   case 15: {
-    resp.m_data |= min_u32((__oe_current_left - (0)) / 0.0007629510948348211, 0xFFFF) << 0;
+    resp.m_data |= min_u32((__oe_current_left - (-25)) / 0.0007629510948348211, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 16: {
-    resp.m_data |= min_u32((__oe_current_right - (0)) / 0.0007629510948348211, 0xFFFF) << 0;
+    resp.m_data |= min_u32((__oe_current_right - (-25)) / 0.0007629510948348211, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 17: {
-    resp.m_data |= min_u32((__oe_input_current - (0)) / 0.0007629510948348211, 0xFFFF) << 0;
+    resp.m_data |= min_u32((__oe_input_current - (-25)) / 0.0007629510948348211, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
@@ -1235,7 +1235,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
       return;
     }
     float current_left_tmp;
-    current_left_tmp = (float)(((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 16))) * 0.0007629510948348211 + 0);
+    current_left_tmp = (float)(((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 16))) * 0.0007629510948348211 + -25);
     canzero_set_current_left(current_left_tmp);
     break;
   }
@@ -1244,7 +1244,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
       return;
     }
     float current_right_tmp;
-    current_right_tmp = (float)(((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 16))) * 0.0007629510948348211 + 0);
+    current_right_tmp = (float)(((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 16))) * 0.0007629510948348211 + -25);
     canzero_set_current_right(current_right_tmp);
     break;
   }
@@ -1253,7 +1253,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
       return;
     }
     float input_current_tmp;
-    input_current_tmp = (float)(((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 16))) * 0.0007629510948348211 + 0);
+    input_current_tmp = (float)(((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 16))) * 0.0007629510948348211 + -25);
     canzero_set_input_current(input_current_tmp);
     break;
   }

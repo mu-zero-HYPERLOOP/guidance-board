@@ -1,4 +1,3 @@
-#pragma once
 #include "adc_isr.h"
 #include "canzero/canzero.h"
 #include "control.h"
@@ -10,29 +9,30 @@
 #include "sensors/formula/displacement420.h"
 #include "util/interval.h"
 #include <avr/pgmspace.h>
-#include <iostream>
+#include <Arduino.h>
 
 using namespace adc_isr;
 
 static volatile Current i_mag_r;
 static volatile Current i_mag_l;
 
-static volatile FASTRUN Distance disp_sense_lim_l;
-static volatile FASTRUN Distance disp_sense_lim_r;
-static volatile FASTRUN Distance disp_sense_mag_l;
-static volatile FASTRUN Distance disp_sense_mag_r;
+static volatile Distance disp_sense_lim_l;
+static volatile Distance disp_sense_lim_r;
+static volatile Distance disp_sense_mag_l;
+static volatile Distance disp_sense_mag_r;
 
-static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
+static ErrorLevelRangeCheck<EXPECT_UNDER>
     error_check_current_left(canzero_get_current_left,
                              canzero_get_error_level_config_magnet_current,
                              canzero_set_error_level_magnet_current_left);
 
-static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
+static ErrorLevelRangeCheck<EXPECT_UNDER>
     error_check_current_right(canzero_get_current_right,
                               canzero_get_error_level_config_magnet_current,
                               canzero_set_error_level_magnet_current_right);
 
 void adc_isr::begin() {
+  canzero_set_gamepad_x_down(bool_t_FALSE);
   // NOTE: if we decise to use any filters initalize them here!
   canzero_set_current_left(0);
   canzero_set_current_right(0);
@@ -123,7 +123,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   const GuidancePwmControl pwmControl = control::control_loop(
       i_mag_l, i_mag_r, disp_sense_mag_l, disp_sense_lim_l, disp_sense_mag_r,
       disp_sense_lim_r);
-  pwm::control(pwmControl);
+  pwm::control(static_cast<PwmControl>(pwmControl));
 }
 
 static Interval offline_interval(1_kHz);

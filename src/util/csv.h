@@ -5,19 +5,20 @@
 #include "util/interval.h"
 #include <array>
 #include <cmath>
+#include <Arduino.h>
 
 template <size_t COL> struct CsvWriter {
 
   void print_header(std::array<const char *, COL> headers){
-    /* bool first = true; */
-    /* for (size_t i = 0; i < headers.size(); ++i) { */
-    /*   if (!first) { */
-    /*     printf(","); */
-    /*   } */
-    /*   first = false; */
-    /*   printf("%s", headers[i]); */
-    /* } */
-    /* printf("\n"); */
+    bool first = true;
+    for (size_t i = 0; i < headers.size(); ++i) {
+      if (!first) {
+        Serial.print(",");
+      }
+      first = false;
+      Serial.printf("%s", headers[i]);
+    }
+    Serial.print("\n");
   }
 
   constexpr size_t columns() {
@@ -46,21 +47,21 @@ template <size_t COL> struct CsvWriter {
         break;
       }
       bool first = true;
-      /* for (size_t i = 0; i < row->size(); ++i) { */
-      /*   if (!first) { */
-      /*     printf(","); */
-      /*   } */
-      /*   first = false; */
-      /*   printf("%f", (*row)[i]); */
-      /* } */
-      /* printf("\n"); */
+      for (size_t i = 0; i < row->size(); ++i) {
+        if (!first) {
+          Serial.print(",");
+        }
+        first = false;
+        Serial.printf("%f", (*row)[i]);
+      }
+      Serial.print("\n");
     }
     if (flush_interval.next()){
-      /* fflush(stdout); */
+      fflush(stdout);
     }
   }
 
 private:
   Interval flush_interval{10_Hz};
-  CircularQueue<std::array<float, COL>, 1000> m_buffer;
+  CircularQueue<std::array<float, COL>, 10000> m_buffer;
 };

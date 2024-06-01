@@ -93,7 +93,7 @@ public:
     if (begin_info.loopback) {
       m_flexcan.enableLoopBack();
     }
-    m_flexcan.mailboxStatus();
+    /* m_flexcan.mailboxStatus(); */
   }
 
   static void FASTRUN enqueue(const CAN_message_t &msg) { m_fifo.enqueue(msg); }

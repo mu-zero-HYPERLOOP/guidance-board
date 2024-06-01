@@ -115,9 +115,9 @@ bool FLASHMEM guidance_board::register_periodic_reading(
                                         });
 }
 
-void FASTRUN guidance_board::set_digital(ctrl_pin pin, bool state) {
-  // pass
-}
+/* void FASTRUN guidance_board::set_digital(ctrl_pin pin, bool state) { */
+/*   // pass */
+/* } */
 
 void guidance_board::delay(Duration delta) {
   std::this_thread::sleep_for(

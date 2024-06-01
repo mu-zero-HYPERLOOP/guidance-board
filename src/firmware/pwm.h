@@ -1,16 +1,16 @@
 #pragma once
 
 #include "util/metrics.h"
-#include "util/timestamp.h"
 #include <cstdint>
+#include <imxrt.h>
 #include <optional>
-
-static constexpr bool ENABLE_PWM2_SM0 = true;
-static constexpr bool ENABLE_PWM2_SM2 = true;
-static constexpr bool ENABLE_PWM2_SM3 = true;
-static constexpr bool ENABLE_PWM4_SM2 = true;
-static constexpr bool ENABLE_PWM3_SM1 = true;
-static constexpr bool ENABLE_PWM1_SM3 = true;
+//                                                pin number   - guidance - motor
+static constexpr bool ENABLE_PWM2_SM0 = false; // pins 4, 33   -          - U1
+static constexpr bool ENABLE_PWM2_SM2 = true;  // pins 6 , 9   - LEFT_L   - V2
+static constexpr bool ENABLE_PWM2_SM3 = false; // pins 36, 37  -          - U2
+static constexpr bool ENABLE_PWM4_SM2 = true;  // pins 2 , 3   - LEFT_R   - W2
+static constexpr bool ENABLE_PWM3_SM1 = true;  // pins 29, 28  - RIGHT_L  - W1
+static constexpr bool ENABLE_PWM1_SM3 = true;  // pins 8 , 7   - RIGHT_R  - V1
 
 struct PwmControl {
   float duty20 = 0.5f; // range [0,1]
@@ -34,8 +34,8 @@ struct PwmBeginInfo {
 
 struct pwm {
 public:
-  static int TRIG0_SIGNAL_SOURCE;
-  static int TRIG1_SIGNAL_SOURCE;
+  static constexpr int TRIG0_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0;
+  static constexpr int TRIG1_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM3_OUT_TRIG1;
 
   static void begin(const PwmBeginInfo &beginInfo = PwmBeginInfo());
 
@@ -54,21 +54,31 @@ public:
   static void trig1(const std::optional<float> &trig1);
   static const std::optional<float> &trig1() { return m_trig1; }
 
-  static void enable_trig0();
-  static void disable_trig0();
-  static void enable_trig1();
-  static void disable_trig1();
-  static inline bool trig0_is_enabled() {
-    return m_enable_trig0 && m_trig0.has_value();
-  }
-  static inline bool trig1_is_enabled(){
-    return m_enable_trig1 && m_trig1.has_value();
-  }
-
   static void enable_trig0_interrupt();
   static void disable_trig0_interrupt();
   static void enable_trig1_interrupt();
   static void disable_trig1_interrupt();
+
+  inline static void enable_trig0(){
+    m_enable_trig0 = true;
+  }
+  inline static void disable_trig0(){
+    m_enable_trig0 = false;
+  }
+  inline static void enable_trig1(){
+    m_enable_trig1 = true;
+  }
+  inline static void disable_trig1(){
+    m_enable_trig1 = false;
+  }
+
+  inline static bool trig0_is_enabled(){
+    return m_enable_trig0;
+  }
+
+  inline static bool trig1_is_enabled(){
+    return m_enable_trig1;
+  }
 
   static void enable_output();
   static void disable_output();
@@ -82,9 +92,7 @@ public:
   static void control(const PwmControl &control);
 
 private:
-
-  static void write_control(bool lock);
-  static void write_trigs(bool lock);
+  static void write_control();
 
   static Frequency m_frequency;
   static Time m_deadtime;
@@ -94,10 +102,10 @@ private:
   static bool m_trig1_inten;
   static std::optional<float> m_trig0;
   static std::optional<float> m_trig1;
-  static bool m_enable_trig0;
-  static bool m_enable_trig1;
 
-  static volatile uint32_t m_pwm_cycles;
-  static volatile uint32_t m_deadtime_cycles;
+  static volatile uint16_t m_pwm_cycles;
+  static volatile uint16_t m_deadtime_cycles;
+
+  static volatile bool m_enable_trig0;
+  static volatile bool m_enable_trig1;
 };
-

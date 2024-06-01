@@ -3,12 +3,17 @@
 #include "core_pins.h"
 #include "firmware/ain_scheduler.h"
 #include "firmware/xbar.h"
+#include <Arduino.h>
 
-constexpr size_t MAX_AIN_PERIODIC_JOBS = 2;
+constexpr size_t MAX_AIN_PERIODIC_JOBS = 6;
 
 static AinScheduler<MAX_AIN_PERIODIC_JOBS> ain_scheduler;
 
 void FLASHMEM guidance_board::begin() {
+  pinMode(static_cast<uint8_t>(ctrl_pin::sdc_trig_37), OUTPUT);
+  pinMode(static_cast<uint8_t>(ctrl_pin::precharge_done_31), OUTPUT);
+  pinMode(static_cast<uint8_t>(ctrl_pin::precharge_start_32), OUTPUT);
+
   xbar::begin();
 }
 

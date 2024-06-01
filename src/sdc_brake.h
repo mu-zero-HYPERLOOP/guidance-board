@@ -2,7 +2,9 @@
 
 #include "canzero/canzero.h"
 #include "firmware/guidance_board.h"
-#include <iostream>
+#include <Arduino.h>
+
+
 namespace sdc_brake {
 
 extern volatile bool brake_engaged;

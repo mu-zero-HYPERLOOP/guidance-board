@@ -1,9 +1,10 @@
-#include "can.h"
+#include "can.hpp"
 #include "FlexCAN_T4.h"
 #include "canzero/canzero.h"
 #include "util/timestamp.h"
 #include <assert.h>
 #include <cinttypes>
+#include <Arduino.h>
 
 void FLASHMEM canzero_can0_setup(uint32_t baudrate, canzero_can_filter *filters,
                         int filter_count) {
@@ -32,7 +33,7 @@ void FLASHMEM canzero_can0_setup(uint32_t baudrate, canzero_can_filter *filters,
     beginInfo.filters = nullptr;
     beginInfo.filter_count = 0;
   }
-  Can3::begin(beginInfo);
+  Can1::begin(beginInfo);
 
   delete[] beginInfo.filters;
 }
@@ -46,11 +47,12 @@ void FLASHMEM canzero_can0_send(canzero_frame *frame) {
   for (int i = 0; i < 8; i++) {
     msg.buf[i] = frame->data[i];
   }
-  Can3::send(msg);
+  Can1::send(msg);
 }
 int FASTRUN canzero_can0_recv(canzero_frame *frame) {
+  /* Serial.println("Can0 recv"); */
   CAN_message_t msg;
-  int rx = Can3::recv(msg);
+  int rx = Can1::recv(msg);
   if (rx) {
     frame->id = msg.id | (msg.flags.extended ? CANZERO_FRAME_IDE_BIT : 0) |
                 (msg.flags.remote ? CANZERO_FRAME_RTR_BIT : 0);
@@ -105,6 +107,7 @@ void FASTRUN canzero_can1_send(canzero_frame *frame) {
   Can2::send(msg);
 }
 int FASTRUN canzero_can1_recv(canzero_frame *frame) {
+  /* Serial.println("Can1 recv"); */
   CAN_message_t msg;
   int rx = Can2::recv(msg);
   if (rx) {

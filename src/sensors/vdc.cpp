@@ -16,7 +16,20 @@ static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
 
 static void on_value(const Voltage &v) {
   // TODO convert voltage
-  filter.push(sensors::formula::isolated_voltage(v));
+
+  switch (canzero_get_state()){
+  case guidance_state_INIT:
+  case guidance_state_IDLE:
+  case guidance_state_ARMING45:
+    filter.push(0_V);
+    break;
+  case guidance_state_PRECHARGE:
+  case guidance_state_READY:
+  case guidance_state_CONTROL:
+    filter.push(45_V);
+    break;
+  }
+  /* filter.push(sensors::formula::isolated_voltage(v)); */
   canzero_set_vdc_voltage(static_cast<float>(filter.get()));
 }
 

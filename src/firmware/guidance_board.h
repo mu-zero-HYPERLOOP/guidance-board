@@ -3,6 +3,7 @@
 #include "firmware/adc_etc.h"
 #include "firmware/pinout.h"
 #include "firmware/pwm.h"
+#include "util/timestamp.h"
 namespace guidance_board {
 
 

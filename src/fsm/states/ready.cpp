@@ -20,7 +20,6 @@ guidance_state fsm::states::ready(guidance_command cmd, Duration time_since_last
     canzero_set_command(guidance_command_NONE);
     return guidance_state_IDLE;
   }
-  guidance_board::set_digital(ctrl_pin::sdc_trig_37, true);
   guidance_board::set_digital(ctrl_pin::precharge_start_32, false);
   guidance_board::set_digital(ctrl_pin::precharge_done_31, true);
 
