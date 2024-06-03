@@ -27,17 +27,9 @@ int main_counter = 0;
 static BoxcarFilter<float, 1000> lim_l(0);
 static BoxcarFilter<float, 1000> lim_r(0);
 
-// define clamp function (use to refactor code, once clamp in code works, e.g.
-// clamp integrator_disp, clamp i_target, etc.)
-float clamp(float in, float min, float max) {
-  if (in > max) {
-    return max;
-  }
-  if (in < min) {
-    return min;
-  }
-  return in;
-}
+// VDC measurement
+float v_dc_raw_meas;
+float v_dc;
 
 // displacement parameters
 float offset;
@@ -127,6 +119,11 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   lim_l.push(disp_meas_LIM_L);
   lim_r.push(disp_meas_LIM_R);
+
+  // VDC measurement
+  v_dc_raw_meas = 3.3 * analogRead(GuidanceBoardPin::VDC_MEAS) / 4096.0;
+  v_dc = v_dc_raw_meas * 52500 / (1500 * 1.5 * 0.4); // voltage divider between 1k5 and 51k
+
 
   // calculate offset from center of track based on airgaps
   // method: subtract both displacement measurements and divide by two
