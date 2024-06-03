@@ -1,7 +1,9 @@
 #pragma once
 #include "canzero/canzero.h"
+#include "feedthrough_mosfet.h"
 #include "firmware/guidance_board.h"
 #include "fsm/states.h"
+#include "precharge_mosfet.h"
 #include "pwm_brake.h"
 #include "sdc_brake.h"
 
@@ -28,8 +30,8 @@ guidance_state fsm::states::arming45(guidance_command cmd, Duration time_since_l
     canzero_set_error_arming_failed(error_flag_ERROR);
     return guidance_state_ARMING45;
   }
-  guidance_board::set_digital(ctrl_pin::precharge_start_32, false);
-  guidance_board::set_digital(ctrl_pin::precharge_done_31, false);
+  precharge_mosfet::open();
+  feedthrough_mosfet::open();
 
   return guidance_state_ARMING45;
 }

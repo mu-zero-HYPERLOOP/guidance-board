@@ -6,7 +6,6 @@
 #include <avr/pgmspace.h>
 #include "util/ema.h"
 #include "util/csv.h"
-#include <Arduino.h>
 
 volatile error_flag control_error;
 

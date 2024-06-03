@@ -3,7 +3,6 @@
 #include "avr/pgmspace.h"
 #include "canzero/canzero.h"
 #include "firmware/pwm.h"
-#include <Arduino.h>
 namespace pwm_brake {
 
 extern volatile bool brake_engaged;

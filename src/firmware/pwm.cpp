@@ -715,3 +715,6 @@ volatile uint16_t pwm::m_pwm_cycles;
 volatile uint16_t pwm::m_deadtime_cycles;
 volatile bool pwm::m_enable_trig0;
 volatile bool pwm::m_enable_trig1;
+
+int pwm::TRIG0_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0;
+int pwm::TRIG1_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM3_OUT_TRIG1;

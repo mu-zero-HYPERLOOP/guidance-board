@@ -146,6 +146,14 @@ static inline guidance_command canzero_get_command() {
   extern guidance_command __oe_command;
   return __oe_command;
 }
+static inline sdc_status canzero_get_precharge_status() {
+  extern sdc_status __oe_precharge_status;
+  return __oe_precharge_status;
+}
+static inline sdc_status canzero_get_feedthrough_status() {
+  extern sdc_status __oe_feedthrough_status;
+  return __oe_feedthrough_status;
+}
 static inline bool_t canzero_get_control_active() {
   extern bool_t __oe_control_active;
   return __oe_control_active;
@@ -320,8 +328,10 @@ typedef struct {
   sdc_status m_sdc_status;
   guidance_command m_command;
   bool_t m_control_active;
+  sdc_status m_precharge_status;
+  sdc_status m_feedthrough_status;
 } canzero_message_guidance_board_front_stream_state;
-static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0x71;
+static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0x70;
 typedef struct {
   error_level m_error_level_vdc_voltage;
   error_flag m_error_arming_failed;
@@ -354,13 +364,13 @@ typedef struct {
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can0;
-static const uint32_t canzero_message_heartbeat_can0_id = 0x10D;
+static const uint32_t canzero_message_heartbeat_can0_id = 0x10C;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can1;
-static const uint32_t canzero_message_heartbeat_can1_id = 0x10C;
+static const uint32_t canzero_message_heartbeat_can1_id = 0x10B;
 typedef struct {
   get_req_header m_header;
 } canzero_message_get_req;
@@ -402,6 +412,8 @@ static inline void canzero_set_build_time(date_time value){
 void canzero_set_state(guidance_state value);
 void canzero_set_sdc_status(sdc_status value);
 void canzero_set_command(guidance_command value);
+void canzero_set_precharge_status(sdc_status value);
+void canzero_set_feedthrough_status(sdc_status value);
 void canzero_set_control_active(bool_t value);
 void canzero_set_error_arming_failed(error_flag value);
 void canzero_set_error_precharge_failed(error_flag value);

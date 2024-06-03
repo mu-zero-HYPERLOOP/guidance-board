@@ -2,7 +2,6 @@
 
 #include "canzero/canzero.h"
 #include "firmware/guidance_board.h"
-#include <Arduino.h>
 
 
 namespace sdc_brake {

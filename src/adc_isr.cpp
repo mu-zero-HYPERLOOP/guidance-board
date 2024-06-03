@@ -9,7 +9,6 @@
 #include "sensors/formula/displacement420.h"
 #include "util/interval.h"
 #include <avr/pgmspace.h>
-#include <Arduino.h>
 
 using namespace adc_isr;
 

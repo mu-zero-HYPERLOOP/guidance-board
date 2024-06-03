@@ -13,10 +13,8 @@
 #include "sensors/mcu_temperature.h"
 #include "sensors/vdc.h"
 #include "xbar_config.h"
-#include <Arduino.h>
 
 int main() {
-  Serial.begin(9600);
   guidance_board::delay(3_s);
 
   canzero_init();
@@ -25,9 +23,9 @@ int main() {
 
 
   // Hardware config
+  guidance_board::begin();
   adc_config();
   pwm_config();
-  guidance_board::begin();
   xbar_config();
 
   // Sensors
@@ -61,10 +59,12 @@ int main() {
     sensors::magnet_temperatures::update();
     sensors::vdc::update();
 
-    adc_isr::update();
     sdc_brake::update();
     pwm_brake::update();
+
+    adc_isr::update();
     control::update();
+
     fsm::update();
 
     canzero_update_continue(canzero_get_time());

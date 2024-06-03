@@ -1,37 +1,34 @@
 #pragma once
 
 #include "firmware/guidance_board.h"
+#include "print.h"
 #include "util/circular_queue.h"
 #include "util/interval.h"
 #include <array>
 #include <cmath>
-#include <Arduino.h>
 
 template <size_t COL> struct CsvWriter {
 
-  void print_header(std::array<const char *, COL> headers){
+  void print_header(std::array<const char *, COL> headers) {
     bool first = true;
     for (size_t i = 0; i < headers.size(); ++i) {
       if (!first) {
-        Serial.print(",");
+        debugPrintChar(',');
       }
       first = false;
-      Serial.printf("%s", headers[i]);
+      debugPrintf("%s", headers[i]);
     }
-    Serial.print("\n");
+    debugPrintChar('\n');
   }
 
-  constexpr size_t columns() {
-    return COL;
-  }
-
+  constexpr size_t columns() { return COL; }
 
   void push(std::array<float, COL> row) {
     auto _lck = guidance_board::InterruptLock::acquire();
     m_buffer.enqueue(row);
   }
 
-  void push_from_isr(const std::array<float, COL>& row) {
+  void push_from_isr(const std::array<float, COL> &row) {
     m_buffer.enqueue(row);
   }
 
@@ -49,15 +46,15 @@ template <size_t COL> struct CsvWriter {
       bool first = true;
       for (size_t i = 0; i < row->size(); ++i) {
         if (!first) {
-          Serial.print(",");
+          debugPrintChar(',');
         }
         first = false;
-        Serial.printf("%f", (*row)[i]);
+        debugPrintf("%s", (*row)[i]);
       }
-      Serial.print("\n");
+      debugPrintChar('\n');
     }
-    if (flush_interval.next()){
-      fflush(stdout);
+    if (flush_interval.next()) {
+      debugPrintFlush();
     }
   }
 

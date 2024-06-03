@@ -17,6 +17,8 @@ date_time DMAMEM __oe_build_time;
 guidance_state DMAMEM __oe_state;
 sdc_status DMAMEM __oe_sdc_status;
 guidance_command DMAMEM __oe_command;
+sdc_status DMAMEM __oe_precharge_status;
+sdc_status DMAMEM __oe_feedthrough_status;
 bool_t DMAMEM __oe_control_active;
 error_flag DMAMEM __oe_error_arming_failed;
 error_flag DMAMEM __oe_error_precharge_failed;
@@ -83,12 +85,14 @@ static void canzero_serialize_canzero_message_set_resp(canzero_message_set_resp*
 static void canzero_serialize_canzero_message_guidance_board_front_stream_state(canzero_message_guidance_board_front_stream_state* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
   *((uint64_t*)data) = 0;
-  frame->id = 0x71;
-  frame->dlc = 1;
+  frame->id = 0x70;
+  frame->dlc = 2;
   ((uint32_t*)data)[0] = (uint8_t)(msg->m_state & (0xFF >> (8 - 3)));
   ((uint32_t*)data)[0] |= (uint8_t)(msg->m_sdc_status & (0xFF >> (8 - 1))) << 3;
   ((uint32_t*)data)[0] |= (uint8_t)(msg->m_command & (0xFF >> (8 - 3))) << 4;
   ((uint32_t*)data)[0] |= (uint8_t)(msg->m_control_active & (0xFF >> (8 - 1))) << 7;
+  ((uint32_t*)data)[0] |= (uint8_t)(msg->m_precharge_status & (0xFF >> (8 - 1))) << 8;
+  ((uint32_t*)data)[0] |= (uint8_t)(msg->m_feedthrough_status & (0xFF >> (8 - 1))) << 9;
 }
 static void canzero_serialize_canzero_message_guidance_board_front_stream_errors(canzero_message_guidance_board_front_stream_errors* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
@@ -161,7 +165,7 @@ static void canzero_serialize_canzero_message_guidance_board_front_stream_airgap
 static void canzero_serialize_canzero_message_heartbeat_can0(canzero_message_heartbeat_can0* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
   *((uint64_t*)data) = 0;
-  frame->id = 0x10D;
+  frame->id = 0x10C;
   frame->dlc = 2;
   ((uint32_t*)data)[0] = msg->m_node_id;
   ((uint32_t*)data)[0] |= (uint8_t)(msg->m_unregister & (0xFF >> (8 - 1))) << 8;
@@ -170,7 +174,7 @@ static void canzero_serialize_canzero_message_heartbeat_can0(canzero_message_hea
 static void canzero_serialize_canzero_message_heartbeat_can1(canzero_message_heartbeat_can1* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
   *((uint64_t*)data) = 0;
-  frame->id = 0x10C;
+  frame->id = 0x10B;
   frame->dlc = 2;
   ((uint32_t*)data)[0] = msg->m_node_id;
   ((uint32_t*)data)[0] |= (uint8_t)(msg->m_unregister & (0xFF >> (8 - 1))) << 8;
@@ -472,6 +476,8 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_sdc_status = __oe_sdc_status;
         stream_message.m_command = __oe_command;
         stream_message.m_control_active = __oe_control_active;
+        stream_message.m_precharge_status = __oe_precharge_status;
+        stream_message.m_feedthrough_status = __oe_feedthrough_status;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_guidance_board_front_stream_state(&stream_message, &stream_frame);
         canzero_can1_send(&stream_frame);
@@ -494,7 +500,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_assertion_fault = __oe_assertion_fault;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_guidance_board_front_stream_errors(&stream_message, &stream_frame);
-        canzero_can1_send(&stream_frame);
+        canzero_can0_send(&stream_frame);
         break;
       }
       case 2: {
@@ -508,7 +514,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_input_current = __oe_input_current;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_guidance_board_front_stream_voltage_and_currents(&stream_message, &stream_frame);
-        canzero_can0_send(&stream_frame);
+        canzero_can1_send(&stream_frame);
         break;
       }
       case 3: {
@@ -682,69 +688,83 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
     break;
   }
   case 5: {
-    resp.m_data |= ((uint32_t)(((uint8_t)__oe_control_active) & (0xFF >> (8 - 1)))) << 0;
+    resp.m_data |= ((uint32_t)(((uint8_t)__oe_precharge_status) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 6: {
-    resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_arming_failed) & (0xFF >> (8 - 1)))) << 0;
+    resp.m_data |= ((uint32_t)(((uint8_t)__oe_feedthrough_status) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 7: {
-    resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_precharge_failed) & (0xFF >> (8 - 1)))) << 0;
+    resp.m_data |= ((uint32_t)(((uint8_t)__oe_control_active) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 8: {
-    resp.m_data |= min_u32((__oe_outer_airgap_left - (0)) / 0.00030518043793392844, 0xFFFF) << 0;
+    resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_arming_failed) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 9: {
-    resp.m_data |= min_u32((__oe_inner_airgap_left - (0)) / 0.00030518043793392844, 0xFFFF) << 0;
+    resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_precharge_failed) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 10: {
-    resp.m_data |= min_u32((__oe_outer_airgap_right - (0)) / 0.00030518043793392844, 0xFFFF) << 0;
+    resp.m_data |= min_u32((__oe_outer_airgap_left - (0)) / 0.00030518043793392844, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 11: {
-    resp.m_data |= min_u32((__oe_inner_airgap_right - (0)) / 0.00030518043793392844, 0xFFFF) << 0;
+    resp.m_data |= min_u32((__oe_inner_airgap_left - (0)) / 0.00030518043793392844, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 12: {
-    resp.m_data |= min_u32((__oe_vdc_voltage - (0)) / 0.0015259021896696422, 0xFFFF) << 0;
+    resp.m_data |= min_u32((__oe_outer_airgap_right - (0)) / 0.00030518043793392844, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 13: {
-    resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_level_vdc_voltage) & (0xFF >> (8 - 2)))) << 0;
+    resp.m_data |= min_u32((__oe_inner_airgap_right - (0)) / 0.00030518043793392844, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
   case 14: {
+    resp.m_data |= min_u32((__oe_vdc_voltage - (0)) / 0.0015259021896696422, 0xFFFF) << 0;
+    resp.m_header.m_sof = 1;
+    resp.m_header.m_eof = 1;
+    resp.m_header.m_toggle = 0;
+    break;
+  }
+  case 15: {
+    resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_level_vdc_voltage) & (0xFF >> (8 - 2)))) << 0;
+    resp.m_header.m_sof = 1;
+    resp.m_header.m_eof = 1;
+    resp.m_header.m_toggle = 0;
+    break;
+  }
+  case 16: {
     __oe_error_level_config_vdc_voltage_rx_fragmentation_buffer[0] = (min_u32((__oe_error_level_config_vdc_voltage.m_info_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_vdc_voltage_rx_fragmentation_buffer[1] = (min_u32((__oe_error_level_config_vdc_voltage.m_info_timeout - ((float)0)) / (float)0.000000013969838622484784, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_vdc_voltage_rx_fragmentation_buffer[2] = (min_u32((__oe_error_level_config_vdc_voltage.m_warning_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
@@ -759,31 +779,31 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 0;
     resp.m_header.m_toggle = 0;
-    schedule_get_resp_fragmentation_job(__oe_error_level_config_vdc_voltage_rx_fragmentation_buffer, 7, 14, msg.m_header.m_client_id);
+    schedule_get_resp_fragmentation_job(__oe_error_level_config_vdc_voltage_rx_fragmentation_buffer, 7, 16, msg.m_header.m_client_id);
     break;
   }
-  case 15: {
+  case 17: {
     resp.m_data |= min_u32((__oe_current_left - (-25)) / 0.0007629510948348211, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 16: {
+  case 18: {
     resp.m_data |= min_u32((__oe_current_right - (-25)) / 0.0007629510948348211, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 17: {
+  case 19: {
     resp.m_data |= min_u32((__oe_input_current - (-25)) / 0.0007629510948348211, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 18: {
+  case 20: {
     __oe_error_level_config_magnet_current_rx_fragmentation_buffer[0] = (min_u32((__oe_error_level_config_magnet_current.m_info_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_magnet_current_rx_fragmentation_buffer[1] = (min_u32((__oe_error_level_config_magnet_current.m_info_timeout - ((float)0)) / (float)0.000000013969838622484784, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_magnet_current_rx_fragmentation_buffer[2] = (min_u32((__oe_error_level_config_magnet_current.m_warning_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
@@ -798,24 +818,24 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 0;
     resp.m_header.m_toggle = 0;
-    schedule_get_resp_fragmentation_job(__oe_error_level_config_magnet_current_rx_fragmentation_buffer, 7, 18, msg.m_header.m_client_id);
+    schedule_get_resp_fragmentation_job(__oe_error_level_config_magnet_current_rx_fragmentation_buffer, 7, 20, msg.m_header.m_client_id);
     break;
   }
-  case 19: {
+  case 21: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_level_magnet_current_left) & (0xFF >> (8 - 2)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 20: {
+  case 22: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_level_magnet_current_right) & (0xFF >> (8 - 2)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 21: {
+  case 23: {
     __oe_error_level_config_input_current_rx_fragmentation_buffer[0] = (min_u32((__oe_error_level_config_input_current.m_info_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_input_current_rx_fragmentation_buffer[1] = (min_u32((__oe_error_level_config_input_current.m_info_timeout - ((float)0)) / (float)0.000000013969838622484784, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_input_current_rx_fragmentation_buffer[2] = (min_u32((__oe_error_level_config_input_current.m_warning_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
@@ -830,73 +850,73 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 0;
     resp.m_header.m_toggle = 0;
-    schedule_get_resp_fragmentation_job(__oe_error_level_config_input_current_rx_fragmentation_buffer, 7, 21, msg.m_header.m_client_id);
+    schedule_get_resp_fragmentation_job(__oe_error_level_config_input_current_rx_fragmentation_buffer, 7, 23, msg.m_header.m_client_id);
     break;
   }
-  case 22: {
+  case 24: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_level_input_current) & (0xFF >> (8 - 2)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 23: {
+  case 25: {
     resp.m_data |= min_u32((__oe_magnet_temperature_left1 - (-1)) / 0.592156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 24: {
+  case 26: {
     resp.m_data |= min_u32((__oe_magnet_temperature_left2 - (-1)) / 0.592156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 25: {
+  case 27: {
     resp.m_data |= min_u32((__oe_magnet_temperature_left_max - (-1)) / 0.592156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 26: {
+  case 28: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_level_magnet_temperature_left) & (0xFF >> (8 - 2)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 27: {
+  case 29: {
     resp.m_data |= min_u32((__oe_magnet_temperature_right1 - (-1)) / 0.592156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 28: {
+  case 30: {
     resp.m_data |= min_u32((__oe_magnet_temperature_right2 - (-1)) / 0.592156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 29: {
+  case 31: {
     resp.m_data |= min_u32((__oe_magnet_temperature_right_max - (-1)) / 0.592156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 30: {
+  case 32: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_level_magnet_temperature_right) & (0xFF >> (8 - 2)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 31: {
+  case 33: {
     __oe_error_level_config_magnet_temperature_rx_fragmentation_buffer[0] = (min_u32((__oe_error_level_config_magnet_temperature.m_info_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_magnet_temperature_rx_fragmentation_buffer[1] = (min_u32((__oe_error_level_config_magnet_temperature.m_info_timeout - ((float)0)) / (float)0.000000013969838622484784, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_magnet_temperature_rx_fragmentation_buffer[2] = (min_u32((__oe_error_level_config_magnet_temperature.m_warning_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
@@ -911,24 +931,24 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 0;
     resp.m_header.m_toggle = 0;
-    schedule_get_resp_fragmentation_job(__oe_error_level_config_magnet_temperature_rx_fragmentation_buffer, 7, 31, msg.m_header.m_client_id);
+    schedule_get_resp_fragmentation_job(__oe_error_level_config_magnet_temperature_rx_fragmentation_buffer, 7, 33, msg.m_header.m_client_id);
     break;
   }
-  case 32: {
+  case 34: {
     resp.m_data |= min_u32((__oe_mcu_temperature - (-1)) / 0.592156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 33: {
+  case 35: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_error_level_mcu_temperature) & (0xFF >> (8 - 2)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 34: {
+  case 36: {
     __oe_error_level_config_mcu_temperature_rx_fragmentation_buffer[0] = (min_u32((__oe_error_level_config_mcu_temperature.m_info_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_mcu_temperature_rx_fragmentation_buffer[1] = (min_u32((__oe_error_level_config_mcu_temperature.m_info_timeout - ((float)0)) / (float)0.000000013969838622484784, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
     __oe_error_level_config_mcu_temperature_rx_fragmentation_buffer[2] = (min_u32((__oe_error_level_config_mcu_temperature.m_warning_thresh - ((float)-1000)) / (float)0.0000004656612874161595, 0xFFFFFFFFul) & (0xFFFFFFFF >> (32 - 32)));
@@ -943,73 +963,73 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 0;
     resp.m_header.m_toggle = 0;
-    schedule_get_resp_fragmentation_job(__oe_error_level_config_mcu_temperature_rx_fragmentation_buffer, 7, 34, msg.m_header.m_client_id);
+    schedule_get_resp_fragmentation_job(__oe_error_level_config_mcu_temperature_rx_fragmentation_buffer, 7, 36, msg.m_header.m_client_id);
     break;
   }
-  case 35: {
+  case 37: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_assertion_fault) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 36: {
+  case 38: {
     resp.m_data |= min_u32((__oe_gamepad_lt2 - (0)) / 0.00392156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 37: {
+  case 39: {
     resp.m_data |= min_u32((__oe_gamepad_rt2 - (0)) / 0.00392156862745098, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 38: {
+  case 40: {
     resp.m_data |= min_u32((__oe_gamepad_lsb_x - (-1)) / 0.00784313725490196, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 39: {
+  case 41: {
     resp.m_data |= min_u32((__oe_gamepad_lsb_y - (-1)) / 0.00784313725490196, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 40: {
+  case 42: {
     resp.m_data |= min_u32((__oe_gamepad_rsb_x - (-1)) / 0.00784313725490196, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 41: {
+  case 43: {
     resp.m_data |= min_u32((__oe_gamepad_rsb_y - (-1)) / 0.00784313725490196, 0xFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 42: {
+  case 44: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_gamepad_lt1_down) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 43: {
+  case 45: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_gamepad_rt1_down) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
     break;
   }
-  case 44: {
+  case 46: {
     resp.m_data |= ((uint32_t)(((uint8_t)__oe_gamepad_x_down) & (0xFF >> (8 - 1)))) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
@@ -1124,12 +1144,30 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
+    sdc_status precharge_status_tmp;
+    precharge_status_tmp = ((sdc_status)((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 1))));
+    canzero_set_precharge_status(precharge_status_tmp);
+    break;
+  }
+  case 6 : {
+    if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
+      return;
+    }
+    sdc_status feedthrough_status_tmp;
+    feedthrough_status_tmp = ((sdc_status)((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 1))));
+    canzero_set_feedthrough_status(feedthrough_status_tmp);
+    break;
+  }
+  case 7 : {
+    if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
+      return;
+    }
     bool_t control_active_tmp;
     control_active_tmp = ((bool_t)((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 1))));
     canzero_set_control_active(control_active_tmp);
     break;
   }
-  case 6 : {
+  case 8 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1138,7 +1176,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_arming_failed(error_arming_failed_tmp);
     break;
   }
-  case 7 : {
+  case 9 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1147,7 +1185,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_precharge_failed(error_precharge_failed_tmp);
     break;
   }
-  case 8 : {
+  case 10 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1156,7 +1194,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_outer_airgap_left(outer_airgap_left_tmp);
     break;
   }
-  case 9 : {
+  case 11 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1165,7 +1203,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_inner_airgap_left(inner_airgap_left_tmp);
     break;
   }
-  case 10 : {
+  case 12 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1174,7 +1212,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_outer_airgap_right(outer_airgap_right_tmp);
     break;
   }
-  case 11 : {
+  case 13 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1183,7 +1221,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_inner_airgap_right(inner_airgap_right_tmp);
     break;
   }
-  case 12 : {
+  case 14 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1192,7 +1230,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_vdc_voltage(vdc_voltage_tmp);
     break;
   }
-  case 13 : {
+  case 15 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1201,7 +1239,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_vdc_voltage(error_level_vdc_voltage_tmp);
     break;
   }
-  case 14 : {
+  case 16 : {
     if (msg.m_header.m_sof == 1) {
       if (msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 0) {
         return; //TODO proper error response frame!
@@ -1230,7 +1268,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_config_vdc_voltage(error_level_config_vdc_voltage_tmp);
     break;
   }
-  case 15 : {
+  case 17 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1239,7 +1277,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_current_left(current_left_tmp);
     break;
   }
-  case 16 : {
+  case 18 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1248,7 +1286,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_current_right(current_right_tmp);
     break;
   }
-  case 17 : {
+  case 19 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1257,7 +1295,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_input_current(input_current_tmp);
     break;
   }
-  case 18 : {
+  case 20 : {
     if (msg.m_header.m_sof == 1) {
       if (msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 0) {
         return; //TODO proper error response frame!
@@ -1286,7 +1324,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_config_magnet_current(error_level_config_magnet_current_tmp);
     break;
   }
-  case 19 : {
+  case 21 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1295,7 +1333,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_magnet_current_left(error_level_magnet_current_left_tmp);
     break;
   }
-  case 20 : {
+  case 22 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1304,7 +1342,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_magnet_current_right(error_level_magnet_current_right_tmp);
     break;
   }
-  case 21 : {
+  case 23 : {
     if (msg.m_header.m_sof == 1) {
       if (msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 0) {
         return; //TODO proper error response frame!
@@ -1333,7 +1371,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_config_input_current(error_level_config_input_current_tmp);
     break;
   }
-  case 22 : {
+  case 24 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1342,7 +1380,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_input_current(error_level_input_current_tmp);
     break;
   }
-  case 23 : {
+  case 25 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1351,7 +1389,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_magnet_temperature_left1(magnet_temperature_left1_tmp);
     break;
   }
-  case 24 : {
+  case 26 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1360,7 +1398,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_magnet_temperature_left2(magnet_temperature_left2_tmp);
     break;
   }
-  case 25 : {
+  case 27 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1369,7 +1407,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_magnet_temperature_left_max(magnet_temperature_left_max_tmp);
     break;
   }
-  case 26 : {
+  case 28 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1378,7 +1416,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_magnet_temperature_left(error_level_magnet_temperature_left_tmp);
     break;
   }
-  case 27 : {
+  case 29 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1387,7 +1425,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_magnet_temperature_right1(magnet_temperature_right1_tmp);
     break;
   }
-  case 28 : {
+  case 30 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1396,7 +1434,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_magnet_temperature_right2(magnet_temperature_right2_tmp);
     break;
   }
-  case 29 : {
+  case 31 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1405,7 +1443,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_magnet_temperature_right_max(magnet_temperature_right_max_tmp);
     break;
   }
-  case 30 : {
+  case 32 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1414,7 +1452,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_magnet_temperature_right(error_level_magnet_temperature_right_tmp);
     break;
   }
-  case 31 : {
+  case 33 : {
     if (msg.m_header.m_sof == 1) {
       if (msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 0) {
         return; //TODO proper error response frame!
@@ -1443,7 +1481,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_config_magnet_temperature(error_level_config_magnet_temperature_tmp);
     break;
   }
-  case 32 : {
+  case 34 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1452,7 +1490,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_mcu_temperature(mcu_temperature_tmp);
     break;
   }
-  case 33 : {
+  case 35 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1461,7 +1499,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_mcu_temperature(error_level_mcu_temperature_tmp);
     break;
   }
-  case 34 : {
+  case 36 : {
     if (msg.m_header.m_sof == 1) {
       if (msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 0) {
         return; //TODO proper error response frame!
@@ -1490,7 +1528,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_error_level_config_mcu_temperature(error_level_config_mcu_temperature_tmp);
     break;
   }
-  case 35 : {
+  case 37 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1499,7 +1537,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_assertion_fault(assertion_fault_tmp);
     break;
   }
-  case 36 : {
+  case 38 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1508,7 +1546,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_gamepad_lt2(gamepad_lt2_tmp);
     break;
   }
-  case 37 : {
+  case 39 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1517,7 +1555,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_gamepad_rt2(gamepad_rt2_tmp);
     break;
   }
-  case 38 : {
+  case 40 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1526,7 +1564,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_gamepad_lsb_x(gamepad_lsb_x_tmp);
     break;
   }
-  case 39 : {
+  case 41 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1535,7 +1573,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_gamepad_lsb_y(gamepad_lsb_y_tmp);
     break;
   }
-  case 40 : {
+  case 42 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1544,7 +1582,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_gamepad_rsb_x(gamepad_rsb_x_tmp);
     break;
   }
-  case 41 : {
+  case 43 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1553,7 +1591,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_gamepad_rsb_y(gamepad_rsb_y_tmp);
     break;
   }
-  case 42 : {
+  case 44 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1562,7 +1600,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_gamepad_lt1_down(gamepad_lt1_down_tmp);
     break;
   }
-  case 43 : {
+  case 45 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1571,7 +1609,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
     canzero_set_gamepad_rt1_down(gamepad_rt1_down_tmp);
     break;
   }
-  case 44 : {
+  case 46 : {
     if (msg.m_header.m_sof != 1 || msg.m_header.m_toggle != 0 || msg.m_header.m_eof != 1) {
       return;
     }
@@ -1658,7 +1696,13 @@ void canzero_can0_poll() {
       case 0xDE:
         canzero_handle_get_req(&frame);
         break;
-      case 0x10D:
+      case 0xFE:
+        canzero_handle_set_req(&frame);
+        break;
+      case 0x5F:
+        canzero_handle_gamepad_stream_input(&frame);
+        break;
+      case 0x10C:
         canzero_handle_heartbeat_can0(&frame);
         break;
     }
@@ -1668,13 +1712,7 @@ void canzero_can1_poll() {
   canzero_frame frame;
   while (canzero_can1_recv(&frame)) {
     switch (frame.id) {
-      case 0xFE:
-        canzero_handle_set_req(&frame);
-        break;
-      case 0x5F:
-        canzero_handle_gamepad_stream_input(&frame);
-        break;
-      case 0x10C:
+      case 0x10B:
         canzero_handle_heartbeat_can1(&frame);
         break;
     }
@@ -1735,7 +1773,7 @@ uint32_t canzero_update_continue(uint32_t time){
 #define BUILD_MIN   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_MIN)
 #define BUILD_SEC   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_SEC)
 void canzero_init() {
-  __oe_config_hash = 3387965361227537821ull;
+  __oe_config_hash = 11369308561056377983ull;
   __oe_build_time = {
     .m_year = BUILD_YEAR,
     .m_month = BUILD_MONTH,
@@ -1783,6 +1821,28 @@ void canzero_set_command(guidance_command value) {
   extern guidance_command __oe_command;
   if (__oe_command != value) {
     __oe_command = value;
+    uint32_t time = canzero_get_time();
+    if (state_interval_job.climax > state_interval_job.job.stream_job.last_schedule + 1) {
+      state_interval_job.climax = state_interval_job.job.stream_job.last_schedule + 1;
+      scheduler_promote_job(&state_interval_job);
+    }
+  }
+}
+void canzero_set_precharge_status(sdc_status value) {
+  extern sdc_status __oe_precharge_status;
+  if (__oe_precharge_status != value) {
+    __oe_precharge_status = value;
+    uint32_t time = canzero_get_time();
+    if (state_interval_job.climax > state_interval_job.job.stream_job.last_schedule + 1) {
+      state_interval_job.climax = state_interval_job.job.stream_job.last_schedule + 1;
+      scheduler_promote_job(&state_interval_job);
+    }
+  }
+}
+void canzero_set_feedthrough_status(sdc_status value) {
+  extern sdc_status __oe_feedthrough_status;
+  if (__oe_feedthrough_status != value) {
+    __oe_feedthrough_status = value;
     uint32_t time = canzero_get_time();
     if (state_interval_job.climax > state_interval_job.job.stream_job.last_schedule + 1) {
       state_interval_job.climax = state_interval_job.job.stream_job.last_schedule + 1;

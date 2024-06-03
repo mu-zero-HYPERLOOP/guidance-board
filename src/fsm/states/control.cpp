@@ -1,6 +1,8 @@
 #include "canzero/canzero.h"
+#include "feedthrough_mosfet.h"
 #include "firmware/guidance_board.h"
 #include "fsm/states.h"
+#include "precharge_mosfet.h"
 #include "pwm_brake.h"
 #include "sdc_brake.h"
 
@@ -22,8 +24,8 @@ guidance_state fsm::states::control(guidance_command cmd, Duration time_since_la
     canzero_set_command(guidance_command_NONE);
     return guidance_state_IDLE;
   }
-  guidance_board::set_digital(ctrl_pin::precharge_start_32, false);
-  guidance_board::set_digital(ctrl_pin::precharge_done_31, true);
+  precharge_mosfet::open();
+  feedthrough_mosfet::close();
 
   return guidance_state_CONTROL;
 }
