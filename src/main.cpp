@@ -72,6 +72,8 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   i_meas_L = res.trig_res<0, 0>(); // I_MAG_L
   i_meas_R = res.trig_res<0, 1>(); // I_MAG_R
+  v_dc_raw_meas = res.trig_res<0, 2>(); // VDC
+
 
   disp_meas_MAG_L = res.trig_res<4, 0>(); // DISP_SENS_MAG_L
   disp_meas_MAG_R = res.trig_res<4, 1>(); // DISP_SENS_MAG_R
@@ -121,7 +123,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   lim_r.push(disp_meas_LIM_R);
 
   // VDC measurement (GAIN: theoretically with 1.5, but 1.515 is more accurate)
-  v_dc_raw_meas = 3.3 * analogRead(GuidanceBoardPin::VDC_MEAS) / 4096.0;
+  v_dc_raw_meas = 3.3 * v_dc_raw_meas / 4096.0;
   v_dc = v_dc_raw_meas * 52500 / (1500 * 1.515 * 0.4); // voltage divider between 1k5 and 51k
 
 
@@ -355,7 +357,8 @@ int main() {
   TrigChainInfo chains[2];
   chains[0].trig_num = TRIG0;
   int chain0_pins[] = {GuidanceBoardPin::I_MAG_L,
-                       GuidanceBoardPin::I_MAG_R};
+                       GuidanceBoardPin::I_MAG_R,
+                       GuidanceBoardPin::VDC_MEAS};
   chains[0].read_pins = chain0_pins;
   chains[0].chain_length = sizeof(chain0_pins) / sizeof(int);
   chains[0].chain_priority = 0;
@@ -442,13 +445,9 @@ int main() {
 
     /*
     // testing current ema
-    float i_meas_L_delayed;
-    float alpha = 0.5;
-    i_meas_L_delayed = i_meas_L;
-    i_meas_L = (alpha * i_meas_L) + (alpha * i_meas_L_delayed);
+    float i_meas_L_filtered;
+    i_meas_L_filtered = (0.5 * i_meas_L_filtered) + (0.5 * i_meas_L);
     */
-
-
 
 
     Serial.printf("Control_L: %f - Control_R: %f \n ",
