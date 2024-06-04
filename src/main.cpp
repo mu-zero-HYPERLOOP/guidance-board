@@ -120,9 +120,9 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   lim_l.push(disp_meas_LIM_L);
   lim_r.push(disp_meas_LIM_R);
 
-  // VDC measurement
+  // VDC measurement (GAIN: theoretically with 1.5, but 1.515 is more accurate)
   v_dc_raw_meas = 3.3 * analogRead(GuidanceBoardPin::VDC_MEAS) / 4096.0;
-  v_dc = v_dc_raw_meas * 52500 / (1500 * 1.5 * 0.4); // voltage divider between 1k5 and 51k
+  v_dc = v_dc_raw_meas * 52500 / (1500 * 1.515 * 0.4); // voltage divider between 1k5 and 51k
 
 
   // calculate offset from center of track based on airgaps
@@ -138,15 +138,16 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
 
   // error detection
-  /* if ((disp_meas_LIM_R < 33 || disp_meas_LIM_R > 39) && */
-  /*     (disp_meas_LIM_L < 33 || disp_meas_LIM_L > 39)) { */
-  /*   // too close -> error */
-  /*   digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW); */
-  /*   pwm::disable_output(); */
-  /*   pwm::trig0(std::nullopt); */
-  /*   Serial.printf("ERROR\n"); */
-  /*   error_flag = true; */
-  /* } */
+  /*
+  if ((disp_meas_LIM_R < 33 || disp_meas_LIM_R > 39) && (disp_meas_LIM_L < 33 || disp_meas_LIM_L > 39)) {
+    // too close -> error 
+    digitalWrite(GuidanceBoardPin::SDC_TRIG, LOW); 
+    pwm::disable_output(); 
+    pwm::trig0(std::nullopt); 
+    Serial.printf("ERROR\n"); 
+    error_flag = true; 
+  } 
+  */
 
   /*
   // error detection for current
@@ -162,6 +163,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // min MAG displacement : 32.0
   // max MAG displacement: 40.0
 
+  // calibration of the offsets of the sensors
   disp_meas_LIM_R -= 33.02;
   disp_meas_LIM_L -= 32.10;
 
@@ -437,6 +439,17 @@ int main() {
         "Measured Offset: %f - Target Current: %f - Target Voltage: %f \n ",
         offset, i_target, v_target);
     */
+
+    /*
+    // testing current ema
+    float i_meas_L_delayed;
+    float alpha = 0.5;
+    i_meas_L_delayed = i_meas_L;
+    i_meas_L = (alpha * i_meas_L) + (alpha * i_meas_L_delayed);
+    */
+
+
+
 
     Serial.printf("Control_L: %f - Control_R: %f \n ",
                     control_L, control_R);
