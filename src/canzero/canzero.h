@@ -61,6 +61,7 @@ typedef enum {
   guidance_state_PRECHARGE = 3,
   guidance_state_READY = 4,
   guidance_state_CONTROL = 5,
+  guidance_state_DISARMING45 = 6,
 } guidance_state;
 typedef enum {
   sdc_status_OPEN = 0,
@@ -274,6 +275,10 @@ static inline error_level_config canzero_get_error_level_config_mcu_temperature(
   extern error_level_config __oe_error_level_config_mcu_temperature;
   return __oe_error_level_config_mcu_temperature;
 }
+static inline float canzero_get_loop_frequency() {
+  extern float __oe_loop_frequency;
+  return __oe_loop_frequency;
+}
 static inline error_flag canzero_get_assertion_fault() {
   extern error_flag __oe_assertion_fault;
   return __oe_assertion_fault;
@@ -331,7 +336,7 @@ typedef struct {
   sdc_status m_precharge_status;
   sdc_status m_feedthrough_status;
 } canzero_message_guidance_board_front_stream_state;
-static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0x70;
+static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0x6F;
 typedef struct {
   error_level m_error_level_vdc_voltage;
   error_flag m_error_arming_failed;
@@ -344,33 +349,37 @@ typedef struct {
   error_level m_error_level_mcu_temperature;
   error_flag m_assertion_fault;
 } canzero_message_guidance_board_front_stream_errors;
-static const uint32_t canzero_message_guidance_board_front_stream_errors_id = 0x5C;
+static const uint32_t canzero_message_guidance_board_front_stream_errors_id = 0x9C;
+typedef struct {
+  float m_loop_frequency;
+} canzero_message_guidance_board_front_stream_debug;
+static const uint32_t canzero_message_guidance_board_front_stream_debug_id = 0x7C;
 typedef struct {
   float m_vdc_voltage;
   float m_current_left;
   float m_current_right;
   float m_input_current;
 } canzero_message_guidance_board_front_stream_voltage_and_currents;
-static const uint32_t canzero_message_guidance_board_front_stream_voltage_and_currents_id = 0x7C;
+static const uint32_t canzero_message_guidance_board_front_stream_voltage_and_currents_id = 0xBC;
 typedef struct {
   float m_outer_airgap_left;
   float m_inner_airgap_left;
   float m_outer_airgap_right;
   float m_inner_airgap_right;
 } canzero_message_guidance_board_front_stream_airgaps;
-static const uint32_t canzero_message_guidance_board_front_stream_airgaps_id = 0xBD;
+static const uint32_t canzero_message_guidance_board_front_stream_airgaps_id = 0x5C;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can0;
-static const uint32_t canzero_message_heartbeat_can0_id = 0x10C;
+static const uint32_t canzero_message_heartbeat_can0_id = 0x10B;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can1;
-static const uint32_t canzero_message_heartbeat_can1_id = 0x10B;
+static const uint32_t canzero_message_heartbeat_can1_id = 0x10A;
 typedef struct {
   get_req_header m_header;
 } canzero_message_get_req;
@@ -503,6 +512,10 @@ void canzero_set_error_level_mcu_temperature(error_level value);
 static inline void canzero_set_error_level_config_mcu_temperature(error_level_config value){
   extern error_level_config __oe_error_level_config_mcu_temperature;
   __oe_error_level_config_mcu_temperature = value;
+}
+static inline void canzero_set_loop_frequency(float value){
+  extern float __oe_loop_frequency;
+  __oe_loop_frequency = value;
 }
 void canzero_set_assertion_fault(error_flag value);
 static inline void canzero_set_gamepad_lt2(float value){

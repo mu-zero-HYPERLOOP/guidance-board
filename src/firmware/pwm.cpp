@@ -3,27 +3,22 @@
 #include "core_pins.h"
 #include "xbar.h"
 #include <Arduino.h>
+#include <algorithm>
+#include <cassert>
 #include <imxrt.h>
 #include <tuple>
-#include <algorithm>
 
-
-__attribute__((weak)) void pwm_trig0_isr() {
-
-}
+__attribute__((weak)) void pwm_trig0_isr() {}
 void pwm_isr_trig0_redirect() {
   FLEXPWM4_SM0STS |= FLEXPWM_SMSTS_CMPF(4); // Clear interrupt flag
   pwm_trig0_isr();
 }
 
-__attribute__((weak)) void pwm_trig1_isr() {
-
-}
+__attribute__((weak)) void pwm_trig1_isr() {}
 void pwm_isr_trig1_redirect() {
   FLEXPWM4_SM2STS |= FLEXPWM_SMSTS_CMPF(8); // Clear interrupt flag
   pwm_trig1_isr();
 }
-
 
 constexpr bool ENABLE_PWM1 = ENABLE_PWM1_SM3;
 constexpr bool ENABLE_PWM2 =
@@ -182,14 +177,14 @@ static inline void sm0_interrupt_enable(bool trig0, bool trig1) {
   if (trig0) {
     FLEXPWM4_SM0INTEN |= FLEXPWM_SMINTEN_CMPIE(0b010000);
     NVIC_ENABLE_IRQ(IRQ_FLEXPWM4_0);
-  }else {
+  } else {
     FLEXPWM4_SM0INTEN &= ~FLEXPWM_SMINTEN_CMPIE(0b010000);
     NVIC_DISABLE_IRQ(IRQ_FLEXPWM4_0);
   }
   if (trig1) {
     FLEXPWM4_SM2INTEN |= FLEXPWM_SMINTEN_CMPIE(0b100000);
     NVIC_ENABLE_IRQ(IRQ_FLEXPWM4_2);
-  }else {
+  } else {
     FLEXPWM4_SM2INTEN &= ~FLEXPWM_SMINTEN_CMPIE(0b100000);
     NVIC_DISABLE_IRQ(IRQ_FLEXPWM4_2);
   }
@@ -199,13 +194,13 @@ static inline void sm0tctrl_enable_output_triggers(bool trig0, bool trig1) {
   if (trig0) {
     // Raises TRIG0, when SM0_CNT == SM0_VAL4
     FLEXPWM4_SM0TCTRL |= FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b010000);
-  }else {
+  } else {
     FLEXPWM4_SM0TCTRL &= ~FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b010000);
   }
   if (trig1) {
     // Raises TRIG1, when SM0_CNT == SM0_VAL5
     FLEXPWM4_SM2TCTRL |= FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b100000);
-  }else {
+  } else {
     FLEXPWM4_SM2TCTRL &= ~FLEXPWM_SMTCTRL_OUT_TRIG_EN(0b100000);
   }
 }
@@ -407,7 +402,8 @@ static inline int16_t trig_to_cnt(float trig, uint16_t cycles) {
 }
 static inline uint16_t duty_to_cmp(float duty, uint16_t cycles) {
   duty = std::clamp(duty, 0.0f, 1.0f);
-  return std::min(static_cast<uint32_t>(cycles), static_cast<uint32_t>(duty * cycles));
+  return std::min(static_cast<uint32_t>(cycles),
+                  static_cast<uint32_t>(duty * cycles));
 }
 } // namespace conv
 
@@ -416,6 +412,7 @@ void pwm::enable_output() {
     return;
   m_outen = true;
   pwm_reg::clear_load_okay();
+  write_control();
   pwm_reg::set_output_enable(m_outen);
   pwm_reg::set_load_okay();
 }
@@ -423,6 +420,7 @@ void pwm::enable_output() {
 void pwm::disable_output() {
   if (!m_outen)
     return;
+  m_control_initalized = false;
   m_outen = false;
   pwm_reg::clear_load_okay();
   pwm_reg::set_output_enable(m_outen);
@@ -435,8 +433,8 @@ void pwm::trig0(const std::optional<float> &trig0) {
   }
   m_trig0 = trig0;
   pwm_reg::clear_load_okay();
-  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
-                                           m_trig1.has_value());
+  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value() && m_enable_trig0,
+                                           m_trig1.has_value() && m_enable_trig1);
   pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
                                 m_trig1.has_value() && m_trig1_inten);
   if (m_trig0.has_value()) {
@@ -458,8 +456,8 @@ void pwm::trig1(const std::optional<float> &trig1) {
   m_trig1 = trig1;
 
   pwm_reg::clear_load_okay();
-  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
-                                           m_trig1.has_value());
+  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value() && m_enable_trig0,
+                                           m_trig1.has_value() && m_enable_trig1);
   pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
                                 m_trig1.has_value() && m_trig1_inten);
   if (m_trig0.has_value()) {
@@ -518,9 +516,49 @@ void pwm::disable_trig1_interrupt() {
   pwm_reg::set_load_okay();
 }
 
+void pwm::enable_trig0() {
+  if (m_enable_trig0){
+    return;
+  }
+  m_enable_trig0 = true;
+  pwm_reg::clear_load_okay();
+  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value() && m_enable_trig0,
+                                           m_trig1.has_value() && m_enable_trig1);
+  pwm_reg::set_load_okay();
+}
+void pwm::disable_trig0() {
+  if (!m_enable_trig0){
+    return;
+  }
+  m_enable_trig0 = false;
+  pwm_reg::clear_load_okay();
+  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value() && m_enable_trig0,
+                                           m_trig1.has_value() && m_enable_trig1);
+  pwm_reg::set_load_okay();
+}
+void pwm::enable_trig1() {
+  if (m_enable_trig1){
+    return;
+  }
+  m_enable_trig1 = true;
+  pwm_reg::clear_load_okay();
+  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value() && m_enable_trig0,
+                                           m_trig1.has_value() && m_enable_trig1);
+  pwm_reg::set_load_okay();
+}
+void pwm::disable_trig1() {
+  if (!m_enable_trig1){
+    return;
+  }
+  m_enable_trig1 = false;
+  pwm_reg::clear_load_okay();
+  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value() && m_enable_trig0,
+                                           m_trig1.has_value() && m_enable_trig1);
+  pwm_reg::set_load_okay();
+}
+
 void pwm::frequency(const Frequency &frequency) {
-  const auto &[pwm_cycles, prescalar] =
-      conv::frequency_to_cycles(m_frequency);
+  const auto &[pwm_cycles, prescalar] = conv::frequency_to_cycles(m_frequency);
   m_pwm_cycles = pwm_cycles;
   pwm_reg::clear_load_okay();
   pwm_reg::smxctrl_write_cycle_with_prescalar(false, prescalar);
@@ -538,8 +576,8 @@ void pwm::frequency(const Frequency &frequency) {
 }
 
 void pwm::write_control() {
-  // Serial.printf("control = %f %u %u\n", m_control.duty42, m_pwm_cycles, 
-      // conv::duty_to_cmp(m_control.duty42, m_pwm_cycles));
+  // Serial.printf("control = %f %u %u\n", m_control.duty42, m_pwm_cycles,
+  // conv::duty_to_cmp(m_control.duty42, m_pwm_cycles));
   if constexpr (ENABLE_PWM4_SM2) {
     pwm_reg::pwm4_sm2_set_duty_cycles(
         conv::duty_to_cmp(m_control.duty42, m_pwm_cycles));
@@ -574,6 +612,7 @@ void pwm::deadtime(const Time &deadtime) {
 }
 
 void pwm::control(const PwmControl &control) {
+  m_control_initalized = true;
   m_control = control;
   pwm_reg::clear_load_okay();
   write_control();
@@ -615,18 +654,17 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
   m_trig1 = beginInfo.trig1;
   m_trig1_inten = beginInfo.enable_trig1_interrupt;
   m_control = beginInfo.control;
-  m_enable_trig0 = false;
-  m_enable_trig1 = false;
-  
+  m_enable_trig0 = beginInfo.enable_trig0;
+  m_enable_trig1 = beginInfo.enable_trig1;
+  m_control_initalized = m_outen;
+
   attachInterruptVector(IRQ_FLEXPWM4_0, pwm_isr_trig0_redirect);
   attachInterruptVector(IRQ_FLEXPWM4_2, pwm_isr_trig1_redirect);
 
-  const auto &[pwm_cycles, prescalar] =
-      conv::frequency_to_cycles(m_frequency);
+  const auto &[pwm_cycles, prescalar] = conv::frequency_to_cycles(m_frequency);
   m_pwm_cycles = pwm_cycles;
 
   m_deadtime_cycles = conv::deadtime_to_cycles(m_deadtime);
-
 
   pwm_reg::clear_load_okay();
 
@@ -636,8 +674,8 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
 
   pwm_reg::set_output_enable(m_outen);
 
-  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
-                                           m_trig1.has_value());
+  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value() && m_enable_trig0,
+                                           m_trig1.has_value() && m_enable_trig1);
 
   pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
                                 m_trig1.has_value() && m_trig1_inten);
@@ -655,10 +693,8 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
     pwm_reg::sm0_set_trig1_value(
         conv::trig_to_cnt(m_trig1.value(), m_pwm_cycles));
   }
-  
 
   write_control();
-
 
   // Update pin configuration
   // Selects which module is connected to the pins, in this case it is the
@@ -715,6 +751,6 @@ volatile uint16_t pwm::m_pwm_cycles;
 volatile uint16_t pwm::m_deadtime_cycles;
 volatile bool pwm::m_enable_trig0;
 volatile bool pwm::m_enable_trig1;
-
+bool pwm::m_control_initalized = false;
 int pwm::TRIG0_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0;
 int pwm::TRIG1_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM3_OUT_TRIG1;

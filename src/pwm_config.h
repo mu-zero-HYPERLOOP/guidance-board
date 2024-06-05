@@ -9,9 +9,11 @@ static void pwm_config() {
   pwmBeginInfo.enable_outputs = false;
   pwmBeginInfo.frequency = 20_kHz;
   pwmBeginInfo.deadtime = 1000_ns;
-  pwmBeginInfo.enable_trig0_interrupt = false;
-  pwmBeginInfo.enable_trig1_interrupt = false;
   pwmBeginInfo.trig0 = 0.0f;
+  pwmBeginInfo.enable_trig0 = false;
+  pwmBeginInfo.enable_trig0_interrupt = false;
   pwmBeginInfo.trig1 = std::nullopt;
+  pwmBeginInfo.enable_trig1 = false;
+  pwmBeginInfo.enable_trig1_interrupt = false;
   pwm::begin(pwmBeginInfo);
 }

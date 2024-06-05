@@ -4,7 +4,6 @@
 #include "error_level_range_check.h"
 #include "firmware/adc_etc.h"
 #include "firmware/guidance_board.h"
-#include "pwm_brake.h"
 #include "sensors/formula/current_sense.h"
 #include "sensors/formula/displacement420.h"
 #include "util/interval.h"

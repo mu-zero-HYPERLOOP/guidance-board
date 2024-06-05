@@ -17,4 +17,6 @@ guidance_state ready(guidance_command cmd, Duration time_since_last_transition);
 
 guidance_state control(guidance_command cmd, Duration time_since_last_transition);
 
+guidance_state disarming45(guidance_command cmd, Duration time_since_last_transition);
+
 }

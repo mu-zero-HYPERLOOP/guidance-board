@@ -3,7 +3,6 @@
 #include "firmware/guidance_board.h"
 #include "fsm/states.h"
 #include "precharge_mosfet.h"
-#include "pwm_brake.h"
 #include "sdc_brake.h"
 
 constexpr Duration MIN_PRECHARGE_TIME = 1_s;
@@ -13,7 +12,7 @@ constexpr Voltage REQUIRED_VDC_VOLTAGE = 40_V;
 guidance_state fsm::states::precharge(guidance_command cmd, Duration time_since_last_transition) {
   
   if (guidance_command_DISARM45 == cmd) {
-    return guidance_state_IDLE;
+    return guidance_state_DISARMING45;
   }
 
   if (time_since_last_transition > MIN_PRECHARGE_TIME && canzero_get_vdc_voltage() > static_cast<float>(REQUIRED_VDC_VOLTAGE)) {
@@ -21,13 +20,17 @@ guidance_state fsm::states::precharge(guidance_command cmd, Duration time_since_
   }
 
   if (time_since_last_transition > MAX_PRECHARGE_TIME) {
-    return guidance_state_IDLE; // we might want to set a error flag here.
+    return guidance_state_DISARMING45; // we might want to set a error flag here.
   }
 
-  pwm_brake::stop();
-  if (!sdc_brake::request_close()) {
-    canzero_set_command(guidance_command_NONE);
-    return guidance_state_IDLE;
+  pwm::control(PwmControl());
+  pwm::enable_output();
+  pwm::enable_trig0();
+  pwm::enable_trig1();
+
+  if (!sdc_brake::request_close()){
+    canzero_set_command(guidance_command_DISARM45);
+    return guidance_state_DISARMING45;
   }
 
   precharge_mosfet::close();

@@ -1,11 +1,9 @@
-
 #include "adc_config.h"
 #include "adc_isr.h"
 #include "canzero/canzero.h"
 #include "control.h"
 #include "firmware/guidance_board.h"
 #include "fsm/fsm.h"
-#include "pwm_brake.h"
 #include "pwm_config.h"
 #include "sdc_brake.h"
 #include "sensors/input_current.h"
@@ -20,7 +18,6 @@ int main() {
   canzero_init();
 
   fsm::begin();
-
 
   // Hardware config
   guidance_board::begin();
@@ -40,7 +37,6 @@ int main() {
   sensors::magnet_temperatures::calibrate();
   sensors::vdc::calibrate();
 
-  pwm_brake::begin();
   sdc_brake::begin();
 
   adc_isr::begin();
@@ -60,7 +56,6 @@ int main() {
     sensors::vdc::update();
 
     sdc_brake::update();
-    pwm_brake::update();
 
     adc_isr::update();
     control::update();

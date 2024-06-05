@@ -3,7 +3,6 @@
 #include "firmware/guidance_board.h"
 #include "fsm/states.h"
 #include "precharge_mosfet.h"
-#include "pwm_brake.h"
 #include "sdc_brake.h"
 
 guidance_state fsm::states::idle(guidance_command cmd, Duration time_since_last_transition) {
@@ -12,8 +11,9 @@ guidance_state fsm::states::idle(guidance_command cmd, Duration time_since_last_
     return guidance_state_ARMING45;
   }
 
-  pwm_brake::stop();
-  pwm_brake::release_brake();
+  pwm::disable_output();
+  pwm::disable_trig0();
+  pwm::disable_trig1();
   sdc_brake::open();
   sdc_brake::release_brake();
 

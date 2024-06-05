@@ -26,8 +26,10 @@ struct PwmBeginInfo {
   bool enable_outputs = false;
   std::optional<float> trig0 = std::nullopt;
   bool enable_trig0_interrupt = false;
+  bool enable_trig0 = false;
   std::optional<float> trig1 = std::nullopt;
   bool enable_trig1_interrupt = false;
+  bool enable_trig1 = false;
   PwmControl control = PwmControl();
 };
 
@@ -58,18 +60,10 @@ public:
   static void enable_trig1_interrupt();
   static void disable_trig1_interrupt();
 
-  inline static void enable_trig0(){
-    m_enable_trig0 = true;
-  }
-  inline static void disable_trig0(){
-    m_enable_trig0 = false;
-  }
-  inline static void enable_trig1(){
-    m_enable_trig1 = true;
-  }
-  inline static void disable_trig1(){
-    m_enable_trig1 = false;
-  }
+  static void enable_trig0();
+  static void disable_trig0();
+  static void enable_trig1();
+  static void disable_trig1();
 
   inline static bool trig0_is_enabled(){
     return m_enable_trig0;
@@ -95,6 +89,7 @@ private:
 
   static Frequency m_frequency;
   static Time m_deadtime;
+  static bool m_control_initalized;
   static PwmControl m_control;
   static bool m_outen;
   static bool m_trig0_inten;
