@@ -39,14 +39,17 @@ float error_disp, error_disp_d;
 float integrator_disp;
 float derivative_disp;
 float i_target; // PWM output (target current)
+float i_target_L, i_target_R;
 
 // current parameters
 float i_meas_L, i_meas_R;
 float error_current;
 float error_current_L;
 float error_current_R;
-float integrator_current;
-float v_target; // PWM output (target voltage)
+float integrator_current_L;
+float integrator_current_R;
+float v_target_L; // PWM output (target voltage)
+float v_target_R; // PWM output (target voltage)
 
 float control_L, control_R;
 
@@ -100,7 +103,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   // current measurement for LEFT and RIGHT magnets
   i_meas_L = 3.3 * i_meas_L / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
-  i_meas_L = (i_meas_L - 2.5) / GuidanceBoardCurrentGains::GAIN_I_LEFT / 0.001; // current in amps
+  i_meas_L = -(i_meas_L - 2.5) / GuidanceBoardCurrentGains::GAIN_I_LEFT / 0.001; // current in amps
 
   i_meas_R = 3.3 * i_meas_R / 4096.0 / 1.5 / 0.4; // voltage at input of isolation amplifier
   i_meas_R = -(i_meas_R - 2.5) / GuidanceBoardCurrentGains::GAIN_I_RIGHT / 0.001; // current in amps
@@ -113,11 +116,14 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_MAG_R = (disp_meas_MAG_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
 
   // displacement measurement for LIM rotor LEFT and RIGHT side
-  disp_meas_LIM_L = 3.3 * disp_meas_LIM_L / 4096.0 / 120; // sense current
+  disp_meas_LIM_L = 3.3 * disp_meas_LIM_L / 4096.0 / 120.0; // sense current
   disp_meas_LIM_L = (disp_meas_LIM_L - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
+  // disp_meas_LIM_L = -disp_meas_LIM_L;
 
   disp_meas_LIM_R = 3.3 * disp_meas_LIM_R / 4096.0 / 120.0; // sense current
   disp_meas_LIM_R = (disp_meas_LIM_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
+  // disp_meas_LIM_R = -disp_meas_LIM_R;
+
 
   lim_l.push(disp_meas_LIM_L);
   lim_r.push(disp_meas_LIM_R);
@@ -169,6 +175,9 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_LIM_R -= 33.02;
   disp_meas_LIM_L -= 32.10;
 
+  disp_meas_MAG_R -= 26.45;
+  disp_meas_MAG_L -= 27.6;
+
   offset = (disp_meas_LIM_L - disp_meas_LIM_R) / 2;
   target_offset = 0;
 
@@ -176,12 +185,12 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   if (!error_flag) {
 
-    float P = 1.2; // P = 1.3 for pod
-    float ITs = 0.01; // I = 0.02 for pod
-    float D = 0.33; // D = 0.9 for pod 
+    float P = 15; // P = 1.3 for pod
+    float ITs = 0.001; // I = 0.02 for pod
+    float D = 0.6; // D = 0.9 for pod 
 
     error_disp_d = error_disp;
-    error_disp = 0.9 * error_disp - 0.1 * (target_offset - offset); // displacement EMA with alpha 0.9
+    error_disp = 0.95 * error_disp - 0.05 * (target_offset - offset); // displacement EMA with alpha 0.9
     integrator_disp += error_disp * ITs;
     derivative_disp = D * (error_disp - error_disp_d) * 20000; // 20kHz PWM frequency
 
@@ -195,6 +204,12 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     // PID to calculate target current
     i_target = P * error_disp + integrator_disp + derivative_disp;
 
+    if(i_target >= 0) {
+      i_target = std::sqrt(i_target);
+    } else {
+      i_target = -std::sqrt(-i_target);
+    }
+
     // clamp i_target (min = -40, max = 40)
     if (i_target > 40) {
       i_target = 40;
@@ -206,70 +221,89 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     P = 1.3;
     ITs = 0.75;
 
-    // is this part correct? (-i_target)
-    error_current_L = 0.5 * error_current_L + 0.5 * (-i_target - i_meas_L); // curent EMA with alpha 0.5 (invert i_target)
-    error_current_R = 0.5 * error_current_R + 0.5 * (i_target - i_meas_R); // current EMA with alpha 0.5
 
-    // Switch case to select error current based on polarity of output PID
-    // (i_target)
-    if (i_target > 0) {
-      error_current = error_current_R;
+    // calculate individual target currents
+    // i_target_L = 1;
+    // i_target_R = 1;
 
-    } else if (i_target < 0) {
-      error_current = error_current_L;
+    // when distance at L is bigger, the input to the distance PID is positive
+    // hence the right magnet should be (more) active 
+    // when i_target (the controller output) is positive
+    // some current is always running through the magnets as a baseline (0 amp in this case)
 
+    if(i_target > 0) {
+      i_target_R = 0 + i_target;
+      i_target_L = 0;
     } else {
-      error_current = 0;
+      i_target_R = 0;
+      i_target_L = 0 - i_target;
     }
 
-    integrator_current += error_current * ITs;
+
+    // for unknown reasons, the right h-bridge sets a currrent that is too high by a factor of 1.5
+    i_target_R = i_target_R / 1.5;
+
+
+    // calculate (filtered) errors
+    error_current_L = 0.5 * error_current_L + 0.5 * (i_target_L - i_meas_L); // curent EMA with alpha 0.5 (invert i_target)
+    error_current_R = 0.5 * error_current_R + 0.5 * (i_target_R - i_meas_R); // current EMA with alpha 0.5
+    
+    // integrator
+    integrator_current_L += error_current_L * ITs;
+    integrator_current_R += error_current_R * ITs;
 
     // clamp integrator (min = -10, max = 10)
-    if (integrator_current > 10) {
-      integrator_current = 10;
-    } else if (integrator_current < -10) {
-      integrator_current = -10;
+    if (integrator_current_L > 10) {
+      integrator_current_L = 10;
+    } else if (integrator_current_L < -10) {
+      integrator_current_L = -10;
+    }
+    if (integrator_current_R > 10) {
+      integrator_current_R = 10;
+    } else if (integrator_current_R < -10) {
+      integrator_current_R = -10;
     }
 
-    // PID to calculate target voltage
-    v_target = P * error_current + integrator_current;
+    // PI control
+    v_target_L = P * error_current_L + integrator_current_L;
+    v_target_R = P * error_current_R + integrator_current_R;
 
     // clamp target voltage (min = 0, max = 40)
-    if (v_target > 40) {
-      v_target = 40;
-    } else if (v_target < 0) {
-      v_target = 0;
+    if (v_target_L > 40) {
+      v_target_L = 40;
+    } else if (v_target_L < -20) {
+      v_target_L = -20;
+    }
+    if (v_target_R > 40) {
+      v_target_R = 40;
+    } else if (v_target_R < -20) {
+      v_target_R = -20;
     }
 
-    i_target = 0;
-    v_target = 0;
-
-    // set output of target voltage to PWM (is this part correct?)
-    if (i_target > 0) {
-      control_R = v_target / 45;
-      control_L = 0;
-
-    } else if (i_target < 0) {
-      control_L = v_target / 45;
-      control_R = 0;
-
-    } else {
-      control_L = 0;
-      control_R = 0;
-    }
+    // set output of target voltage to PWM
+    control_L = v_target_L / 45;
+    control_R = v_target_R / 45;
 
     // limit the duty cycle  
     if (control_L > 0.9) { 
       control_L = 0.9;
     }
+    if (control_L < -0.9) { 
+      control_L = -0.9;
+    }
+    
     if (control_R > 0.9) { 
       control_R = 0.9;
     }
+    if (control_R < -0.9) { 
+      control_R = -0.9;
+    }
+    
     
 
     // initial test
-    control_R = 0.0;
-    control_L = 0.0;
+    // control_R = 0.0;
+    // control_L = 0.0;
 
     /*
     0.1 Duty 2.65A
@@ -321,7 +355,6 @@ int main() {
   pwmBeginInfo.trig1 = 0.0f;
   pwm::begin(pwmBeginInfo);
 
-  Serial.println("Enable Not-Aus");
 
   /*
 
@@ -397,16 +430,19 @@ int main() {
   /* xbar::connect(pwm::TRIG1_SIGNAL_SOURCE, AdcEtc::TRIG1_SIGNAL_SINK); */
 
   delay(5000);
+  Serial.println("Enable Not-Aus");
+  delay(5000);
+  Serial.println("Enable outputs");
+  if (!error_flag) {
+    pwm::enable_output();
+  }
+
   // "precharge"
   delay(1000);
   digitalWrite(GuidanceBoardPin::SDC_TRIG, HIGH);
   delay(1000);
   digitalWrite(GuidanceBoardPin::PRECHARGE_DONE, HIGH);
   delay(1000);
-  Serial.println("Enable outputs");
-  if (!error_flag) {
-    pwm::enable_output();
-  }
 
 
   while (true) {
@@ -450,12 +486,15 @@ int main() {
     */
 
 
-    Serial.printf("Control_L: %f - Control_R: %f \n ",
+    Serial.printf("Control_L: %f - Control_R: %f \n",
                     control_L, control_R);
 
-    Serial.printf("Current left: %f - Current right: %f  - Target current: %f \n \n",
+    Serial.printf("Current left: %f - Current right: %f  - Target current: %f \n",
                     i_meas_L, i_meas_R, i_target);
 
-    delay(50);
+    Serial.printf("Disp_LIM_L: %f  -  Disp_LIM_R: %f  -  Disp_MAG_L: %f  -  Disp_MAG_R: %f \n\n",
+                  disp_meas_LIM_L, disp_meas_LIM_R, disp_meas_MAG_L, disp_meas_MAG_R);
+
+    delay(200);
   }
 }
