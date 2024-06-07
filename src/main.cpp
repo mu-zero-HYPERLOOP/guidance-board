@@ -103,7 +103,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   float control = 0;
 
   if(monitor_flag) {
-    control = 20 / vdc_meas;
+    control = 10 / vdc_meas; // set voltage here
     if(control > 0.95) {
       control = 0.95;
     }
