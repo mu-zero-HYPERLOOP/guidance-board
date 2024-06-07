@@ -26,6 +26,8 @@ int main_counter = 0;
 
 static BoxcarFilter<float, 1000> lim_l(0);
 static BoxcarFilter<float, 1000> lim_r(0);
+static BoxcarFilter<float, 1000> mag_l(0);
+static BoxcarFilter<float, 1000> mag_r(0);
 
 // VDC measurement
 float v_dc_raw_meas;
@@ -71,8 +73,6 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   // get raw values for current and displacement measurements
 
-  // configuration 1
-
   i_meas_L = res.trig_res<0, 0>(); // I_MAG_L
   i_meas_R = res.trig_res<0, 1>(); // I_MAG_R
   v_dc_raw_meas = res.trig_res<0, 2>(); // VDC
@@ -82,22 +82,6 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_MAG_R = res.trig_res<4, 1>(); // DISP_SENS_MAG_R
   disp_meas_LIM_L = res.trig_res<4, 2>(); // DISP_SENS_MAG_L
   disp_meas_LIM_R = res.trig_res<4, 3>(); // DISP_SENS_MAG_R
-
-  /*
-
-  configuration 2
-
-  i_meas_L = res.trig_res<0, 0>(); // I_MAG_L
-  i_meas_R = res.trig_res<4, 0>(); // I_MAG_R
-
-  disp_meas_MAG_L = res.trig_res<0, 1>(); // DISP_SENS_MAG_L
-  disp_meas_MAG_R = res.trig_res<4, 1>(); // DISP_SENS_MAG_R
-
-  disp_meas_LIM_L = res.trig_res<0, 2>(); // DISP_SENS_LIM_L
-  disp_meas_LIM_R = res.trig_res<4, 2>(); // DISP_SENS_LIM_R
-
-
-  */
 
   // convert to actual values
 
@@ -124,14 +108,15 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_LIM_R = (disp_meas_LIM_R - 0.004) * (50.0 - 20.0) / 0.016 + 20.0; // map 4...20mA to 20...50mm
   // disp_meas_LIM_R = -disp_meas_LIM_R;
 
-
   lim_l.push(disp_meas_LIM_L);
   lim_r.push(disp_meas_LIM_R);
+  mag_l.push(disp_meas_MAG_L);
+  mag_r.push(disp_meas_MAG_R);
 
   // VDC measurement (GAIN: theoretically with 1.5, but 1.515 is more accurate)
   v_dc_raw_meas = 3.3 * v_dc_raw_meas / 4096.0;
-  v_dc = v_dc_raw_meas * 52500 / (1500 * 1.515 * 0.4); // voltage divider between 1k5 and 51k
-
+  // EMA filtering for VDC
+  v_dc = 0.9 * v_dc + 0.1 * v_dc_raw_meas * 52500 / (1500 * 1.515 * 0.4); // voltage divider between 1k5 and 51k
 
   // calculate offset from center of track based on airgaps
   // method: subtract both displacement measurements and divide by two
@@ -178,6 +163,14 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   disp_meas_MAG_R -= 26.45;
   disp_meas_MAG_L -= 27.6;
 
+  /*
+  // EMA filtering (alpha = 0.9) for displacement sensors for magnets
+  float disp_meas_MAG_R_delayed = disp_meas_MAG_R;
+  float disp_meas_MAG_L_delayed = disp_meas_MAG_L;
+
+  disp_meas_MAG_R = 0.95 * disp_meas_MAG_R + 0.05 * disp_meas_MAG_R_delayed;
+  disp_meas_MAG_L = 0.95 * disp_meas_MAG_L + 0.05 * disp_meas_MAG_L_delayed;
+  */
   offset = (disp_meas_LIM_L - disp_meas_LIM_R) / 2;
   target_offset = 0;
 
@@ -190,7 +183,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     float D = 0.6; // D = 0.9 for pod 
 
     error_disp_d = error_disp;
-    error_disp = 0.95 * error_disp - 0.05 * (target_offset - offset); // displacement EMA with alpha 0.9
+    error_disp = 0.95 * error_disp - 0.05 * (target_offset - offset); // displacement EMA with alpha 0.95
     integrator_disp += error_disp * ITs;
     derivative_disp = D * (error_disp - error_disp_d) * 20000; // 20kHz PWM frequency
 
@@ -221,7 +214,6 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     P = 1.3;
     ITs = 0.75;
 
-
     // calculate individual target currents
     // i_target_L = 1;
     // i_target_R = 1;
@@ -239,13 +231,12 @@ void adc_etc_done0_isr(AdcTrigRes res) {
       i_target_L = 0 - i_target;
     }
 
-
-    // for unknown reasons, the right h-bridge sets a currrent that is too high by a factor of 1.5
-    i_target_R = i_target_R / 1.5;
-
+    // linearise target currents with magnet distance (seems to make it worse)
+    // i_target_L = i_target_L * disp_meas_MAG_L / 5.721381;
+    // i_target_R = i_target_R * disp_meas_MAG_R / 6.997266;
 
     // calculate (filtered) errors
-    error_current_L = 0.5 * error_current_L + 0.5 * (i_target_L - i_meas_L); // curent EMA with alpha 0.5 (invert i_target)
+    error_current_L = 0.5 * error_current_L + 0.5 * (i_target_L - i_meas_L); // curent EMA with alpha 0.5
     error_current_R = 0.5 * error_current_R + 0.5 * (i_target_R - i_meas_R); // current EMA with alpha 0.5
     
     // integrator
@@ -281,8 +272,8 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     }
 
     // set output of target voltage to PWM
-    control_L = v_target_L / 45;
-    control_R = v_target_R / 45;
+    control_L = v_target_L / v_dc;
+    control_R = v_target_R / v_dc;
 
     // limit the duty cycle  
     if (control_L > 0.9) { 
@@ -299,8 +290,6 @@ void adc_etc_done0_isr(AdcTrigRes res) {
       control_R = -0.9;
     }
     
-    
-
     // initial test
     // control_R = 0.0;
     // control_L = 0.0;
@@ -314,8 +303,6 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     0.16 Duty 4.91A
     0.2 Duty 6.45A
     */
-
-
 
     // write outputs
     PwmControl isr_control;
@@ -354,38 +341,6 @@ int main() {
   pwmBeginInfo.trig0 = 0.0f;
   pwmBeginInfo.trig1 = 0.0f;
   pwm::begin(pwmBeginInfo);
-
-
-  /*
-
-  configuration 1
-
-  TrigChainInfo chains[2];
-  chains[0].trig_num = TRIG0;
-  int chain0_pins[] = {GuidanceBoardPin::I_MAG_L,
-                       GuidanceBoardPin::DISP_SENS_MAG_L,
-                       GuidanceBoardPin::DISP_SENS_LIM_L};
-  chains[0].read_pins = chain0_pins;
-  chains[0].chain_length = sizeof(chain0_pins) / sizeof(int);
-  chains[0].chain_priority = 0;
-  chains[0].software_trig = false;
-  chains[0].trig_sync = true;
-  chains[0].intr = DONE0;
-
-  chains[1].trig_num = TRIG4;
-  int chain4_pins[] = {GuidanceBoardPin::I_MAG_R,
-                       GuidanceBoardPin::DISP_SENS_MAG_R,
-                       GuidanceBoardPin::DISP_SENS_LIM_R};
-  chains[1].read_pins = chain4_pins;
-  chains[1].chain_length = sizeof(chain4_pins) / sizeof(int);
-  chains[1].chain_priority = 0;
-  chains[1].software_trig = false;
-  chains[1].trig_sync = false;
-  chains[1].intr = NONE;
-
-  */
-
-  // configuration 2
 
   TrigChainInfo chains[2];
   chains[0].trig_num = TRIG0;
@@ -437,13 +392,15 @@ int main() {
     pwm::enable_output();
   }
 
-  // "precharge"
+  // precharge
   delay(1000);
   digitalWrite(GuidanceBoardPin::SDC_TRIG, HIGH);
   delay(1000);
+  digitalWrite(GuidanceBoardPin::PRECHARGE_START, HIGH);
+  delay(2000);
   digitalWrite(GuidanceBoardPin::PRECHARGE_DONE, HIGH);
+  digitalWrite(GuidanceBoardPin::PRECHARGE_START, LOW);
   delay(1000);
-
 
   while (true) {
     if (error_flag) {
@@ -468,7 +425,6 @@ int main() {
     // digitalWrite(LED_BUILTIN, LOW);
 
 
-
     /*
     Serial.printf("error flag %u\n", error_flag);
   
@@ -478,13 +434,6 @@ int main() {
         "Measured Offset: %f - Target Current: %f - Target Voltage: %f \n ",
         offset, i_target, v_target);
     */
-
-    /*
-    // testing current ema
-    float i_meas_L_filtered;
-    i_meas_L_filtered = (0.5 * i_meas_L_filtered) + (0.5 * i_meas_L);
-    */
-
 
     Serial.printf("Control_L: %f - Control_R: %f \n",
                     control_L, control_R);
