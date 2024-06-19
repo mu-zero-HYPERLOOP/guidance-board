@@ -101,11 +101,11 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   if(!error_flag) {
 
-  float P = 7; // 9
+  float P = 4; // 9
   // float ITs = 0.0005 - (disp_target-7)*0.0001;
-  float ITs = 0.002; // 0.002
-  float D = 0.045; // 0.02
-  float N = 1000;
+  float ITs = 0.001; // 0.002
+  float D = 0.05; // 0.02
+  float N = 500;
   // disp_target = 7.4; // temporary
   error_disp_d = error_disp;
 
@@ -128,7 +128,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   if(i_target <= 0) {
     i_target = 0;
   } else {
-    // i_target = sqrtf(i_target);
+    i_target = 2.67f * sqrtf(i_target/2.67f);
   }
 
   if(i_target > 20) {
@@ -148,7 +148,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   in_d = in;
 
-  error = 0.5 * error + 0.5 * (i_target / 0.75 - i_meas_R); // EMA
+  error = 0.5 * error + 0.5 * (i_target - i_meas_R); // EMA
   in = error;
 
   integrator_current = integrator_current + in * ITs;
@@ -315,8 +315,8 @@ int main() {
     
     // Serial.printf("Disp_Targ: %f - I_Targ: %f - Integr Disp: %f - DISP_R: %f - Out: %f \n",
     //                 disp_target, i_target, integrator_disp, disp_meas_MAG_R, out);
-    Serial.printf("Disp_Targ: %f - DISP_R: %f - Out: %f \n",
-                    disp_target, disp_meas_MAG_R, out);
+    Serial.printf("Disp_Targ: %f - DISP_R: %f - Out: %f - integrator: %f\n",
+                    disp_target, disp_meas_MAG_R, out, integrator_disp);
 
     // disp_target -= 0.2 / 20;
     // if(disp_target < 6) {
