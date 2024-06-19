@@ -101,10 +101,10 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   if(!error_flag) {
 
-  float P = 11; // 9
+  float P = 7; // 9
   // float ITs = 0.0005 - (disp_target-7)*0.0001;
   float ITs = 0.002; // 0.002
-  float D = 0.04; // 0.02
+  float D = 0.045; // 0.02
   float N = 1000;
   // disp_target = 7.4; // temporary
   error_disp_d = error_disp;
