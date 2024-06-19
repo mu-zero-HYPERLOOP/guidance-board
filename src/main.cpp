@@ -125,6 +125,11 @@ void adc_etc_done0_isr(AdcTrigRes res) {
 
   i_target = P*error_disp + integrator_disp + derivative_disp;
 
+  if(i_target <= 0) {
+    i_target = 0;
+  } else {
+    // i_target = sqrtf(i_target);
+  }
 
   if(i_target > 20) {
     i_target = 20;
