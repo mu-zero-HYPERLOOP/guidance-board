@@ -126,11 +126,11 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   i_target = P*error_disp + integrator_disp + derivative_disp;
 
 
-  if(i_target > 50) {
-    i_target = 50;
+  if(i_target > 20) {
+    i_target = 20;
     digitalWrite(LED_BUILTIN, HIGH);
-  }else if(i_target < -4) {
-    i_target = -4;
+  }else if(i_target < 0) {
+    i_target = 0;
     // digitalWrite(LED_BUILTIN, HIGH);
   }
 
@@ -328,20 +328,21 @@ int main() {
     if(main_counter == 100) {
       // after 5s step to target
       digitalWrite(LED_BUILTIN, LOW);
-      airgap_transition::start_transition(target_list[target_counter], 0);
+      // airgap_transition::start_transition(target_list[target_counter], 0);
+      // airgap_transition::start_transition(6, 10);      
     }
     if(main_counter == 200) {
-      // after 5s step to starting position
-      digitalWrite(LED_BUILTIN, LOW);
-      airgap_transition::start_transition(6, 0);
-      main_counter = 0;
-      target_counter++;
-      if(target_counter >= 5) {
-        // all steps complete
-        target_counter = 0;
+      // // after 5s step to starting position
+      // digitalWrite(LED_BUILTIN, LOW);
+      // airgap_transition::start_transition(6, 0);
+      // main_counter = 0;
+      // target_counter++;
+      // if(target_counter >= 5) {
+      //   // all steps complete
+      //   target_counter = 0;
         
-        // TODO: change control parameters based on results
-      }
+      //   // TODO: change control parameters based on results
+      // }
     }
 
     main_counter++;
