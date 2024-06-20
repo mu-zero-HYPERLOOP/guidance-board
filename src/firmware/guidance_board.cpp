@@ -5,7 +5,7 @@
 #include "firmware/xbar.h"
 #include <Arduino.h>
 
-constexpr size_t MAX_AIN_PERIODIC_JOBS = 6;
+constexpr size_t MAX_AIN_PERIODIC_JOBS = 10;
 
 static AinScheduler<MAX_AIN_PERIODIC_JOBS> ain_scheduler;
 

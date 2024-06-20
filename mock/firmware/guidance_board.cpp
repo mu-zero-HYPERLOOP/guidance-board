@@ -70,6 +70,7 @@ Voltage FASTRUN guidance_board::sync_read(ain_pin pin) {
     case guidance_state_INIT:
     case guidance_state_IDLE:
     case guidance_state_ARMING45:
+    case guidance_state_DISARMING45:
       vdc_voltage.push(0_V);
       break;
     case guidance_state_PRECHARGE:
@@ -115,9 +116,9 @@ bool FLASHMEM guidance_board::register_periodic_reading(
                                         });
 }
 
-/* void FASTRUN guidance_board::set_digital(ctrl_pin pin, bool state) { */
-/*   // pass */
-/* } */
+void FASTRUN guidance_board::set_digital(ctrl_pin pin, bool state) {
+  // pass
+}
 
 void guidance_board::delay(Duration delta) {
   std::this_thread::sleep_for(

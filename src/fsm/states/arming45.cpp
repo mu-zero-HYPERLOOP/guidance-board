@@ -1,4 +1,3 @@
-#pragma once
 #include "canzero/canzero.h"
 #include "feedthrough_mosfet.h"
 #include "firmware/guidance_board.h"

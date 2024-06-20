@@ -10,15 +10,18 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 17)
 
+
 add_executable(${PROJECT_NAME} 
   mock/firmware/adc_etc.cpp
   mock/firmware/guidance_board.cpp
   mock/firmware/pwm.cpp
   mock/firmware/xbar.cpp
   mock/can.cpp
+  mock/print.cpp
   src/canzero/canzero.cpp
   src/fsm/states/arming45.cpp
   src/fsm/states/control.cpp
+  src/fsm/states/disarming45.cpp
   src/fsm/states/idle.cpp
   src/fsm/states/init.cpp
   src/fsm/states/precharge.cpp
@@ -36,6 +39,8 @@ add_executable(${PROJECT_NAME}
   src/sdc_brake.cpp
   src/handle_heartbeat.cpp
 )
+
+add_compile_options(${PROJECT_NAME} -Wpedantic)
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/ mock/)
 

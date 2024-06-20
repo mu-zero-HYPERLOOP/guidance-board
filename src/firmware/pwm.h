@@ -3,26 +3,35 @@
 #include "util/metrics.h"
 #include <cstdint>
 #include <optional>
-//                                                pin number   - guidance - motor
+//                                                pin number   - guidance -
+//                                                motor
 static constexpr bool ENABLE_PWM2_SM0 = false; // pins 4, 33   -          - U1
 static constexpr bool ENABLE_PWM2_SM2 = true;  // pins 6 , 9   - LEFT_L   - V2
 static constexpr bool ENABLE_PWM2_SM3 = false; // pins 36, 37  -          - U2
 static constexpr bool ENABLE_PWM4_SM2 = true;  // pins 2 , 3   - LEFT_R   - W2
-static constexpr bool ENABLE_PWM3_SM1 = true;  // pins 29, 28  - RIGHT_L  - W1
-static constexpr bool ENABLE_PWM1_SM3 = true;  // pins 8 , 7   - RIGHT_R  - V1
+static constexpr bool ENABLE_PWM3_SM1 = true;  // pins 29, 28  - RIGHT_R  - W1! FIXME
+static constexpr bool ENABLE_PWM1_SM3 = true;  // pins 8 , 7   - RIGHT_L  - V1! FIXME
 
 struct PwmControl {
-  float duty20 = 0.5f; // range [0,1]
-  float duty22 = 0.5f;
-  float duty23 = 0.5f;
-  float duty42 = 0.5f;
-  float duty31 = 0.5f;
-  float duty13 = 0.5f;
+  float duty20;
+  float duty22;
+  float duty23;
+  float duty42;
+  float duty31;
+  float duty13;
+
+  constexpr explicit PwmControl(float duty20, float duty22, float duty23,
+                                float duty42, float duty31, float duty13)
+      : duty20(duty20), duty22(duty22), duty23(duty23), duty42(duty42),
+        duty31(duty31), duty13(duty13) {}
+  constexpr explicit PwmControl()
+      : duty20(0.5f), duty22(0.5f), duty23(0.5f), duty42(0.5f), duty31(0.5f),
+        duty13(0.5f) {}
 };
 
 struct PwmBeginInfo {
   Frequency frequency = 20_kHz;
-  Time deadtime = 1_ns;
+  Time deadtime = 1_us;
   bool enable_outputs = false;
   std::optional<float> trig0 = std::nullopt;
   bool enable_trig0_interrupt = false;
@@ -65,13 +74,9 @@ public:
   static void enable_trig1();
   static void disable_trig1();
 
-  inline static bool trig0_is_enabled(){
-    return m_enable_trig0;
-  }
+  inline static bool trig0_is_enabled() { return m_enable_trig0; }
 
-  inline static bool trig1_is_enabled(){
-    return m_enable_trig1;
-  }
+  inline static bool trig1_is_enabled() { return m_enable_trig1; }
 
   static void enable_output();
   static void disable_output();

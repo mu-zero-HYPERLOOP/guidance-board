@@ -19,6 +19,31 @@ void pwm::disable_output() {
   m_outen = false;
 }
 
+void pwm::enable_trig0() {
+  if (m_enable_trig0){
+    return;
+  }
+  m_enable_trig0 = true;
+}
+void pwm::disable_trig0() {
+  if (!m_enable_trig0){
+    return;
+  }
+  m_enable_trig0 = false;
+}
+void pwm::enable_trig1() {
+  if (m_enable_trig1){
+    return;
+  }
+  m_enable_trig1 = true;
+}
+void pwm::disable_trig1() {
+  if (!m_enable_trig1){
+    return;
+  }
+  m_enable_trig1 = false;
+}
+
 void pwm::trig0(const std::optional<float> &trig0) {
   if (m_trig0 == trig0) {
     return;
@@ -33,32 +58,6 @@ void pwm::trig1(const std::optional<float> &trig1) {
   }
   m_trig1 = trig1;
   m_enable_trig1 = m_trig1.has_value();
-}
-
-void pwm::enable_trig0() {
-  if (m_enable_trig0) {
-    return;
-  }
-  m_enable_trig0 = true;
-}
-void pwm::disable_trig0() {
-  if (!m_enable_trig0) {
-    return;
-  }
-  __pwm_control = PwmControl();
-  m_enable_trig0 = false;
-}
-void pwm::enable_trig1() {
-  if (m_enable_trig1) {
-    return;
-  }
-  m_enable_trig0 = true;
-}
-void pwm::disable_trig1() {
-  if (!m_enable_trig1) {
-    return;
-  }
-  m_enable_trig1 = false;
 }
 
 void pwm::enable_trig0_interrupt() {
@@ -95,10 +94,7 @@ void pwm::frequency(const Frequency &frequency) {
   m_frequency = frequency;
 }
 
-void pwm::write_trigs(bool lock) {
-}
-
-void pwm::write_control(bool lock) {
+void pwm::write_control() {
 }
 
 void pwm::deadtime(const Time &deadtime) {
@@ -132,10 +128,10 @@ bool pwm::m_trig0_inten;
 bool pwm::m_trig1_inten;
 std::optional<float> pwm::m_trig0;
 std::optional<float> pwm::m_trig1;
-bool pwm::m_enable_trig0;
-bool pwm::m_enable_trig1;
-volatile uint32_t pwm::m_pwm_cycles;
-volatile uint32_t pwm::m_deadtime_cycles;
+volatile bool pwm::m_enable_trig0;
+volatile bool pwm::m_enable_trig1;
+volatile uint16_t pwm::m_pwm_cycles;
+volatile uint16_t pwm::m_deadtime_cycles;
 
 int pwm::TRIG0_SIGNAL_SOURCE = 0;
 int pwm::TRIG1_SIGNAL_SOURCE = 1;

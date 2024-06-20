@@ -7,7 +7,6 @@
 #include "util/boxcar.h"
 #include "util/metrics.h"
 #include <cassert>
-#include <Arduino.h>
 
 static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
     error_check(canzero_get_input_current,

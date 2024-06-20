@@ -48,6 +48,9 @@ void fsm::update() {
     case guidance_state_CONTROL:
       next_state = states::control(cmd, time_since_last_transition);
       break;
+    case guidance_state_DISARMING45:
+      next_state = states::disarming45(cmd, time_since_last_transition);
+      break;
     }
 
     if (next_state != state) {
