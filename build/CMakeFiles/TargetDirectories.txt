@@ -1,3 +1,0 @@
-/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles/guidance-board.dir
-/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles/edit_cache.dir
-/Users/karlsassie/Documents/muzero/guidance-board/build/CMakeFiles/rebuild_cache.dir

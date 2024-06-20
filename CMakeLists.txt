@@ -33,7 +33,6 @@ add_executable(${PROJECT_NAME}
   src/assert_err.cpp
   src/control.cpp
   src/main.cpp
-  src/pwm_brake.cpp
   src/sdc_brake.cpp
 )
 
