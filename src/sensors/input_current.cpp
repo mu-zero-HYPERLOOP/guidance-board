@@ -17,7 +17,7 @@ static DMAMEM BoxcarFilter<Current, 10> filter(0_A);
 
 static void on_value(const Voltage &v) {
   const Current i = sensors::formula::current_sense(
-      v, sensors::input_current::INPUT_CURRENT_GAIN);
+      v, sensors::input_current::SENSE_GAIN, sensors::input_current::INPUT_SHUNT_R);
   filter.push(i);
   canzero_set_input_current(static_cast<float>(filter.get()));
 }

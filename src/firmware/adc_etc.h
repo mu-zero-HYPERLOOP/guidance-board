@@ -77,6 +77,8 @@ struct AdcEtcBeginInfo {
   AdcClockDivider adc2_clock_div = NO_DIV;
   AdcResolution adc1_resolution = BIT_12;
   AdcResolution adc2_resolution = BIT_12;
+
+  explicit AdcEtcBeginInfo() = default;
 };
 
 struct AdcTrigRes {

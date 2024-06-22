@@ -11,9 +11,11 @@ static AinScheduler<MAX_AIN_PERIODIC_JOBS> ain_scheduler;
 
 void FLASHMEM guidance_board::begin() {
   pinMode(static_cast<uint8_t>(ctrl_pin::sdc_trig_37), OUTPUT);
+  digitalWrite(static_cast<uint8_t>(ctrl_pin::sdc_trig_37), false);
   pinMode(static_cast<uint8_t>(ctrl_pin::precharge_done_31), OUTPUT);
+  digitalWrite(static_cast<uint8_t>(ctrl_pin::precharge_done_31), false);
   pinMode(static_cast<uint8_t>(ctrl_pin::precharge_start_32), OUTPUT);
-
+  digitalWrite(static_cast<uint8_t>(ctrl_pin::precharge_start_32), false);
   xbar::begin();
 }
 

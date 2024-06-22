@@ -28,7 +28,10 @@ add_executable(${PROJECT_NAME}
   src/fsm/states/ready.cpp
   src/fsm/error_handling.cpp
   src/fsm/fsm.cpp
+  src/sensors/airgaps.cpp
+  src/sensors/airgaps.cpp
   src/sensors/input_current.cpp
+  src/sensors/magnet_current.cpp
   src/sensors/magnet_temperatures.cpp
   src/sensors/mcu_temperature.cpp
   src/sensors/vdc.cpp

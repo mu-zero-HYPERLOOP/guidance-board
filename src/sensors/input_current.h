@@ -5,7 +5,8 @@
 namespace sensors::input_current {
 
 constexpr Frequency MEAS_FREQUENCY = 1_kHz;
-constexpr float INPUT_CURRENT_GAIN = 20;
+constexpr float SENSE_GAIN = 20;
+constexpr Resistance INPUT_SHUNT_R = 1_mOhm;
 
 void begin();
 

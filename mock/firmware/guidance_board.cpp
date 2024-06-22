@@ -7,12 +7,12 @@
 #include "sensors/formula/displacement420.h"
 #include "sensors/formula/isolated_voltage.h"
 #include "sensors/input_current.h"
+#include "sensors/magnet_current.h"
 #include "util/boxcar.h"
 #include "util/interval.h"
 #include <chrono>
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 #include <random>
 #include <thread>
 
@@ -53,13 +53,13 @@ static float current_left = 0;
 Voltage FASTRUN guidance_board::sync_read(ain_pin pin) {
   switch (pin) {
   case ain_pin::disp_sense_mag_l_19:
-    return mock_disp(40_mm);
+    return mock_disp(28_mm + 6_mm);
   case ain_pin::disp_sense_lim_l_18:
-    return mock_disp(40_mm);
+    return mock_disp(28_mm + 6_mm);
   case ain_pin::disp_sense_mag_r_17:
-    return mock_disp(40_mm);
+    return mock_disp(28_mm + 6_mm);
   case ain_pin::disp_sense_lim_r_16:
-    return mock_disp(40_mm);
+    return mock_disp(28_mm + 6_mm);
   case ain_pin::temp_sense_l2_21:
   case ain_pin::temp_sense_l1_20:
   case ain_pin::temp_sense_r2_15:
@@ -84,17 +84,18 @@ Voltage FASTRUN guidance_board::sync_read(ain_pin pin) {
     return sensors::formula::inv_isolated_voltage(v_dist);
   }
   case ain_pin::i_mag_l_24: {
-    return mock_current(Current(current_left), adc_isr::CURRENT_MEAS_GAIN_RIGHT);
+    const float duty1 = (__pwm_control.duty13 - 0.5) * 2.0;
+    return mock_current(Current(duty1 * 38), sensors::magnet_current::SENSE_GAIN);
   }
   case ain_pin::i_mag_r_25: {
     const float duty = (__pwm_control.duty42 - 0.5) * 2.0;
-    return mock_current(Current(duty * 38), adc_isr::CURRENT_MEAS_GAIN_RIGHT);
+    return mock_current(Current(duty * 38), sensors::magnet_current::SENSE_GAIN);
   }
   case ain_pin::i_mag_total: {
     const float duty1 = (__pwm_control.duty13 - 0.5) * 2.0;
     const float duty2 = (__pwm_control.duty42 - 0.5) * 2.0;
     return mock_current(Current((duty1 + duty2) * 38),
-                        sensors::input_current::INPUT_CURRENT_GAIN);
+                        sensors::input_current::SENSE_GAIN);
   }
   default:
     assert(false && "trying to read a invalid pin");
