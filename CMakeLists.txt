@@ -43,7 +43,7 @@ add_executable(${PROJECT_NAME}
   src/handle_heartbeat.cpp
 )
 
-add_compile_options(${PROJECT_NAME} -Wpedantic)
+add_compile_options(${PROJECT_NAME} -Wpedantic -std=c++17)
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/ mock/)
 
