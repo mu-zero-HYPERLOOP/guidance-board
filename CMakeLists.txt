@@ -34,6 +34,7 @@ add_executable(${PROJECT_NAME}
   src/control.cpp
   src/main.cpp
   src/sdc_brake.cpp
+  src/handle_heartbeat.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/ mock/)
