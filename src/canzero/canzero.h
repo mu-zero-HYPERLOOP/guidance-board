@@ -15,8 +15,7 @@ typedef enum {
   node_id_input_board = 8,
   node_id_power_board12 = 9,
   node_id_power_board24 = 10,
-  node_id_test_node = 11,
-  node_id_count = 12,
+  node_id_count = 11,
 } node_id;
 typedef struct {
   uint16_t m_od_index;
@@ -31,6 +30,14 @@ typedef struct {
   uint8_t m_client_id;
   uint8_t m_server_id;
 } set_req_header;
+typedef enum {
+  guidance_command_NONE = 0,
+  guidance_command_ARM45 = 1,
+  guidance_command_PRECHARGE = 2,
+  guidance_command_START = 3,
+  guidance_command_STOP = 4,
+  guidance_command_DISARM45 = 5,
+} guidance_command;
 typedef enum {
   bool_t_FALSE = 0,
   bool_t_TRUE = 1,
@@ -67,14 +74,6 @@ typedef enum {
   sdc_status_CLOSED = 1,
 } sdc_status;
 typedef enum {
-  guidance_command_NONE = 0,
-  guidance_command_ARM45 = 1,
-  guidance_command_PRECHARGE = 2,
-  guidance_command_START = 3,
-  guidance_command_STOP = 4,
-  guidance_command_DISARM45 = 5,
-} guidance_command;
-typedef enum {
   error_level_OK = 0,
   error_level_INFO = 1,
   error_level_WARNING = 2,
@@ -103,7 +102,7 @@ typedef struct {
   bool_t m_ignore_warning;
   bool_t m_ignore_error;
 } error_level_config;
-static const node_id CANZERO_NODE_ID = node_id_guidance_board_front;
+static const node_id CANZERO_NODE_ID = node_id_guidance_board_back;
 typedef struct {
   uint32_t id;
   uint8_t dlc;
@@ -339,8 +338,8 @@ typedef struct {
   bool_t m_control_active;
   sdc_status m_precharge_status;
   sdc_status m_feedthrough_status;
-} canzero_message_guidance_board_front_stream_state;
-static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0xE9;
+} canzero_message_guidance_board_back_stream_state;
+static const uint32_t canzero_message_guidance_board_back_stream_state_id = 0xA9;
 typedef struct {
   error_level m_error_level_vdc_voltage;
   error_flag m_error_arming_failed;
@@ -353,26 +352,26 @@ typedef struct {
   error_level m_error_level_mcu_temperature;
   error_flag m_error_heartbeat_miss;
   error_flag m_assertion_fault;
-} canzero_message_guidance_board_front_stream_errors;
-static const uint32_t canzero_message_guidance_board_front_stream_errors_id = 0xBB;
+} canzero_message_guidance_board_back_stream_errors;
+static const uint32_t canzero_message_guidance_board_back_stream_errors_id = 0x13D;
 typedef struct {
   float m_loop_frequency;
-} canzero_message_guidance_board_front_stream_debug;
-static const uint32_t canzero_message_guidance_board_front_stream_debug_id = 0x13C;
+} canzero_message_guidance_board_back_stream_debug;
+static const uint32_t canzero_message_guidance_board_back_stream_debug_id = 0xFD;
 typedef struct {
   float m_vdc_voltage;
   float m_current_left;
   float m_current_right;
   float m_input_current;
-} canzero_message_guidance_board_front_stream_voltage_and_currents;
-static const uint32_t canzero_message_guidance_board_front_stream_voltage_and_currents_id = 0xFB;
+} canzero_message_guidance_board_back_stream_voltage_and_currents;
+static const uint32_t canzero_message_guidance_board_back_stream_voltage_and_currents_id = 0xBC;
 typedef struct {
   float m_outer_airgap_left;
   float m_inner_airgap_left;
   float m_outer_airgap_right;
   float m_inner_airgap_right;
-} canzero_message_guidance_board_front_stream_airgaps;
-static const uint32_t canzero_message_guidance_board_front_stream_airgaps_id = 0xFC;
+} canzero_message_guidance_board_back_stream_airgaps;
+static const uint32_t canzero_message_guidance_board_back_stream_airgaps_id = 0xBD;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
@@ -394,6 +393,10 @@ typedef struct {
   uint32_t m_data;
 } canzero_message_set_req;
 static const uint32_t canzero_message_set_req_id = 0x1BE;
+typedef struct {
+  guidance_command m_guidance_command;
+} canzero_message_mother_board_stream_guidance_command;
+static const uint32_t canzero_message_mother_board_stream_guidance_command_id = 0xA3;
 typedef struct {
   float m_lt2;
   float m_rt2;

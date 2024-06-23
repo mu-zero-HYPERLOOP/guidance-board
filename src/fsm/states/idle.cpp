@@ -11,6 +11,11 @@ guidance_state fsm::states::idle(guidance_command cmd, Duration time_since_last_
     return guidance_state_ARMING45;
   }
 
+  if (time_since_last_transition > 3_s){
+    canzero_set_error_arming_failed(error_flag_OK);
+    canzero_set_error_precharge_failed(error_flag_OK);
+  }
+
   pwm::disable_output();
   pwm::disable_trig0();
   pwm::disable_trig1();
