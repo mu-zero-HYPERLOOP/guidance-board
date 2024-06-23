@@ -137,7 +137,7 @@ extern void adc_etc_done0_isr(AdcTrigRes);
 extern void adc_etc_done1_isr(AdcTrigRes);
 
 using namespace std::chrono;
-static high_resolution_clock::time_point last = high_resolution_clock::now();
+static high_resolution_clock::time_point last_step = high_resolution_clock::now();
 
 void guidance_board::update() {
   ain_scheduler.update_continue();
@@ -152,9 +152,9 @@ void guidance_board::update() {
   }
 
   const high_resolution_clock::time_point now = high_resolution_clock::now();
-  const high_resolution_clock::duration dt_duration = now - last;
+  const high_resolution_clock::duration dt_duration = now - last_step;
   float dt = duration_cast<duration<float, std::ratio<1>>>(dt_duration).count();
-  last = now;
+  last_step = now;
 
   
   constexpr float L = 0.07;
