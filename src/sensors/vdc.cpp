@@ -48,5 +48,7 @@ void sensors::vdc::calibrate() {
 }
 
 void sensors::vdc::update() {
-  error_check.check();
+  if (canzero_get_ignore_45v() == bool_t_FALSE) {
+    error_check.check();
+  }
 }

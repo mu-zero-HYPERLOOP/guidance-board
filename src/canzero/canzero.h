@@ -15,7 +15,8 @@ typedef enum {
   node_id_input_board = 8,
   node_id_power_board12 = 9,
   node_id_power_board24 = 10,
-  node_id_count = 11,
+  node_id_led_board = 11,
+  node_id_count = 12,
 } node_id;
 typedef struct {
   uint16_t m_od_index;
@@ -74,15 +75,15 @@ typedef enum {
   sdc_status_CLOSED = 1,
 } sdc_status;
 typedef enum {
+  error_flag_OK = 0,
+  error_flag_ERROR = 1,
+} error_flag;
+typedef enum {
   error_level_OK = 0,
   error_level_INFO = 1,
   error_level_WARNING = 2,
   error_level_ERROR = 3,
 } error_level;
-typedef enum {
-  error_flag_OK = 0,
-  error_flag_ERROR = 1,
-} error_flag;
 typedef struct {
   uint16_t m_year;
   uint8_t m_month;
@@ -102,7 +103,7 @@ typedef struct {
   bool_t m_ignore_warning;
   bool_t m_ignore_error;
 } error_level_config;
-static const node_id CANZERO_NODE_ID = node_id_guidance_board_back;
+static const node_id CANZERO_NODE_ID = node_id_guidance_board_front;
 typedef struct {
   uint32_t id;
   uint8_t dlc;
@@ -141,6 +142,14 @@ static inline guidance_state canzero_get_state() {
 static inline sdc_status canzero_get_sdc_status() {
   extern sdc_status __oe_sdc_status;
   return __oe_sdc_status;
+}
+static inline error_flag canzero_get_error_heartbeat_miss() {
+  extern error_flag __oe_error_heartbeat_miss;
+  return __oe_error_heartbeat_miss;
+}
+static inline error_level canzero_get_errro_level_mcu_temperature() {
+  extern error_level __oe_errro_level_mcu_temperature;
+  return __oe_errro_level_mcu_temperature;
 }
 static inline guidance_command canzero_get_command() {
   extern guidance_command __oe_command;
@@ -282,10 +291,6 @@ static inline error_flag canzero_get_assertion_fault() {
   extern error_flag __oe_assertion_fault;
   return __oe_assertion_fault;
 }
-static inline error_flag canzero_get_error_heartbeat_miss() {
-  extern error_flag __oe_error_heartbeat_miss;
-  return __oe_error_heartbeat_miss;
-}
 static inline float canzero_get_gamepad_lt2() {
   extern float __oe_gamepad_lt2;
   return __oe_gamepad_lt2;
@@ -322,15 +327,19 @@ static inline bool_t canzero_get_gamepad_x_down() {
   extern bool_t __oe_gamepad_x_down;
   return __oe_gamepad_x_down;
 }
+static inline bool_t canzero_get_ignore_45v() {
+  extern bool_t __oe_ignore_45v;
+  return __oe_ignore_45v;
+}
 typedef struct {
   get_resp_header m_header;
   uint32_t m_data;
 } canzero_message_get_resp;
-static const uint32_t canzero_message_get_resp_id = 0x17D;
+static const uint32_t canzero_message_get_resp_id = 0xFD;
 typedef struct {
   set_resp_header m_header;
 } canzero_message_set_resp;
-static const uint32_t canzero_message_set_resp_id = 0x1BD;
+static const uint32_t canzero_message_set_resp_id = 0x11D;
 typedef struct {
   guidance_state m_state;
   sdc_status m_sdc_status;
@@ -338,65 +347,70 @@ typedef struct {
   bool_t m_control_active;
   sdc_status m_precharge_status;
   sdc_status m_feedthrough_status;
-} canzero_message_guidance_board_back_stream_state;
-static const uint32_t canzero_message_guidance_board_back_stream_state_id = 0xA9;
+} canzero_message_guidance_board_front_stream_state;
+static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0xB2;
 typedef struct {
-  error_level m_error_level_vdc_voltage;
+  error_flag m_error_heartbeat_miss;
+  error_level m_errro_level_mcu_temperature;
+  error_flag m_assertion_fault;
   error_flag m_error_arming_failed;
   error_flag m_error_precharge_failed;
+  error_level m_error_level_vdc_voltage;
   error_level m_error_level_magnet_current_left;
   error_level m_error_level_magnet_current_right;
   error_level m_error_level_input_current;
   error_level m_error_level_magnet_temperature_left;
   error_level m_error_level_magnet_temperature_right;
   error_level m_error_level_mcu_temperature;
-  error_flag m_error_heartbeat_miss;
-  error_flag m_assertion_fault;
-} canzero_message_guidance_board_back_stream_errors;
-static const uint32_t canzero_message_guidance_board_back_stream_errors_id = 0x13D;
+} canzero_message_guidance_board_front_stream_errors;
+static const uint32_t canzero_message_guidance_board_front_stream_errors_id = 0x92;
 typedef struct {
   float m_loop_frequency;
-} canzero_message_guidance_board_back_stream_debug;
-static const uint32_t canzero_message_guidance_board_back_stream_debug_id = 0xFD;
+} canzero_message_guidance_board_front_stream_debug;
+static const uint32_t canzero_message_guidance_board_front_stream_debug_id = 0xDD;
 typedef struct {
   float m_vdc_voltage;
   float m_current_left;
   float m_current_right;
   float m_input_current;
-} canzero_message_guidance_board_back_stream_voltage_and_currents;
-static const uint32_t canzero_message_guidance_board_back_stream_voltage_and_currents_id = 0xBC;
+} canzero_message_guidance_board_front_stream_voltage_and_currents;
+static const uint32_t canzero_message_guidance_board_front_stream_voltage_and_currents_id = 0x5C;
 typedef struct {
   float m_outer_airgap_left;
   float m_inner_airgap_left;
   float m_outer_airgap_right;
   float m_inner_airgap_right;
-} canzero_message_guidance_board_back_stream_airgaps;
-static const uint32_t canzero_message_guidance_board_back_stream_airgaps_id = 0xBD;
+} canzero_message_guidance_board_front_stream_airgaps;
+static const uint32_t canzero_message_guidance_board_front_stream_airgaps_id = 0xBD;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can0;
-static const uint32_t canzero_message_heartbeat_can0_id = 0x1E5;
+static const uint32_t canzero_message_heartbeat_can0_id = 0x12E;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can1;
-static const uint32_t canzero_message_heartbeat_can1_id = 0x1E4;
+static const uint32_t canzero_message_heartbeat_can1_id = 0x12D;
 typedef struct {
   get_req_header m_header;
 } canzero_message_get_req;
-static const uint32_t canzero_message_get_req_id = 0x17E;
+static const uint32_t canzero_message_get_req_id = 0xFE;
 typedef struct {
   set_req_header m_header;
   uint32_t m_data;
 } canzero_message_set_req;
-static const uint32_t canzero_message_set_req_id = 0x1BE;
+static const uint32_t canzero_message_set_req_id = 0x11E;
 typedef struct {
   guidance_command m_guidance_command;
 } canzero_message_mother_board_stream_guidance_command;
-static const uint32_t canzero_message_mother_board_stream_guidance_command_id = 0xA3;
+static const uint32_t canzero_message_mother_board_stream_guidance_command_id = 0x4B;
+typedef struct {
+  bool_t m_ignore_45v;
+} canzero_message_mother_board_stream_debug_settings;
+static const uint32_t canzero_message_mother_board_stream_debug_settings_id = 0x4C;
 typedef struct {
   float m_lt2;
   float m_rt2;
@@ -413,7 +427,7 @@ typedef struct {
   bool_t m_lsb_down;
   bool_t m_rsb_down;
 } canzero_message_gamepad_stream_input;
-static const uint32_t canzero_message_gamepad_stream_input_id = 0xBF;
+static const uint32_t canzero_message_gamepad_stream_input_id = 0x5F;
 void canzero_can0_poll();
 void canzero_can1_poll();
 uint32_t canzero_update_continue(uint32_t delta_time);
@@ -431,6 +445,10 @@ static inline void canzero_set_build_time(date_time value){
 void canzero_set_state(guidance_state value);
 
 void canzero_set_sdc_status(sdc_status value);
+
+void canzero_set_error_heartbeat_miss(error_flag value);
+
+void canzero_set_errro_level_mcu_temperature(error_level value);
 
 void canzero_set_command(guidance_command value);
 
@@ -565,8 +583,6 @@ static inline void canzero_set_loop_frequency(float value){
 
 void canzero_set_assertion_fault(error_flag value);
 
-void canzero_set_error_heartbeat_miss(error_flag value);
-
 static inline void canzero_set_gamepad_lt2(float value){
   extern float __oe_gamepad_lt2;
   __oe_gamepad_lt2 = value;
@@ -612,6 +628,11 @@ static inline void canzero_set_gamepad_x_down(bool_t value){
   __oe_gamepad_x_down = value;
 }
 
+static inline void canzero_set_ignore_45v(bool_t value){
+  extern bool_t __oe_ignore_45v;
+  __oe_ignore_45v = value;
+}
+
 void canzero_send_config_hash();
 
 void canzero_send_build_time();
@@ -619,6 +640,10 @@ void canzero_send_build_time();
 void canzero_send_state();
 
 void canzero_send_sdc_status();
+
+void canzero_send_error_heartbeat_miss();
+
+void canzero_send_errro_level_mcu_temperature();
 
 void canzero_send_command();
 
@@ -690,8 +715,6 @@ void canzero_send_loop_frequency();
 
 void canzero_send_assertion_fault();
 
-void canzero_send_error_heartbeat_miss();
-
 void canzero_send_gamepad_lt2();
 
 void canzero_send_gamepad_rt2();
@@ -709,5 +732,7 @@ void canzero_send_gamepad_lt1_down();
 void canzero_send_gamepad_rt1_down();
 
 void canzero_send_gamepad_x_down();
+
+void canzero_send_ignore_45v();
 
 #endif

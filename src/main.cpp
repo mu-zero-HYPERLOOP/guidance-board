@@ -2,6 +2,7 @@
 #include "adc_isr.h"
 #include "canzero/canzero.h"
 #include "control.h"
+#include "defaults.h"
 #include "firmware/guidance_board.h"
 #include "fsm/fsm.h"
 #include "pwm_config.h"
@@ -16,6 +17,7 @@ int main() {
   guidance_board::delay(3_s);
 
   canzero_init();
+  can_defaults();
 
   fsm::begin();
 
