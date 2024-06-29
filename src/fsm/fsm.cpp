@@ -14,6 +14,8 @@ void fsm::begin() {
 
 void fsm::finish_init() {
   canzero_set_state(guidance_state_IDLE);
+  canzero_set_error_precharge_failed(error_flag_OK);
+  canzero_set_error_arming_failed(error_flag_OK);
   canzero_update_continue(canzero_get_time());
 }
 

@@ -25,7 +25,7 @@ Voltage FASTRUN guidance_board::sync_read(ain_pin pin) {
 
 Temperature guidance_board::read_mcu_temperature() {
   float temp = InternalTemperature.readTemperatureC();
-  float temp_kelvin = temp - 273.15f;
+  float temp_kelvin = temp + 273.15f;
   return Temperature(temp_kelvin);
 }
 
