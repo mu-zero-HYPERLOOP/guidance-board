@@ -14,8 +14,6 @@
 #include "xbar_config.h"
 
 int main() {
-  guidance_board::delay(3_s);
-
   canzero_init();
   can_defaults();
 
