@@ -16,10 +16,6 @@ GuidancePwmControl FASTRUN control::control_loop(Current current_left,
                                                  Distance magnet_airgap_right,
                                                  Distance lim_airgap_right) {
 
-  // USE this for error handling!
-  //sdc_brake::brake_immediatly();
-
-
   const Voltage v_left = 0_V;
   const Voltage v_right = 0_V;
 
