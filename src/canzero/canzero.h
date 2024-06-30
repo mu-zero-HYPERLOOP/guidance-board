@@ -147,9 +147,9 @@ static inline error_flag canzero_get_error_heartbeat_miss() {
   extern error_flag __oe_error_heartbeat_miss;
   return __oe_error_heartbeat_miss;
 }
-static inline error_level canzero_get_errro_level_mcu_temperature() {
-  extern error_level __oe_errro_level_mcu_temperature;
-  return __oe_errro_level_mcu_temperature;
+static inline error_level canzero_get_error_level_mcu_temperature() {
+  extern error_level __oe_error_level_mcu_temperature;
+  return __oe_error_level_mcu_temperature;
 }
 static inline guidance_command canzero_get_command() {
   extern guidance_command __oe_command;
@@ -275,10 +275,6 @@ static inline float canzero_get_mcu_temperature() {
   extern float __oe_mcu_temperature;
   return __oe_mcu_temperature;
 }
-static inline error_level canzero_get_error_level_mcu_temperature() {
-  extern error_level __oe_error_level_mcu_temperature;
-  return __oe_error_level_mcu_temperature;
-}
 static inline error_level_config canzero_get_error_level_config_mcu_temperature() {
   extern error_level_config __oe_error_level_config_mcu_temperature;
   return __oe_error_level_config_mcu_temperature;
@@ -351,7 +347,7 @@ typedef struct {
 static const uint32_t canzero_message_guidance_board_back_stream_state_id = 0x71;
 typedef struct {
   error_flag m_error_heartbeat_miss;
-  error_level m_errro_level_mcu_temperature;
+  error_level m_error_level_mcu_temperature;
   error_flag m_assertion_fault;
   error_flag m_error_arming_failed;
   error_flag m_error_precharge_failed;
@@ -361,7 +357,6 @@ typedef struct {
   error_level m_error_level_input_current;
   error_level m_error_level_magnet_temperature_left;
   error_level m_error_level_magnet_temperature_right;
-  error_level m_error_level_mcu_temperature;
 } canzero_message_guidance_board_back_stream_errors;
 static const uint32_t canzero_message_guidance_board_back_stream_errors_id = 0x51;
 typedef struct {
@@ -454,7 +449,7 @@ void canzero_set_sdc_status(sdc_status value);
 
 void canzero_set_error_heartbeat_miss(error_flag value);
 
-void canzero_set_errro_level_mcu_temperature(error_level value);
+void canzero_set_error_level_mcu_temperature(error_level value);
 
 void canzero_set_command(guidance_command value);
 
@@ -575,8 +570,6 @@ static inline void canzero_set_mcu_temperature(float value){
   __oe_mcu_temperature = value;
 }
 
-void canzero_set_error_level_mcu_temperature(error_level value);
-
 static inline void canzero_set_error_level_config_mcu_temperature(error_level_config value){
   extern error_level_config __oe_error_level_config_mcu_temperature;
   __oe_error_level_config_mcu_temperature = value;
@@ -649,7 +642,7 @@ void canzero_send_sdc_status();
 
 void canzero_send_error_heartbeat_miss();
 
-void canzero_send_errro_level_mcu_temperature();
+void canzero_send_error_level_mcu_temperature();
 
 void canzero_send_command();
 
@@ -712,8 +705,6 @@ void canzero_send_error_level_magnet_temperature_right();
 void canzero_send_error_level_config_magnet_temperature();
 
 void canzero_send_mcu_temperature();
-
-void canzero_send_error_level_mcu_temperature();
 
 void canzero_send_error_level_config_mcu_temperature();
 
