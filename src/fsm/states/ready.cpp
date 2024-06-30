@@ -24,8 +24,8 @@ guidance_state fsm::states::ready(guidance_command cmd, Duration time_since_last
     canzero_set_command(guidance_command_NONE);
     return guidance_state_IDLE;
   }
-  precharge_mosfet::close();
-  feedthrough_mosfet::open();
+  precharge_mosfet::open();
+  feedthrough_mosfet::close();
 
   return guidance_state_READY;
 }
