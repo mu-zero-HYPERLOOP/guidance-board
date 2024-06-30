@@ -24,8 +24,8 @@ guidance_state fsm::states::arming45(guidance_command cmd, Duration time_since_l
 
   pwm::control(PwmControl());
   pwm::enable_output();
-  pwm::disable_trig0();
   pwm::disable_trig1();
+
   if (!sdc_brake::request_close()) {
     canzero_set_command(guidance_command_NONE);
     return guidance_state_DISARMING45;

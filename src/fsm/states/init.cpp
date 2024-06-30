@@ -7,9 +7,10 @@
 
 guidance_state fsm::states::init(guidance_command cmd, Duration time_since_last_transition) {
   canzero_set_error_arming_failed(error_flag_OK);
+
   pwm::disable_output();
-  pwm::disable_trig0();
   pwm::disable_trig1();
+
   sdc_brake::open();
 
   precharge_mosfet::open();

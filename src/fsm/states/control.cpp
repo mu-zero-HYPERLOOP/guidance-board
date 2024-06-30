@@ -16,8 +16,8 @@ guidance_state fsm::states::control(guidance_command cmd, Duration time_since_la
 
   pwm::enable_output();
   // pwm control set by isr!
-  pwm::enable_trig0();
   pwm::enable_trig1();
+
   if (!sdc_brake::request_close()) {
     canzero_set_command(guidance_command_NONE);
     return guidance_state_IDLE;

@@ -27,8 +27,7 @@ guidance_state fsm::states::precharge(guidance_command cmd,
 
   pwm::control(PwmControl());
   pwm::enable_output();
-  pwm::enable_trig0();
-  pwm::enable_trig1();
+  pwm::disable_trig1();
 
   if (!sdc_brake::request_close()) {
     canzero_set_command(guidance_command_DISARM45);
