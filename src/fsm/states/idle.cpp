@@ -1,4 +1,5 @@
 #include "canzero/canzero.h"
+#include "control.h"
 #include "feedthrough_mosfet.h"
 #include "firmware/guidance_board.h"
 #include "fsm/states.h"
@@ -19,6 +20,7 @@ guidance_state fsm::states::idle(guidance_command cmd, Duration time_since_last_
   sdc_brake::open();
   sdc_brake::release_brake();
 
+  pwm::control(GuidancePwmControl());
   pwm::disable_output();
   pwm::disable_trig1();
 

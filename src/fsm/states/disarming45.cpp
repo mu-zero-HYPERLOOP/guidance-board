@@ -1,4 +1,5 @@
 #include "canzero/canzero.h"
+#include "control.h"
 #include "feedthrough_mosfet.h"
 #include "fsm/states.h"
 #include "firmware/pwm.h"
@@ -15,7 +16,7 @@ guidance_state fsm::states::disarming45(guidance_command cmd, Duration time_sinc
   }
 
 
-  pwm::control(PwmControl());
+  pwm::control(GuidancePwmControl());
   pwm::enable_output();
   pwm::disable_trig1();
 
