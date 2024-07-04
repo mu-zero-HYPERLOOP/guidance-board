@@ -38,7 +38,7 @@ float offset;
 float target_offset;
 float disp_meas_MAG_L, disp_meas_MAG_R, disp_meas_LIM_L, disp_meas_LIM_R;
 float error_disp, error_disp_d;
-float integrator_disp;
+float integrator_disp = 0;
 float derivative_disp;
 float i_target; // PWM output (target current)
 float i_target_L, i_target_R;
@@ -48,8 +48,8 @@ float i_meas_L, i_meas_R;
 float error_current;
 float error_current_L;
 float error_current_R;
-float integrator_current_L;
-float integrator_current_R;
+float integrator_current_L = 0;
+float integrator_current_R = 0;
 float v_target_L; // PWM output (target voltage)
 float v_target_R; // PWM output (target voltage)
 
@@ -116,7 +116,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   // VDC measurement (GAIN: theoretically with 1.5, but 1.515 is more accurate)
   v_dc_raw_meas = 3.3 * v_dc_raw_meas / 4096.0;
   // EMA filtering for VDC
-  v_dc = 0.9 * v_dc + 0.1 * v_dc_raw_meas * 52500 / (1500 * 1.515 * 0.4); // voltage divider between 1k5 and 51k
+  v_dc = 0.9 * v_dc + 0.1 * v_dc_raw_meas * 52500 / (1500 * 1.49 * 0.4); // voltage divider between 1k5 and 51k
 
   // calculate offset from center of track based on airgaps
   // method: subtract both displacement measurements and divide by two
@@ -188,10 +188,10 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     derivative_disp = D * (error_disp - error_disp_d) * 20000; // 20kHz PWM frequency
 
     // clamp integrator (min = -30, max = 30)
-    if (integrator_disp > 30) {
-      integrator_disp = 30;
-    } else if (integrator_disp < -30) {
-      integrator_disp = -30;
+    if (integrator_disp > 90) {
+      integrator_disp = 90;
+    } else if (integrator_disp < -90) {
+      integrator_disp = -90;
     }
 
     // PID to calculate target current
@@ -231,6 +231,7 @@ void adc_etc_done0_isr(AdcTrigRes res) {
       i_target_L = 0 - i_target;
     }
 
+
     // linearise target currents with magnet distance (seems to make it worse)
     // i_target_L = i_target_L * disp_meas_MAG_L / 5.721381;
     // i_target_R = i_target_R * disp_meas_MAG_R / 6.997266;
@@ -244,15 +245,15 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     integrator_current_R += error_current_R * ITs;
 
     // clamp integrator (min = -10, max = 10)
-    if (integrator_current_L > 10) {
-      integrator_current_L = 10;
-    } else if (integrator_current_L < -10) {
-      integrator_current_L = -10;
+    if (integrator_current_L > 20) {
+      integrator_current_L = 20;
+    } else if (integrator_current_L < -20) {
+      integrator_current_L = -20;
     }
-    if (integrator_current_R > 10) {
-      integrator_current_R = 10;
-    } else if (integrator_current_R < -10) {
-      integrator_current_R = -10;
+    if (integrator_current_R > 20) {
+      integrator_current_R = 20;
+    } else if (integrator_current_R < -20) {
+      integrator_current_R = -20;
     }
 
     // PI control
@@ -274,6 +275,14 @@ void adc_etc_done0_isr(AdcTrigRes res) {
     // set output of target voltage to PWM
     control_L = v_target_L / v_dc;
     control_R = v_target_R / v_dc;
+
+    if (i_meas_L < 1 && i_target_L <= 0) {
+      control_L = 0;
+    }
+    
+    if (i_meas_R < 1 && i_target_R <= 0) {
+      control_R = 0;
+    }
 
     // limit the duty cycle  
     if (control_L > 0.9) { 
