@@ -29,10 +29,16 @@ GuidancePwmControl FASTRUN control::control_loop(Current current_left,
   float dutyRL = 0.5 + controlRight / 2;
   float dutyRR = 0.5 - controlRight / 2;
 
+  dutyLL = 0.0f;
+  dutyLR = 0.0f;
+  dutyRL = 0.0f;
+  dutyRR = 0.0f;
+
   dutyLL = std::clamp(dutyLL, 0.1f, 0.9f);
   dutyLR = std::clamp(dutyLR, 0.1f, 0.9f);
   dutyRL = std::clamp(dutyRL, 0.1f, 0.9f);
   dutyRR = std::clamp(dutyRR, 0.1f, 0.9f);
+
 
   GuidancePwmControl pwmControl{};
   pwmControl.left_l = dutyLL;
