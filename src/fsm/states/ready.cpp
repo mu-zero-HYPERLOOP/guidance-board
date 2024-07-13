@@ -2,7 +2,6 @@
 #include "canzero/canzero.h"
 #include "control.h"
 #include "feedthrough_mosfet.h"
-#include "firmware/guidance_board.h"
 #include "fsm/states.h"
 #include "precharge_mosfet.h"
 #include "sdc_brake.h"
@@ -17,9 +16,9 @@ guidance_state fsm::states::ready(guidance_command cmd, Duration time_since_last
     return guidance_state_CONTROL;
   }
 
-  pwm::control(GuidancePwmControl());
-  pwm::enable_output();
   pwm::disable_trig1();
+  pwm::control(GuidancePwmControl{});
+  pwm::enable_output();
 
   if (!sdc_brake::request_close()) {
     canzero_set_command(guidance_command_NONE);
