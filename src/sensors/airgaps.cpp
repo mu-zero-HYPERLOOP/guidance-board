@@ -35,24 +35,48 @@ Distance sensors::airgaps::conv_right_lim(Voltage v){
 
 
 static void on_left_mag_disp(const Voltage &v) {
+  if (v < 0.1_V) {
+    canzero_set_error_outer_airgap_left_invalid(error_flag_ERROR);
+    canzero_set_outer_airgap_left(0);
+    return;
+  }
+  canzero_set_error_outer_airgap_left_invalid(error_flag_OK);
   const Distance disp = sensors::airgaps::conv_left_mag(v);
   left_mag_filter.push(disp);
   canzero_set_outer_airgap_left(left_mag_filter.get() / 1_mm);
 }
 
 static void on_right_mag_disp(const Voltage &v) {
+  if (v < 0.1_V) {
+    canzero_set_error_outer_airgap_right_invalid(error_flag_ERROR);
+    canzero_set_outer_airgap_right(0);
+    return;
+  }
+  canzero_set_error_outer_airgap_right_invalid(error_flag_OK);
   const Distance disp = sensors::airgaps::conv_right_mag(v);
   right_mag_filter.push(disp);
   canzero_set_outer_airgap_right(right_mag_filter.get() / 1_mm);
 }
 
 static void on_left_lim_disp(const Voltage &v) {
+  if (v < 0.1_V) {
+    canzero_set_error_inner_airgap_left_invalid(error_flag_ERROR);
+    canzero_set_inner_airgap_left(0);
+    return;
+  }
+  canzero_set_error_inner_airgap_left_invalid(error_flag_OK);
   const Distance disp = sensors::airgaps::conv_left_lim(v);
   left_lim_filter.push(disp);
   canzero_set_inner_airgap_left(left_lim_filter.get() / 1_mm);
 }
 
 static void on_right_lim_disp(const Voltage &v) {
+  if (v < 0.1_V) {
+    canzero_set_error_inner_airgap_right_invalid(error_flag_ERROR);
+    canzero_set_inner_airgap_right(0);
+    return;
+  }
+  canzero_set_error_inner_airgap_right_invalid(error_flag_OK);
   const Distance disp = sensors::airgaps::conv_right_lim(v);
   right_lim_filter.push(disp);
   canzero_set_outer_airgap_right(right_lim_filter.get() / 1_mm);

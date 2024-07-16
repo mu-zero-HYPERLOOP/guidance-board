@@ -471,7 +471,7 @@ static void scheduler_unschedule() {
   scheduler.size -= 1;
   scheduler_reschedule(scheduler.heap[0]->climax);
 }
-static const uint32_t get_resp_fragmentation_interval = 100;
+static const uint32_t get_resp_fragmentation_interval = 10;
 static void schedule_get_resp_fragmentation_job(uint32_t *fragmentation_buffer, uint8_t size, uint8_t od_index, uint8_t client_id) {
   job_t *fragmentation_job = job_pool_allocator_alloc();
   fragmentation_job->climax = canzero_get_time() + get_resp_fragmentation_interval;
@@ -2170,7 +2170,7 @@ uint32_t canzero_update_continue(uint32_t time){
 #define BUILD_MIN   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_MIN)
 #define BUILD_SEC   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_SEC)
 void canzero_init() {
-  __oe_config_hash = 2876945102520670225ull;
+  __oe_config_hash = 15293460524362237552ull;
   __oe_build_time = {
     .m_year = BUILD_YEAR,
     .m_month = BUILD_MONTH,

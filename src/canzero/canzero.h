@@ -107,7 +107,7 @@ static const node_id CANZERO_NODE_ID = node_id_guidance_board_front;
 typedef struct {
   uint32_t id;
   uint8_t dlc;
-  __attribute__((aligned(alignof(uint64_t)))) uint8_t data[8];
+  uint8_t data[8];
 } canzero_frame;
 typedef enum : uint32_t {
   CANZERO_FRAME_IDE_BIT = 0x40000000, // 1 << 30
