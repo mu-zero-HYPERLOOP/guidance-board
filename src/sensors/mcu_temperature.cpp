@@ -21,12 +21,12 @@ void FLASHMEM sensors::mcu_temperature::begin() {
   canzero_set_error_level_mcu_temperature(error_level_OK);
   canzero_set_error_mcu_temperature_invalid(error_flag_OK);
   canzero_set_error_level_config_mcu_temperature(error_level_config{
-    .m_info_thresh = 45,
-    .m_info_timeout = 5,
-    .m_warning_thresh = 65,
-    .m_warning_timeout = 5,
-    .m_error_thresh = 80,
-    .m_error_timeout = 5,
+    .m_info_thresh = 70,
+    .m_info_timeout = 1,
+    .m_warning_thresh = 80,
+    .m_warning_timeout = 1,
+    .m_error_thresh = 90,
+    .m_error_timeout = 1,
     .m_ignore_info = bool_t_FALSE,
     .m_ignore_warning = bool_t_FALSE,
     .m_ignore_error = bool_t_FALSE,
