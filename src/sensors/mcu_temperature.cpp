@@ -19,6 +19,7 @@ void FLASHMEM sensors::mcu_temperature::begin() {
   canzero_set_mcu_temperature(24);
   /* canzero_set_error_mcu_temperature_invalid(error_flag_OK); */
   canzero_set_error_level_mcu_temperature(error_level_OK);
+  canzero_set_error_mcu_temperature_invalid(error_flag_OK);
   canzero_set_error_level_config_mcu_temperature(error_level_config{
     .m_info_thresh = 45,
     .m_info_timeout = 5,
@@ -50,6 +51,8 @@ void FASTRUN sensors::mcu_temperature::update() {
   if (interval.next()) {
     filter.push(guidance_board::read_mcu_temperature());
     canzero_set_mcu_temperature(static_cast<float>(filter.get() - 0_Celcius));
+    const bool sensible = filter.get() >= 0_Celcius && filter.get() <= 200_Celcius;
+    canzero_set_error_mcu_temperature_invalid(sensible ? error_flag_OK : error_flag_ERROR);
   }
   error_check.check();
 }
