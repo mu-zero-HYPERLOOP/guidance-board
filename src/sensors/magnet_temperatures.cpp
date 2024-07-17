@@ -1,6 +1,5 @@
 #include "sensors/magnet_temperatures.h"
 #include "avr/pgmspace.h"
-#include "print.h"
 #include "canzero/canzero.h"
 #include "error_level_range_check.h"
 #include "firmware/guidance_board.h"
@@ -8,7 +7,6 @@
 #include "sensors/formula/voltage_divider.h"
 #include "util/boxcar.h"
 #include "util/metrics.h"
-#include <algorithm>
 #include <cassert>
 
 static DMAMEM BoxcarFilter<Temperature, 100> left_filter(24_Celcius);

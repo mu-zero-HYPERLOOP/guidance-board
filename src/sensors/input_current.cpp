@@ -3,6 +3,7 @@
 #include "canzero/canzero.h"
 #include "error_level_range_check.h"
 #include "firmware/guidance_board.h"
+#include "print.h"
 #include "sensors/formula/current_sense.h"
 #include "util/boxcar.h"
 #include "util/metrics.h"
@@ -16,8 +17,15 @@ static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
 static DMAMEM BoxcarFilter<Current, 10> filter(0_A);
 
 static void on_value(const Voltage &v) {
-  const Current i = sensors::formula::current_sense(
-      v, sensors::input_current::SENSE_GAIN, sensors::input_current::INPUT_SHUNT_R);
+  Current i;
+  if (canzero_get_state() == guidance_state_CONTROL) {
+    i = sensors::formula::current_sense(v, sensors::input_current::SENSE_GAIN,
+                                        sensors::input_current::INPUT_SHUNT_R);
+    const bool sensible = i <= 100_A && i >= -50_A;
+    canzero_set_error_input_current_invalid(sensible ? error_flag_OK : error_flag_ERROR);
+  } else {
+    i = 0_A;
+  }
   filter.push(i);
   canzero_set_input_current(static_cast<float>(filter.get()));
 }
@@ -25,6 +33,7 @@ static void on_value(const Voltage &v) {
 void sensors::input_current::begin() {
   canzero_set_input_current(0);
   canzero_set_error_level_input_current(error_level_OK);
+  canzero_set_error_input_current_invalid(error_flag_OK);
   canzero_set_error_level_config_input_current(error_level_config{
       .m_info_thresh = 20,
       .m_info_timeout = 2,
