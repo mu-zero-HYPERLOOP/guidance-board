@@ -9,8 +9,8 @@
 #include "util/metrics.h"
 #include <cassert>
 
-static DMAMEM BoxcarFilter<Temperature, 100> left_filter(24_Celcius);
-static DMAMEM BoxcarFilter<Temperature, 100> right_filter(24_Celcius);
+static DMAMEM BoxcarFilter<Temperature, 1000> left_filter(24_Celcius);
+static DMAMEM BoxcarFilter<Temperature, 1000> right_filter(24_Celcius);
 
 static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
     error_check_left(canzero_get_magnet_temperature_left,
