@@ -103,7 +103,7 @@ typedef struct {
   bool_t m_ignore_warning;
   bool_t m_ignore_error;
 } error_level_config;
-static const node_id CANZERO_NODE_ID = node_id_guidance_board_back;
+static const node_id CANZERO_NODE_ID = node_id_guidance_board_front;
 typedef struct {
   uint32_t id;
   uint8_t dlc;
@@ -159,6 +159,50 @@ static inline error_flag canzero_get_error_heartbeat_miss() {
   extern error_flag __oe_error_heartbeat_miss;
   return __oe_error_heartbeat_miss;
 }
+static inline error_flag canzero_get_error_outer_airgap_left_invalid() {
+  extern error_flag __oe_error_outer_airgap_left_invalid;
+  return __oe_error_outer_airgap_left_invalid;
+}
+static inline error_flag canzero_get_error_inner_airgap_left_invalid() {
+  extern error_flag __oe_error_inner_airgap_left_invalid;
+  return __oe_error_inner_airgap_left_invalid;
+}
+static inline error_flag canzero_get_error_outer_airgap_right_invalid() {
+  extern error_flag __oe_error_outer_airgap_right_invalid;
+  return __oe_error_outer_airgap_right_invalid;
+}
+static inline error_flag canzero_get_error_inner_airgap_right_invalid() {
+  extern error_flag __oe_error_inner_airgap_right_invalid;
+  return __oe_error_inner_airgap_right_invalid;
+}
+static inline error_flag canzero_get_error_vdc_voltage_invalid() {
+  extern error_flag __oe_error_vdc_voltage_invalid;
+  return __oe_error_vdc_voltage_invalid;
+}
+static inline error_flag canzero_get_error_magnet_current_left_invalid() {
+  extern error_flag __oe_error_magnet_current_left_invalid;
+  return __oe_error_magnet_current_left_invalid;
+}
+static inline error_flag canzero_get_error_magnet_current_right_invalid() {
+  extern error_flag __oe_error_magnet_current_right_invalid;
+  return __oe_error_magnet_current_right_invalid;
+}
+static inline error_flag canzero_get_error_input_current_invalid() {
+  extern error_flag __oe_error_input_current_invalid;
+  return __oe_error_input_current_invalid;
+}
+static inline error_flag canzero_get_error_magnet_temperature_left_invalid() {
+  extern error_flag __oe_error_magnet_temperature_left_invalid;
+  return __oe_error_magnet_temperature_left_invalid;
+}
+static inline error_flag canzero_get_error_magnet_temperature_right_invalid() {
+  extern error_flag __oe_error_magnet_temperature_right_invalid;
+  return __oe_error_magnet_temperature_right_invalid;
+}
+static inline error_flag canzero_get_error_mcu_temperature_invalid() {
+  extern error_flag __oe_error_mcu_temperature_invalid;
+  return __oe_error_mcu_temperature_invalid;
+}
 static inline error_level canzero_get_error_level_vdc_voltage() {
   extern error_level __oe_error_level_vdc_voltage;
   return __oe_error_level_vdc_voltage;
@@ -211,14 +255,6 @@ static inline float canzero_get_inner_airgap_left() {
   extern float __oe_inner_airgap_left;
   return __oe_inner_airgap_left;
 }
-static inline error_flag canzero_get_error_outer_airgap_left_invalid() {
-  extern error_flag __oe_error_outer_airgap_left_invalid;
-  return __oe_error_outer_airgap_left_invalid;
-}
-static inline error_flag canzero_get_error_inner_airgap_left_invalid() {
-  extern error_flag __oe_error_inner_airgap_left_invalid;
-  return __oe_error_inner_airgap_left_invalid;
-}
 static inline float canzero_get_outer_airgap_right() {
   extern float __oe_outer_airgap_right;
   return __oe_outer_airgap_right;
@@ -227,21 +263,9 @@ static inline float canzero_get_inner_airgap_right() {
   extern float __oe_inner_airgap_right;
   return __oe_inner_airgap_right;
 }
-static inline error_flag canzero_get_error_outer_airgap_right_invalid() {
-  extern error_flag __oe_error_outer_airgap_right_invalid;
-  return __oe_error_outer_airgap_right_invalid;
-}
-static inline error_flag canzero_get_error_inner_airgap_right_invalid() {
-  extern error_flag __oe_error_inner_airgap_right_invalid;
-  return __oe_error_inner_airgap_right_invalid;
-}
 static inline float canzero_get_vdc_voltage() {
   extern float __oe_vdc_voltage;
   return __oe_vdc_voltage;
-}
-static inline error_flag canzero_get_error_vdc_voltage_invalid() {
-  extern error_flag __oe_error_vdc_voltage_invalid;
-  return __oe_error_vdc_voltage_invalid;
 }
 static inline error_level_config canzero_get_error_level_config_vdc_voltage() {
   extern error_level_config __oe_error_level_config_vdc_voltage;
@@ -263,37 +287,17 @@ static inline error_level_config canzero_get_error_level_config_magnet_current()
   extern error_level_config __oe_error_level_config_magnet_current;
   return __oe_error_level_config_magnet_current;
 }
-static inline error_flag canzero_get_error_magnet_current_left_invalid() {
-  extern error_flag __oe_error_magnet_current_left_invalid;
-  return __oe_error_magnet_current_left_invalid;
-}
-static inline error_flag canzero_get_error_magnet_current_right_invalid() {
-  extern error_flag __oe_error_magnet_current_right_invalid;
-  return __oe_error_magnet_current_right_invalid;
-}
 static inline error_level_config canzero_get_error_level_config_input_current() {
   extern error_level_config __oe_error_level_config_input_current;
   return __oe_error_level_config_input_current;
-}
-static inline error_flag canzero_get_error_input_current_invalid() {
-  extern error_flag __oe_error_input_current_invalid;
-  return __oe_error_input_current_invalid;
 }
 static inline float canzero_get_magnet_temperature_left() {
   extern float __oe_magnet_temperature_left;
   return __oe_magnet_temperature_left;
 }
-static inline error_flag canzero_get_error_magnet_temperature_left_invalid() {
-  extern error_flag __oe_error_magnet_temperature_left_invalid;
-  return __oe_error_magnet_temperature_left_invalid;
-}
 static inline float canzero_get_magnet_temperature_right() {
   extern float __oe_magnet_temperature_right;
   return __oe_magnet_temperature_right;
-}
-static inline error_flag canzero_get_error_magnet_temperature_right_invalid() {
-  extern error_flag __oe_error_magnet_temperature_right_invalid;
-  return __oe_error_magnet_temperature_right_invalid;
 }
 static inline error_level_config canzero_get_error_level_config_magnet_temperature() {
   extern error_level_config __oe_error_level_config_magnet_temperature;
@@ -302,10 +306,6 @@ static inline error_level_config canzero_get_error_level_config_magnet_temperatu
 static inline float canzero_get_mcu_temperature() {
   extern float __oe_mcu_temperature;
   return __oe_mcu_temperature;
-}
-static inline error_flag canzero_get_error_mcu_temperature_invalid() {
-  extern error_flag __oe_error_mcu_temperature_invalid;
-  return __oe_error_mcu_temperature_invalid;
 }
 static inline error_level_config canzero_get_error_level_config_mcu_temperature() {
   extern error_level_config __oe_error_level_config_mcu_temperature;
@@ -375,17 +375,28 @@ typedef struct {
   bool_t m_control_active;
   sdc_status m_precharge_status;
   sdc_status m_feedthrough_status;
-} canzero_message_guidance_board_back_stream_state;
-static const uint32_t canzero_message_guidance_board_back_stream_state_id = 0x97;
+} canzero_message_guidance_board_front_stream_state;
+static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0xF7;
 typedef struct {
   uint64_t m_config_hash;
-} canzero_message_guidance_board_back_stream_config_hash;
-static const uint32_t canzero_message_guidance_board_back_stream_config_hash_id = 0x57;
+} canzero_message_guidance_board_front_stream_config_hash;
+static const uint32_t canzero_message_guidance_board_front_stream_config_hash_id = 0xB7;
 typedef struct {
   error_flag m_assertion_fault;
   error_flag m_error_arming_failed;
   error_flag m_error_precharge_failed;
   error_flag m_error_heartbeat_miss;
+  error_flag m_error_outer_airgap_left_invalid;
+  error_flag m_error_inner_airgap_left_invalid;
+  error_flag m_error_outer_airgap_right_invalid;
+  error_flag m_error_inner_airgap_right_invalid;
+  error_flag m_error_vdc_voltage_invalid;
+  error_flag m_error_magnet_current_left_invalid;
+  error_flag m_error_magnet_current_right_invalid;
+  error_flag m_error_input_current_invalid;
+  error_flag m_error_magnet_temperature_left_invalid;
+  error_flag m_error_magnet_temperature_right_invalid;
+  error_flag m_error_mcu_temperature_invalid;
   error_level m_error_level_vdc_voltage;
   error_level m_error_level_magnet_current_left;
   error_level m_error_level_magnet_current_right;
@@ -393,41 +404,33 @@ typedef struct {
   error_level m_error_level_magnet_temperature_left;
   error_level m_error_level_magnet_temperature_right;
   error_level m_error_level_mcu_temperature;
-  error_flag m_error_outer_airgap_left_invalid;
-  error_flag m_error_inner_airgap_left_invalid;
-  error_flag m_error_outer_airgap_right_invalid;
-  error_flag m_error_inner_airgap_right_invalid;
-  error_flag m_error_input_current_invalid;
-  error_flag m_error_magnet_temperature_left_invalid;
-  error_flag m_error_magnet_temperature_right_invalid;
-  error_flag m_error_mcu_temperature_invalid;
   uint8_t m_last_node_missed;
-} canzero_message_guidance_board_back_stream_errors;
-static const uint32_t canzero_message_guidance_board_back_stream_errors_id = 0x77;
+} canzero_message_guidance_board_front_stream_errors;
+static const uint32_t canzero_message_guidance_board_front_stream_errors_id = 0xD7;
 typedef struct {
   float m_loop_frequency;
-} canzero_message_guidance_board_back_stream_debug;
-static const uint32_t canzero_message_guidance_board_back_stream_debug_id = 0x7D;
+} canzero_message_guidance_board_front_stream_debug;
+static const uint32_t canzero_message_guidance_board_front_stream_debug_id = 0xFD;
 typedef struct {
   float m_vdc_voltage;
   float m_current_left;
   float m_current_right;
   float m_input_current;
-} canzero_message_guidance_board_back_stream_voltage_and_currents;
-static const uint32_t canzero_message_guidance_board_back_stream_voltage_and_currents_id = 0xBD;
+} canzero_message_guidance_board_front_stream_voltage_and_currents;
+static const uint32_t canzero_message_guidance_board_front_stream_voltage_and_currents_id = 0x13D;
 typedef struct {
   float m_outer_airgap_left;
   float m_inner_airgap_left;
   float m_outer_airgap_right;
   float m_inner_airgap_right;
-} canzero_message_guidance_board_back_stream_airgaps;
-static const uint32_t canzero_message_guidance_board_back_stream_airgaps_id = 0x5D;
+} canzero_message_guidance_board_front_stream_airgaps;
+static const uint32_t canzero_message_guidance_board_front_stream_airgaps_id = 0xDD;
 typedef struct {
   float m_magnet_temperature_left;
   float m_magnet_temperature_right;
   float m_mcu_temperature;
-} canzero_message_guidance_board_back_stream_temperatures;
-static const uint32_t canzero_message_guidance_board_back_stream_temperatures_id = 0x9D;
+} canzero_message_guidance_board_front_stream_temperatures;
+static const uint32_t canzero_message_guidance_board_front_stream_temperatures_id = 0x11D;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
@@ -497,6 +500,28 @@ void canzero_set_error_precharge_failed(error_flag value);
 
 void canzero_set_error_heartbeat_miss(error_flag value);
 
+void canzero_set_error_outer_airgap_left_invalid(error_flag value);
+
+void canzero_set_error_inner_airgap_left_invalid(error_flag value);
+
+void canzero_set_error_outer_airgap_right_invalid(error_flag value);
+
+void canzero_set_error_inner_airgap_right_invalid(error_flag value);
+
+void canzero_set_error_vdc_voltage_invalid(error_flag value);
+
+void canzero_set_error_magnet_current_left_invalid(error_flag value);
+
+void canzero_set_error_magnet_current_right_invalid(error_flag value);
+
+void canzero_set_error_input_current_invalid(error_flag value);
+
+void canzero_set_error_magnet_temperature_left_invalid(error_flag value);
+
+void canzero_set_error_magnet_temperature_right_invalid(error_flag value);
+
+void canzero_set_error_mcu_temperature_invalid(error_flag value);
+
 void canzero_set_error_level_vdc_voltage(error_level value);
 
 void canzero_set_error_level_magnet_current_left(error_level value);
@@ -529,10 +554,6 @@ static inline void canzero_set_inner_airgap_left(float value){
   __oe_inner_airgap_left = value;
 }
 
-void canzero_set_error_outer_airgap_left_invalid(error_flag value);
-
-void canzero_set_error_inner_airgap_left_invalid(error_flag value);
-
 static inline void canzero_set_outer_airgap_right(float value){
   extern float __oe_outer_airgap_right;
   __oe_outer_airgap_right = value;
@@ -543,18 +564,9 @@ static inline void canzero_set_inner_airgap_right(float value){
   __oe_inner_airgap_right = value;
 }
 
-void canzero_set_error_outer_airgap_right_invalid(error_flag value);
-
-void canzero_set_error_inner_airgap_right_invalid(error_flag value);
-
 static inline void canzero_set_vdc_voltage(float value){
   extern float __oe_vdc_voltage;
   __oe_vdc_voltage = value;
-}
-
-static inline void canzero_set_error_vdc_voltage_invalid(error_flag value){
-  extern error_flag __oe_error_vdc_voltage_invalid;
-  __oe_error_vdc_voltage_invalid = value;
 }
 
 static inline void canzero_set_error_level_config_vdc_voltage(error_level_config value){
@@ -582,36 +594,20 @@ static inline void canzero_set_error_level_config_magnet_current(error_level_con
   __oe_error_level_config_magnet_current = value;
 }
 
-static inline void canzero_set_error_magnet_current_left_invalid(error_flag value){
-  extern error_flag __oe_error_magnet_current_left_invalid;
-  __oe_error_magnet_current_left_invalid = value;
-}
-
-static inline void canzero_set_error_magnet_current_right_invalid(error_flag value){
-  extern error_flag __oe_error_magnet_current_right_invalid;
-  __oe_error_magnet_current_right_invalid = value;
-}
-
 static inline void canzero_set_error_level_config_input_current(error_level_config value){
   extern error_level_config __oe_error_level_config_input_current;
   __oe_error_level_config_input_current = value;
 }
-
-void canzero_set_error_input_current_invalid(error_flag value);
 
 static inline void canzero_set_magnet_temperature_left(float value){
   extern float __oe_magnet_temperature_left;
   __oe_magnet_temperature_left = value;
 }
 
-void canzero_set_error_magnet_temperature_left_invalid(error_flag value);
-
 static inline void canzero_set_magnet_temperature_right(float value){
   extern float __oe_magnet_temperature_right;
   __oe_magnet_temperature_right = value;
 }
-
-void canzero_set_error_magnet_temperature_right_invalid(error_flag value);
 
 static inline void canzero_set_error_level_config_magnet_temperature(error_level_config value){
   extern error_level_config __oe_error_level_config_magnet_temperature;
@@ -622,8 +618,6 @@ static inline void canzero_set_mcu_temperature(float value){
   extern float __oe_mcu_temperature;
   __oe_mcu_temperature = value;
 }
-
-void canzero_set_error_mcu_temperature_invalid(error_flag value);
 
 static inline void canzero_set_error_level_config_mcu_temperature(error_level_config value){
   extern error_level_config __oe_error_level_config_mcu_temperature;
@@ -703,6 +697,28 @@ void canzero_send_error_precharge_failed();
 
 void canzero_send_error_heartbeat_miss();
 
+void canzero_send_error_outer_airgap_left_invalid();
+
+void canzero_send_error_inner_airgap_left_invalid();
+
+void canzero_send_error_outer_airgap_right_invalid();
+
+void canzero_send_error_inner_airgap_right_invalid();
+
+void canzero_send_error_vdc_voltage_invalid();
+
+void canzero_send_error_magnet_current_left_invalid();
+
+void canzero_send_error_magnet_current_right_invalid();
+
+void canzero_send_error_input_current_invalid();
+
+void canzero_send_error_magnet_temperature_left_invalid();
+
+void canzero_send_error_magnet_temperature_right_invalid();
+
+void canzero_send_error_mcu_temperature_invalid();
+
 void canzero_send_error_level_vdc_voltage();
 
 void canzero_send_error_level_magnet_current_left();
@@ -729,21 +745,11 @@ void canzero_send_outer_airgap_left();
 
 void canzero_send_inner_airgap_left();
 
-void canzero_send_error_outer_airgap_left_invalid();
-
-void canzero_send_error_inner_airgap_left_invalid();
-
 void canzero_send_outer_airgap_right();
 
 void canzero_send_inner_airgap_right();
 
-void canzero_send_error_outer_airgap_right_invalid();
-
-void canzero_send_error_inner_airgap_right_invalid();
-
 void canzero_send_vdc_voltage();
-
-void canzero_send_error_vdc_voltage_invalid();
 
 void canzero_send_error_level_config_vdc_voltage();
 
@@ -755,27 +761,15 @@ void canzero_send_input_current();
 
 void canzero_send_error_level_config_magnet_current();
 
-void canzero_send_error_magnet_current_left_invalid();
-
-void canzero_send_error_magnet_current_right_invalid();
-
 void canzero_send_error_level_config_input_current();
-
-void canzero_send_error_input_current_invalid();
 
 void canzero_send_magnet_temperature_left();
 
-void canzero_send_error_magnet_temperature_left_invalid();
-
 void canzero_send_magnet_temperature_right();
-
-void canzero_send_error_magnet_temperature_right_invalid();
 
 void canzero_send_error_level_config_magnet_temperature();
 
 void canzero_send_mcu_temperature();
-
-void canzero_send_error_mcu_temperature_invalid();
 
 void canzero_send_error_level_config_mcu_temperature();
 
