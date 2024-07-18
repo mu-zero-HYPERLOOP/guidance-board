@@ -17,15 +17,16 @@ static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
 static DMAMEM BoxcarFilter<Current, 1000> filter(0_A);
 
 static void on_value(const Voltage &v) {
-  Current i;
-  if (canzero_get_state() == guidance_state_CONTROL) {
-    i = sensors::formula::current_sense(v, sensors::input_current::SENSE_GAIN,
-                                        sensors::input_current::INPUT_SHUNT_R);
-    const bool sensible = i <= 100_A && i >= -50_A;
-    canzero_set_error_input_current_invalid(sensible ? error_flag_OK : error_flag_ERROR);
-  } else {
-    i = 0_A;
-  }
+  Current i = 0_A;
+  canzero_set_error_input_current_invalid(error_flag_OK);
+  /* if (canzero_get_state() == guidance_state_CONTROL) { */
+  /*   i = sensors::formula::current_sense(v, sensors::input_current::SENSE_GAIN, */
+  /*                                       sensors::input_current::INPUT_SHUNT_R); */
+  /*   const bool sensible = i <= 100_A && i >= -50_A; */
+  /*   canzero_set_error_input_current_invalid(sensible ? error_flag_OK : error_flag_ERROR); */
+  /* } else { */
+  /*   i = 0_A; */
+  /* } */
   filter.push(i);
   canzero_set_input_current(static_cast<float>(filter.get()));
 }
