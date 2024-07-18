@@ -25,7 +25,7 @@ void sensors::vdc::begin() {
   canzero_set_vdc_voltage(0);
   canzero_set_error_level_vdc_voltage(error_level_OK);
   canzero_set_error_level_config_vdc_voltage(error_level_config{
-      .m_info_thresh = 45,
+      .m_info_thresh = 47,
       .m_info_timeout = 5,
       .m_warning_thresh = 48,
       .m_warning_timeout = 1,

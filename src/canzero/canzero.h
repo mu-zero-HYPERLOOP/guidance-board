@@ -103,7 +103,7 @@ typedef struct {
   bool_t m_ignore_warning;
   bool_t m_ignore_error;
 } error_level_config;
-static const node_id CANZERO_NODE_ID = node_id_guidance_board_back;
+static const node_id CANZERO_NODE_ID = node_id_guidance_board_front;
 typedef struct {
   uint32_t id;
   uint8_t dlc;
@@ -375,12 +375,12 @@ typedef struct {
   bool_t m_control_active;
   sdc_status m_precharge_status;
   sdc_status m_feedthrough_status;
-} canzero_message_guidance_board_back_stream_state;
-static const uint32_t canzero_message_guidance_board_back_stream_state_id = 0x97;
+} canzero_message_guidance_board_front_stream_state;
+static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0xF7;
 typedef struct {
   uint64_t m_config_hash;
-} canzero_message_guidance_board_back_stream_config_hash;
-static const uint32_t canzero_message_guidance_board_back_stream_config_hash_id = 0x57;
+} canzero_message_guidance_board_front_stream_config_hash;
+static const uint32_t canzero_message_guidance_board_front_stream_config_hash_id = 0xB7;
 typedef struct {
   error_flag m_assertion_fault;
   error_flag m_error_arming_failed;
@@ -405,32 +405,32 @@ typedef struct {
   error_level m_error_level_magnet_temperature_right;
   error_level m_error_level_mcu_temperature;
   uint8_t m_last_node_missed;
-} canzero_message_guidance_board_back_stream_errors;
-static const uint32_t canzero_message_guidance_board_back_stream_errors_id = 0x77;
+} canzero_message_guidance_board_front_stream_errors;
+static const uint32_t canzero_message_guidance_board_front_stream_errors_id = 0xD7;
 typedef struct {
   float m_loop_frequency;
-} canzero_message_guidance_board_back_stream_debug;
-static const uint32_t canzero_message_guidance_board_back_stream_debug_id = 0x7D;
+} canzero_message_guidance_board_front_stream_debug;
+static const uint32_t canzero_message_guidance_board_front_stream_debug_id = 0xFD;
 typedef struct {
   float m_vdc_voltage;
   float m_current_left;
   float m_current_right;
   float m_input_current;
-} canzero_message_guidance_board_back_stream_voltage_and_currents;
-static const uint32_t canzero_message_guidance_board_back_stream_voltage_and_currents_id = 0xBD;
+} canzero_message_guidance_board_front_stream_voltage_and_currents;
+static const uint32_t canzero_message_guidance_board_front_stream_voltage_and_currents_id = 0x13D;
 typedef struct {
   float m_outer_airgap_left;
   float m_inner_airgap_left;
   float m_outer_airgap_right;
   float m_inner_airgap_right;
-} canzero_message_guidance_board_back_stream_airgaps;
-static const uint32_t canzero_message_guidance_board_back_stream_airgaps_id = 0x5D;
+} canzero_message_guidance_board_front_stream_airgaps;
+static const uint32_t canzero_message_guidance_board_front_stream_airgaps_id = 0xDD;
 typedef struct {
   float m_magnet_temperature_left;
   float m_magnet_temperature_right;
   float m_mcu_temperature;
-} canzero_message_guidance_board_back_stream_temperatures;
-static const uint32_t canzero_message_guidance_board_back_stream_temperatures_id = 0x9D;
+} canzero_message_guidance_board_front_stream_temperatures;
+static const uint32_t canzero_message_guidance_board_front_stream_temperatures_id = 0x11D;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
