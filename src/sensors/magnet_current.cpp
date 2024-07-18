@@ -75,7 +75,18 @@ void sensors::magnet_current::calibrate() {
   }
 }
 
+static Timestamp ready_current_ok_left = Timestamp::now();
+static Timestamp ready_current_ok_right = Timestamp::now();
+
 void sensors::magnet_current::update() {
+  if (canzero_get_state() == guidance_state_READY) {
+    if (canzero_get_current_left() < 10){
+      ready_current_ok_left = Timestamp::now();
+    }
+    if (canzero_get_current_right() < 10){
+      ready_current_ok_right = Timestamp::now();
+    }
+  }
   left_magnet_check.check();
   right_magnet_check.check();
 }

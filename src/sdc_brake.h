@@ -46,6 +46,7 @@ static inline void open() {
 }
 
 inline void update(){
+  canzero_set_error_sdc_brake(brake_engaged ? error_flag_ERROR : error_flag_OK);
   canzero_set_sdc_status(sdc_state);
 }
 
