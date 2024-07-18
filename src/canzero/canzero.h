@@ -376,11 +376,11 @@ typedef struct {
   sdc_status m_precharge_status;
   sdc_status m_feedthrough_status;
 } canzero_message_guidance_board_front_stream_state;
-static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0xF7;
+static const uint32_t canzero_message_guidance_board_front_stream_state_id = 0xF8;
 typedef struct {
   uint64_t m_config_hash;
 } canzero_message_guidance_board_front_stream_config_hash;
-static const uint32_t canzero_message_guidance_board_front_stream_config_hash_id = 0xB7;
+static const uint32_t canzero_message_guidance_board_front_stream_config_hash_id = 0xB8;
 typedef struct {
   error_flag m_assertion_fault;
   error_flag m_error_arming_failed;
@@ -406,7 +406,7 @@ typedef struct {
   error_level m_error_level_mcu_temperature;
   uint8_t m_last_node_missed;
 } canzero_message_guidance_board_front_stream_errors;
-static const uint32_t canzero_message_guidance_board_front_stream_errors_id = 0xD7;
+static const uint32_t canzero_message_guidance_board_front_stream_errors_id = 0xD8;
 typedef struct {
   float m_loop_frequency;
 } canzero_message_guidance_board_front_stream_debug;
@@ -436,13 +436,13 @@ typedef struct {
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can0;
-static const uint32_t canzero_message_heartbeat_can0_id = 0x1F4;
+static const uint32_t canzero_message_heartbeat_can0_id = 0x1F5;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can1;
-static const uint32_t canzero_message_heartbeat_can1_id = 0x1F3;
+static const uint32_t canzero_message_heartbeat_can1_id = 0x1F4;
 typedef struct {
   get_req_header m_header;
 } canzero_message_get_req;
@@ -455,11 +455,11 @@ static const uint32_t canzero_message_set_req_id = 0x1DE;
 typedef struct {
   guidance_command m_guidance_command;
 } canzero_message_mother_board_stream_guidance_command;
-static const uint32_t canzero_message_mother_board_stream_guidance_command_id = 0x4F;
+static const uint32_t canzero_message_mother_board_stream_guidance_command_id = 0x50;
 typedef struct {
   bool_t m_ignore_45v;
 } canzero_message_mother_board_stream_debug_settings;
-static const uint32_t canzero_message_mother_board_stream_debug_settings_id = 0x51;
+static const uint32_t canzero_message_mother_board_stream_debug_settings_id = 0x52;
 typedef struct {
   float m_lt2;
   float m_rt2;

@@ -102,7 +102,7 @@ static void canzero_serialize_canzero_message_guidance_board_front_stream_state(
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0xF7;
+  frame->id = 0xF8;
   frame->dlc = 2;
   ((volatile uint32_t*)data)[0] = (uint8_t)(msg->m_state & (0xFF >> (8 - 3)));
   ((volatile uint32_t*)data)[0] |= (uint8_t)(msg->m_sdc_status & (0xFF >> (8 - 1))) << 3;
@@ -116,7 +116,7 @@ static void canzero_serialize_canzero_message_guidance_board_front_stream_config
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0xB7;
+  frame->id = 0xB8;
   frame->dlc = 8;
   ((volatile uint64_t*)data)[0] = msg->m_config_hash;
 }
@@ -125,7 +125,7 @@ static void canzero_serialize_canzero_message_guidance_board_front_stream_errors
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0xD7;
+  frame->id = 0xD8;
   frame->dlc = 5;
   ((volatile uint32_t*)data)[0] = (uint8_t)(msg->m_assertion_fault & (0xFF >> (8 - 1)));
   ((volatile uint32_t*)data)[0] |= (uint8_t)(msg->m_error_arming_failed & (0xFF >> (8 - 1))) << 1;
@@ -248,7 +248,7 @@ static void canzero_serialize_canzero_message_heartbeat_can0(canzero_message_hea
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0x1F4;
+  frame->id = 0x1F5;
   frame->dlc = 2;
   ((volatile uint32_t*)data)[0] = msg->m_node_id;
   ((volatile uint32_t*)data)[0] |= (uint8_t)(msg->m_unregister & (0xFF >> (8 - 1))) << 8;
@@ -259,7 +259,7 @@ static void canzero_serialize_canzero_message_heartbeat_can1(canzero_message_hea
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0x1F3;
+  frame->id = 0x1F4;
   frame->dlc = 2;
   ((volatile uint32_t*)data)[0] = msg->m_node_id;
   ((volatile uint32_t*)data)[0] |= (uint8_t)(msg->m_unregister & (0xFF >> (8 - 1))) << 8;
@@ -488,7 +488,7 @@ static void schedule_get_resp_fragmentation_job(uint32_t *fragmentation_buffer, 
 }
 
 static job_t heartbeat_job;
-static const uint32_t heartbeat_interval = 198;
+static const uint32_t heartbeat_interval = 100;
 static void schedule_heartbeat_job() {
   heartbeat_job.climax = canzero_get_time();
   heartbeat_job.tag = HEARTBEAT_JOB_TAG;
@@ -739,13 +739,13 @@ static void schedule_jobs(uint32_t time) {
         canzero_message_heartbeat_can0 heartbeat_can0;
         heartbeat_can0.m_node_id = node_id_guidance_board_front;
         heartbeat_can0.m_unregister = 0;
-        heartbeat_can0.m_ticks_next = 20;
+        heartbeat_can0.m_ticks_next = 14;
         canzero_serialize_canzero_message_heartbeat_can0(&heartbeat_can0, &heartbeat_frame);
         canzero_can0_send(&heartbeat_frame);
         canzero_message_heartbeat_can1 heartbeat_can1;
         heartbeat_can1.m_node_id = node_id_guidance_board_front;
         heartbeat_can1.m_unregister = 0;
-        heartbeat_can1.m_ticks_next = 20;
+        heartbeat_can1.m_ticks_next = 14;
         canzero_serialize_canzero_message_heartbeat_can1(&heartbeat_can1, &heartbeat_frame);
         canzero_can1_send(&heartbeat_frame);
         break;
@@ -2093,13 +2093,13 @@ void canzero_can0_poll() {
       case 0x1BE:
         canzero_handle_get_req(&frame);
         break;
-      case 0x4F:
+      case 0x50:
         canzero_handle_mother_board_stream_guidance_command(&frame);
         break;
-      case 0x51:
+      case 0x52:
         canzero_handle_mother_board_stream_debug_settings(&frame);
         break;
-      case 0x1F4:
+      case 0x1F5:
         canzero_handle_heartbeat_can0(&frame);
         break;
     }
@@ -2115,7 +2115,7 @@ void canzero_can1_poll() {
       case 0x5F:
         canzero_handle_gamepad_stream_input(&frame);
         break;
-      case 0x1F3:
+      case 0x1F4:
         canzero_handle_heartbeat_can1(&frame);
         break;
     }
@@ -2176,7 +2176,7 @@ uint32_t canzero_update_continue(uint32_t time){
 #define BUILD_MIN   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_MIN)
 #define BUILD_SEC   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_SEC)
 void canzero_init() {
-  __oe_config_hash = 6880691237230841129ull;
+  __oe_config_hash = 12445867394052837609ull;
   __oe_build_time = {
     .m_year = BUILD_YEAR,
     .m_month = BUILD_MONTH,
