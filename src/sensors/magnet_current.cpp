@@ -85,13 +85,13 @@ void sensors::magnet_current::update() {
       ready_current_ok_left = now;
     }
     if (now - ready_current_ok_left > 1_s){
-      canzero_set_error_magnet_current_left_unexpected(error_flag_OK);
+      canzero_set_error_magnet_current_left_unexpected(error_flag_ERROR);
     }
     if (canzero_get_current_right() < 10){
       ready_current_ok_right = now;
     }
     if (now - ready_current_ok_right > 1_s){
-      canzero_set_error_magnet_current_right_unexpected(error_flag_OK);
+      canzero_set_error_magnet_current_right_unexpected(error_flag_ERROR);
     }
   }else {
     ready_current_ok_right = Timestamp::now();
