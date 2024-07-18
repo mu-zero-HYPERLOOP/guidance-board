@@ -14,7 +14,7 @@ static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
                 canzero_get_error_level_config_input_current,
                 canzero_set_error_level_input_current);
 
-static DMAMEM BoxcarFilter<Current, 10> filter(0_A);
+static DMAMEM BoxcarFilter<Current, 1000> filter(0_A);
 
 static void on_value(const Voltage &v) {
   Current i;

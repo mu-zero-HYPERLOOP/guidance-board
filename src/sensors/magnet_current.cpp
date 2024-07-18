@@ -7,8 +7,8 @@
 #include "util/boxcar.h"
 #include <cassert>
 
-static DMAMEM BoxcarFilter<Current, 10> left_filter(0_A);
-static DMAMEM BoxcarFilter<Current, 10> right_filter(0_A);
+static DMAMEM BoxcarFilter<Current, 500> left_filter(0_A);
+static DMAMEM BoxcarFilter<Current, 500> right_filter(0_A);
 
 static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
     left_magnet_check(canzero_get_current_left,
