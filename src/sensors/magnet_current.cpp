@@ -80,12 +80,22 @@ static Timestamp ready_current_ok_right = Timestamp::now();
 
 void sensors::magnet_current::update() {
   if (canzero_get_state() == guidance_state_READY) {
+    const auto now = Timestamp::now();
     if (canzero_get_current_left() < 10){
-      ready_current_ok_left = Timestamp::now();
+      ready_current_ok_left = now;
+    }
+    if (now - ready_current_ok_left > 1_s){
+      canzero_set_error_magnet_current_left_unexpected(error_flag_OK);
     }
     if (canzero_get_current_right() < 10){
-      ready_current_ok_right = Timestamp::now();
+      ready_current_ok_right = now;
     }
+    if (now - ready_current_ok_right > 1_s){
+      canzero_set_error_magnet_current_right_unexpected(error_flag_OK);
+    }
+  }else {
+    ready_current_ok_right = Timestamp::now();
+    ready_current_ok_left = Timestamp::now();
   }
   left_magnet_check.check();
   right_magnet_check.check();
