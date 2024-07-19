@@ -53,7 +53,7 @@ void control::begin() {
   // Parameters
   pid_force_parameters.Kp = 0.1;
   pid_force_parameters.Ki = 0;
-  pid_force_parameters.Kd = 0.5;
+  pid_force_parameters.Kd = 2;
 
   pi_left_current_parameters.Kp = 20;
   pi_left_current_parameters.Ki = 10;
