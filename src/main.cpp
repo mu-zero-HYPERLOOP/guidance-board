@@ -8,6 +8,7 @@
 #include "pwm_config.h"
 #include "sdc_brake.h"
 #include "sensors/input_current.h"
+#include "sensors/magnet_current.h"
 #include "sensors/magnet_temperatures.h"
 #include "sensors/mcu_temperature.h"
 #include "sensors/vdc.h"
@@ -33,6 +34,7 @@ int main() {
   sensors::magnet_temperatures::begin();
   sensors::vdc::begin();
   sensors::airgaps::begin();
+  sensors::magnet_current::begin();
   
   // Calibration
   sensors::input_current::calibrate();
@@ -40,6 +42,7 @@ int main() {
   sensors::magnet_temperatures::calibrate();
   sensors::vdc::calibrate();
   sensors::airgaps::calibrate();
+  sensors::magnet_current::begin();
 
   sdc_brake::begin();
 
@@ -59,6 +62,7 @@ int main() {
     sensors::magnet_temperatures::update();
     sensors::vdc::update();
     sensors::airgaps::update();
+    sensors::magnet_current::update();
 
     sdc_brake::update();
 
