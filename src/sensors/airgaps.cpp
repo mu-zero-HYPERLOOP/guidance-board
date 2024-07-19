@@ -80,7 +80,7 @@ static void on_right_lim_disp(const Voltage &v) {
   canzero_set_error_inner_airgap_right_invalid(error_flag_OK);
   const Distance disp = sensors::airgaps::conv_right_lim(v);
   right_lim_filter.push(disp);
-  canzero_set_outer_airgap_right(right_lim_filter.get() / 1_mm);
+  canzero_set_inner_airgap_right(right_lim_filter.get() / 1_mm);
 }
 
 void sensors::airgaps::begin() {
