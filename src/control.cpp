@@ -53,7 +53,7 @@ void control::begin() {
   // Parameters
   pid_force_parameters.Kp = 0.1;
   pid_force_parameters.Ki = 0;
-  pid_force_parameters.Kd = 2;
+  pid_force_parameters.Kd = 1.2;
 
   pi_left_current_parameters.Kp = 20;
   pi_left_current_parameters.Ki = 10;
@@ -98,13 +98,12 @@ GuidancePwmControl FASTRUN control::control_loop(Current current_left,
   pid_error_filter.push(error_raw);
   const float error = pid_error_filter.get();
 
-  pid_force_state.last_error = error;
-
   pid_force_state.p_term = error * pid_force_parameters.Kp;
   pid_force_state.i_term += error * pid_force_parameters.Ki;
   pid_force_state.d_term = (error - pid_force_state.last_error) *
                            static_cast<float>(pwm::frequency()) *
                            pid_force_parameters.Kd;
+  pid_force_state.last_error = error;
 
   const float force_target = pid_force_state.p_term + pid_force_state.i_term + pid_force_state.d_term;
   // ================ FORCE CURRENT CONVERTION ==================
