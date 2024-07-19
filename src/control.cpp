@@ -51,14 +51,14 @@ static PidParameters pid_force_parameters;
 void control::begin() {
 
   // Parameters
-  pid_force_parameters.Kp = 15;
+  pid_force_parameters.Kp = 70;
   pid_force_parameters.Ki = 0;
   pid_force_parameters.Kd = 0.6;
 
-  pi_left_current_parameters.Kp = 1.3;
-  pi_left_current_parameters.Ki = 0.75;
+  pi_left_current_parameters.Kp = 20;
+  pi_left_current_parameters.Ki = 10;
   pi_left_current_parameters.i_max = 30;
-  pi_left_current_parameters.i_max = 0;
+  pi_left_current_parameters.i_min = 0;
 
 
   pi_right_current_parameters.Ki = pi_left_current_parameters.Ki;
@@ -117,7 +117,7 @@ GuidancePwmControl FASTRUN control::control_loop(Current current_left,
   if (current_target > 0) {
     left_current_pi_target = current_target;
   } else {
-    right_current_pi_target = current_target;
+    right_current_pi_target = -current_target;
   }
   // ====================== CURRENT PIDs =========================
   // Left current PI
