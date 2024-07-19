@@ -86,7 +86,12 @@ GuidancePwmControl FASTRUN control::control_loop(Current current_left,
                                                  Distance lim_airgap_right) {
 
   const Distance offset = (lim_airgap_left - lim_airgap_right) / 2.0f;
-  const Distance target_offset = 0_m;
+  Distance target_offset;
+  if (CANZERO_NODE_ID == node_id_guidance_board_front) {
+    target_offset = 6.71_mm;
+  } else {
+    target_offset = 3.49_mm;
+  }
 
   // ================== FORCE PID CONTROLLER ====================
   const float error_raw = static_cast<float>(target_offset - offset) * 1e3;
