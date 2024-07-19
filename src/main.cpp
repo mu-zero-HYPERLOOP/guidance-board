@@ -12,6 +12,8 @@
 #include "sensors/mcu_temperature.h"
 #include "sensors/vdc.h"
 #include "xbar_config.h"
+#include "print.h"
+#include "sensors/airgaps.h"
 
 int main() {
   canzero_init();
@@ -30,12 +32,14 @@ int main() {
   sensors::mcu_temperature::begin();
   sensors::magnet_temperatures::begin();
   sensors::vdc::begin();
+  sensors::airgaps::begin();
   
   // Calibration
   sensors::input_current::calibrate();
   sensors::mcu_temperature::calibrate();
   sensors::magnet_temperatures::calibrate();
   sensors::vdc::calibrate();
+  sensors::airgaps::calibrate();
 
   sdc_brake::begin();
 
@@ -54,6 +58,7 @@ int main() {
     sensors::mcu_temperature::update();
     sensors::magnet_temperatures::update();
     sensors::vdc::update();
+    sensors::airgaps::update();
 
     sdc_brake::update();
 

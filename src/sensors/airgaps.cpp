@@ -5,6 +5,7 @@
 #include "sensors/formula/displacement420.h"
 #include "util/boxcar.h"
 #include <cassert>
+#include "print.h"
 
 static DMAMEM BoxcarFilter<Distance, 10> left_mag_filter(0_mm);
 static DMAMEM BoxcarFilter<Distance, 10> right_mag_filter(0_mm);
