@@ -51,9 +51,9 @@ static PidParameters pid_force_parameters;
 void control::begin() {
 
   // Parameters
-  pid_force_parameters.Kp = 70;
+  pid_force_parameters.Kp = 80;
   pid_force_parameters.Ki = 0;
-  pid_force_parameters.Kd = 0.6;
+  pid_force_parameters.Kd = 1.8;
 
   pi_left_current_parameters.Kp = 20;
   pi_left_current_parameters.Ki = 10;
