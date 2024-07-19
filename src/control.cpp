@@ -51,9 +51,9 @@ static PidParameters pid_force_parameters;
 void control::begin() {
 
   // Parameters
-  pid_force_parameters.Kp = 80;
+  pid_force_parameters.Kp = 15;
   pid_force_parameters.Ki = 0;
-  pid_force_parameters.Kd = 1.8;
+  pid_force_parameters.Kd = 0.6;
 
   pi_left_current_parameters.Kp = 20;
   pi_left_current_parameters.Ki = 10;
@@ -89,7 +89,7 @@ GuidancePwmControl FASTRUN control::control_loop(Current current_left,
   const Distance target_offset = 0_m;
 
   // ================== FORCE PID CONTROLLER ====================
-  const float error_raw = static_cast<float>(target_offset - offset);
+  const float error_raw = static_cast<float>(target_offset - offset) * 1e3;
   pid_error_filter.push(error_raw);
   const float error = pid_error_filter.get();
 
