@@ -1,11 +1,13 @@
 #include "control.h"
 #include "canzero/canzero.h"
+#include "print.h"
 #include "sdc_brake.h"
 #include "util/boxcar.h"
 #include "util/ema.h"
 #include "util/metrics.h"
 #include <algorithm>
 #include <avr/pgmspace.h>
+#include <cassert>
 
 static ExponentialMovingAverage<Current> pi_left_current_filter{0.5, 0_A};
 static ExponentialMovingAverage<Current> pi_right_current_filter{0.5, 0_A};

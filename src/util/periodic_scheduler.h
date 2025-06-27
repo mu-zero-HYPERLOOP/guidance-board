@@ -1,5 +1,6 @@
 #pragma once
 
+#include "print.h"
 #include "util/heap.h"
 #include "util/metrics.h"
 #include "util/pool_allocator.h"

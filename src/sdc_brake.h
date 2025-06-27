@@ -20,7 +20,7 @@ inline void begin() {
 // it requries release_brake to be called to
 // close the SDC again, which only happens when
 // the board is in the idle state.
-static __attribute__((always_inline)) void brake_immediatly() {
+static __attribute__((always_inline)) inline void brake_immediatly() {
   brake_engaged = true;
   guidance_board::set_digital(ctrl_pin::sdc_trig_37, false);
   sdc_state = sdc_status_OPEN;
