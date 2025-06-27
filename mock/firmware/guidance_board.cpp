@@ -6,21 +6,17 @@
 #include "sensors/formula/current_sense.h"
 #include "sensors/formula/displacement420.h"
 #include "sensors/formula/isolated_voltage.h"
-#include "sensors/formula/ntc_beta.h"
-#include "sensors/formula/voltage_divider.h"
 #include "sensors/input_current.h"
 #include "sensors/magnet_current.h"
-#include "sensors/magnet_temperatures.h"
 #include "util/boxcar.h"
 #include "util/interval.h"
-#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <cstdlib>
 #include <random>
 #include <thread>
 
-constexpr size_t MAX_AIN_PERIODIC_JOBS = 32;
+constexpr size_t MAX_AIN_PERIODIC_JOBS = 10;
 
 static AinScheduler<MAX_AIN_PERIODIC_JOBS> ain_scheduler;
 static std::random_device rd{};
@@ -48,15 +44,6 @@ static Voltage mock_current(Current current, float gain) {
   return v;
 }
 
-static Voltage mock_temperature(Temperature temp, float beta, Resistance r_ref,
-                                Temperature t_ref, Resistance r2) {
-  std::normal_distribution dist{static_cast<float>(temp), 1.0f};
-  const Temperature t = Temperature(dist(gen));
-  const Resistance ptx_r =
-      sensors::formula::inv_ntc_beta(t, beta, r_ref, t_ref);
-  return sensors::formula::vout_of_voltage_divider(3.3_V, ptx_r, r2);
-}
-
 extern PwmControl __pwm_control;
 
 BoxcarFilter<Voltage, 1000> vdc_voltage(0_V);
@@ -77,10 +64,7 @@ Voltage FASTRUN guidance_board::sync_read(ain_pin pin) {
   case ain_pin::temp_sense_l1_20:
   case ain_pin::temp_sense_r2_15:
   case ain_pin::temp_sense_r1_14:
-    return mock_temperature(24_Celcius, sensors::magnet_temperatures::NTC_BETA,
-                            sensors::magnet_temperatures::NTC_R_REF,
-                            sensors::magnet_temperatures::NTC_T_REF,
-                            sensors::magnet_temperatures::R_MEAS);
+    return 0_V;
   case ain_pin::vdc_sense_40: {
     switch (canzero_get_state()) {
     case guidance_state_INIT:
@@ -96,18 +80,16 @@ Voltage FASTRUN guidance_board::sync_read(ain_pin pin) {
       break;
     }
     std::normal_distribution dist{static_cast<float>(vdc_voltage.get()), 0.1f};
-    const Voltage v_dist = std::clamp(Voltage(dist(gen)), 0_V, 50_V);
-    return (sensors::formula::inv_isolated_voltage(v_dist));
+    const Voltage v_dist = Voltage(dist(gen));
+    return sensors::formula::inv_isolated_voltage(v_dist);
   }
   case ain_pin::i_mag_l_24: {
     const float duty1 = (__pwm_control.duty13 - 0.5) * 2.0;
-    return mock_current(Current(duty1 * 38),
-                        sensors::magnet_current::SENSE_GAIN);
+    return mock_current(Current(duty1 * 38), sensors::magnet_current::SENSE_GAIN);
   }
   case ain_pin::i_mag_r_25: {
     const float duty = (__pwm_control.duty42 - 0.5) * 2.0;
-    return mock_current(Current(duty * 38),
-                        sensors::magnet_current::SENSE_GAIN);
+    return mock_current(Current(duty * 38), sensors::magnet_current::SENSE_GAIN);
   }
   case ain_pin::i_mag_total: {
     const float duty1 = (__pwm_control.duty13 - 0.5) * 2.0;
@@ -155,8 +137,7 @@ extern void adc_etc_done0_isr(AdcTrigRes);
 extern void adc_etc_done1_isr(AdcTrigRes);
 
 using namespace std::chrono;
-static high_resolution_clock::time_point last_step =
-    high_resolution_clock::now();
+static high_resolution_clock::time_point last_step = high_resolution_clock::now();
 
 void guidance_board::update() {
   ain_scheduler.update_continue();
@@ -175,9 +156,10 @@ void guidance_board::update() {
   float dt = duration_cast<duration<float, std::ratio<1>>>(dt_duration).count();
   last_step = now;
 
+  
   constexpr float L = 0.07;
   constexpr float R = 1;
-
+  
   const float duty = (__pwm_control.duty42 - 0.5) * 2.0;
   const float v_t = duty * 45.0;
 

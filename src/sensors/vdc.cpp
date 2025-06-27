@@ -1,26 +1,25 @@
 #include "sensors/vdc.h"
 #include "avr/pgmspace.h"
 #include "canzero/canzero.h"
-#include "error_level_range_check.h"
 #include "firmware/guidance_board.h"
-#include "print.h"
+#include <cassert>
+#include "error_level_range_check.h"
 #include "sensors/formula/isolated_voltage.h"
 #include "util/boxcar.h"
-#include <algorithm>
-#include <cassert>
 
 static DMAMEM BoxcarFilter<Voltage, 10> filter(0_V);
 
 static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
     error_check(canzero_get_vdc_voltage,
-                canzero_get_error_level_config_vdc_voltage,
-                canzero_set_error_level_vdc_voltage);
+                     canzero_get_error_level_config_vdc_voltage,
+                     canzero_set_error_level_vdc_voltage);
 
 static void on_value(const Voltage &v) {
   const Voltage v_isolated = sensors::formula::isolated_voltage(v);
   filter.push(v_isolated);
-  canzero_set_vdc_voltage(std::max(static_cast<float>(filter.get()), 0.0f));
+  canzero_set_vdc_voltage(static_cast<float>(filter.get()));
 }
+
 
 void sensors::vdc::begin() {
   canzero_set_vdc_voltage(0);

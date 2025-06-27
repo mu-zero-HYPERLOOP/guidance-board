@@ -2,7 +2,6 @@
 
 #include "util/metrics.h"
 #include <algorithm>
-#include <cassert>
 class TrapazoidalIntegral{
 public:
   explicit TrapazoidalIntegral(float inital)
@@ -20,7 +19,6 @@ public:
   }
 
   inline void clamp(float min, float max) {
-    assert(min < max);
     m_integral = std::clamp(m_integral, min, max);
   }
 
