@@ -15,6 +15,8 @@
 #include "xbar_config.h"
 #include "print.h"
 #include "sensors/airgaps.h"
+#include <chrono>
+#include <thread>
 
 int main() {
   canzero_init();
@@ -49,8 +51,24 @@ int main() {
   adc_isr::begin();
   control::begin();
 
-
   fsm::finish_init(); // init -> idle
+
+  // 1. Go to ARMING45
+  canzero_set_command(guidance_command_ARM45);
+  for (int i = 0; i < 10; ++i) { fsm::update(); std::this_thread::sleep_for(std::chrono::milliseconds(10)); }
+
+  // 2. Go to PRECHARGE
+  canzero_set_command(guidance_command_PRECHARGE);
+  for (int i = 0; i < 10; ++i) { fsm::update(); std::this_thread::sleep_for(std::chrono::milliseconds(10)); }
+
+  // 3. Wait for precharge to complete (simulate time passing)
+  for (int i = 0; i < 100; ++i) { fsm::update(); std::this_thread::sleep_for(std::chrono::milliseconds(10)); }
+
+  // 4. Go to CONTROL
+  canzero_set_command(guidance_command_START);
+  for (int i = 0; i < 10; ++i) { fsm::update(); std::this_thread::sleep_for(std::chrono::milliseconds(10)); }
+
+  // Now enter the main loop
   while (true) {
     canzero_can0_poll();
     canzero_can1_poll();
