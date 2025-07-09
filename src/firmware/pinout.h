@@ -8,10 +8,15 @@ enum class ctrl_pin : uint8_t {
 };
 
 enum class ain_pin : uint8_t{
+  // Pinout according to the actual cable management
+  // See levitation code as well
   disp_sense_mag_l_19 = 19,
-  disp_sense_lim_l_18 = 18,
-  disp_sense_mag_r_17 = 17,
+  disp_sense_lim_l_18 = 17,
+  disp_sense_mag_r_17 = 18,
   disp_sense_lim_r_16 = 16,
+
+  // TODO
+  // Removed from the board, not used anymore
 
   temp_sense_l2_21 = 21,
   temp_sense_l1_20 = 20,
@@ -33,8 +38,8 @@ enum pwm_pin : uint8_t{
 
   right_high_l = 8,
   right_low_l = 7,
-  right_high_r = 29,
-  right_low_r = 28,
+  right_high_r = 33,
+  right_low_r = 4,
 };
 
 
@@ -60,3 +65,14 @@ enum pwm_pin : uint8_t{
 // RIGHT_HIN_R: Pin29 HIGH
 // RIGHT_LIN_R: Pin28 LOW
 
+
+// Changed this to
+
+
+// FlexPWM2 Module0
+
+
+// RIGHT_HIN_R: Pin33 HIGH
+
+
+// RIGHT_LIN_R: Pin4  LOW

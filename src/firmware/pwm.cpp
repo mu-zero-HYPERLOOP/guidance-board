@@ -22,7 +22,7 @@ void pwm_isr_trig1_redirect() {
 
 constexpr bool ENABLE_PWM1 = ENABLE_PWM1_SM3;
 constexpr bool ENABLE_PWM2 =
-    ENABLE_PWM2_SM0 || ENABLE_PWM2_SM2 || ENABLE_PWM2_SM3;
+    ENABLE_PWM2_SM0 || ENABLE_PWM2_SM2; // || ENABLE_PWM2_SM3;
 constexpr bool ENABLE_PWM3 = ENABLE_PWM3_SM1;
 constexpr bool ENABLE_PWM4 = ENABLE_PWM4_SM2;
 
@@ -272,8 +272,12 @@ static inline void pwm1_sm3_set_duty_cycles(uint16_t cycles) {
 }
 
 static inline void pwm2_sm0_set_duty_cycles(uint16_t cycles) {
-  FLEXPWM2_SM0VAL2 = -cycles;
-  FLEXPWM2_SM0VAL3 = cycles;
+  // FLEXPWM2_SM0VAL2 = -cycles;
+  // FLEXPWM2_SM0VAL3 = cycles;
+
+  // FOR THE RED FIXED BOARD
+  FLEXPWM2_SM0VAL2 = cycles;
+  FLEXPWM2_SM0VAL3 = -cycles;
 }
 
 static inline void pwm2_sm2_set_duty_cycles(uint16_t cycles) {
