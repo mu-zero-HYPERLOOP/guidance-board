@@ -633,7 +633,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_feedthrough_status = __oe_feedthrough_status;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_guidance_board_front_stream_state(&stream_message, &stream_frame);
-        canzero_can0_send(&stream_frame);
+        canzero_can1_send(&stream_frame);
         break;
       }
       case 1: {
@@ -691,7 +691,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_loop_frequency = __oe_loop_frequency;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_guidance_board_front_stream_debug(&stream_message, &stream_frame);
-        canzero_can1_send(&stream_frame);
+        canzero_can0_send(&stream_frame);
         break;
       }
       case 4: {
@@ -732,7 +732,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_mcu_temperature = __oe_mcu_temperature;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_guidance_board_front_stream_temperatures(&stream_message, &stream_frame);
-        canzero_can0_send(&stream_frame);
+        canzero_can1_send(&stream_frame);
         break;
       }
         default:
@@ -2150,7 +2150,7 @@ void canzero_can0_poll() {
       case 0x13E:
         canzero_handle_get_req(&frame);
         break;
-      case 0x4D:
+      case 0x4C:
         canzero_handle_input_board_stream_debug_settings(&frame);
         break;
       case 0x5F:
@@ -2169,7 +2169,7 @@ void canzero_can1_poll() {
       case 0x15E:
         canzero_handle_set_req(&frame);
         break;
-      case 0x4C:
+      case 0x4B:
         canzero_handle_input_board_stream_guidance_command(&frame);
         break;
       case 0x16E:
@@ -2233,7 +2233,7 @@ uint32_t canzero_update_continue(uint32_t time){
 #define BUILD_MIN   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_MIN)
 #define BUILD_SEC   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_SEC)
 void canzero_init() {
-  __oe_config_hash = 1439478898903526003ull;
+  __oe_config_hash = 12961416758477259400ull;
   __oe_build_time = {
     .m_year = BUILD_YEAR,
     .m_month = BUILD_MONTH,

@@ -470,11 +470,11 @@ static const uint32_t canzero_message_set_req_id = 0x15E;
 typedef struct {
   guidance_command m_guidance_command;
 } canzero_message_input_board_stream_guidance_command;
-static const uint32_t canzero_message_input_board_stream_guidance_command_id = 0x4C;
+static const uint32_t canzero_message_input_board_stream_guidance_command_id = 0x4B;
 typedef struct {
   bool_t m_ignore_45v;
 } canzero_message_input_board_stream_debug_settings;
-static const uint32_t canzero_message_input_board_stream_debug_settings_id = 0x4D;
+static const uint32_t canzero_message_input_board_stream_debug_settings_id = 0x4C;
 typedef struct {
   float m_lt2;
   float m_rt2;
