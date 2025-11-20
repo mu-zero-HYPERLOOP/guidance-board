@@ -6,6 +6,7 @@
 #include "util/metrics.h"
 #include <algorithm>
 #include <avr/pgmspace.h>
+#include <cassert>
 
 static ExponentialMovingAverage<Current> pi_left_current_filter{0.5, 0_A};
 static ExponentialMovingAverage<Current> pi_right_current_filter{0.5, 0_A};
@@ -163,7 +164,7 @@ GuidancePwmControl FASTRUN control::control_loop(Current current_left,
   constexpr float CONTROL_LOWER_BOUND = -0.9f;
   constexpr float CONTROL_UPPER_BOUND = 0.9f;
 
-  const Voltage vdc = Voltage(canzero_get_vdc_voltage());
+  Voltage vdc = Voltage(canzero_get_vdc_voltage()).abs();
 
   // clamping here (just for debugging!) remove be on release!
   left_current_pi_output = std::clamp(

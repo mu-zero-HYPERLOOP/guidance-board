@@ -11,12 +11,12 @@
 
 canzero gen guidance_board_front src/canzero
 cmake -Bbuild
-make -C build
+cmake --build build -j8
 alacritty -e ./build/guidance-board&
 
 canzero gen guidance_board_back src/canzero
 cmake -Bbuild
-make -C build
+cmake --build build -j8
 alacritty -e ./build/guidance-board&
 
 

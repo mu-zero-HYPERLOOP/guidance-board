@@ -55,7 +55,7 @@ public:
 
     memset(&broadcast_addr, 0, sizeof(broadcast_addr));
     broadcast_addr.sin_family = AF_INET;
-    broadcast_addr.sin_port = htons(9002);
+    broadcast_addr.sin_port = htons(9003);
     broadcast_addr.sin_addr.s_addr = INADDR_BROADCAST;
 
     uint8_t udp_datagram[216];
