@@ -1,0 +1,66 @@
+# Guidance Board Technical Referencemu-zero HYPERLOOP 
+28.11.25
+
+### Functionality
+The guidance board is a safety-critical embedded system responsible for controlling the lateral positioning and levitation of a hyperloop pod. It manages PWM-driven electromagnets, monitors system voltages and currents via ADC, and communicates with other pod subsystems over CAN bus.
+
+### Execution in main
+
+First we have the setup steps done before we can check readiness for the finite state machine
+void setup() {
+    Canzero_init();        // Initialize CAN with defaults from PBA
+    Can_defaults();        // Load CAN default parameters
+    Pdu12::begin();        // Start 12V power distribution unit
+    sdc::begin();          // Start safety-critical systems
+    fsm::begin();          // Start finite state machine
+}
+
+If the finite state machine is on, we loop:
+void loop() {
+    // While forever loop
+    Pdu12::update();       // Update power distribution
+    fsm::update();         // Update state machine
+    // Additional module updates
+}
+
+### Terms explained
+
+| Term | Description |
+|------|-------------|
+| **PBA** | Parameter Block A - Initial configuration loaded on every board startup |
+| **Canzero** | Custom CAN communication protocol/library for the hyperloop system |
+| **H-bridge** | Electronic circuit allowing bidirectional current control through electromagnets |
+| **Deadtime** | Mandatory OFF period between switching states to prevent short circuits |
+| **ADC** | Analog-to-Digital Converter - translates voltage measurements to digital values |
+| **PWM** | Pulse Width Modulation - controls power by rapid on/off switching |
+| **Levitation coil** | Electromagnet that lifts the pod off the track |
+| **Guidance system** | Controls lateral positioning of the pod |
+| **FSM** | Finite State Machine - controls operational modes (idle, ready, levitating, etc.) |
+| **PDU12** | 12V Power Distribution Unit |
+| **SDC** | Safety-Critical systems module |
+| **Register reading** | Periodic polling of sensor values |
+| **Kurzschluss** | German for "short circuit" |
+| **Schalter** | German for "switch" - refers to power switching elements (MOSFETs/IGBTs) |
+| **CAN** | Controller Area Network - automotive communication bus protocol |
+| **DLC** | Data Length Code - specifies the length of CAN message payload |
+| **Gap sensor** | Measures levitation distance from track |
+| **Shunt resistor** | Small precision resistor for current sensing |
+| **boxcar** | what is this? |
+ | **boxcar** | A fixed-size moving-average filter (boxcar filter). Used to smooth noisy sensor errors for the PID loop by averaging the last N samples. |
+| **ema** | Exponential Moving Average filter — gives more weight to recent samples for low-latency smoothing of current or sensor measurements. |
+| **lina** | Not found in the source tree — likely a typo or shorthand. Please confirm with the author; not used in `src/` as a module. |
+| **timestamp** | Timekeeping utility that provides current time/ticks for scheduling, logging, and timestamping sensor/CAN messages. |
+| **airgaps** | Sensor module that converts ADC readings into magnet and limiter airgap distances; primary input to guidance PID. |
+| **input current** | Module that measures the board or supply input current (via a shunt), used for health monitoring and overcurrent detection. |
+| **magnetic current** | Current measurement for the levitation/guidance electromagnets (used by inner current PI loops). |
+| **mcu temperature** | On-board MCU temperature measurement module; used for thermal monitoring and fault conditions. |
+| **vdc** | DC bus voltage measurement module (measures the coil power supply voltage, e.g. ~45 V) used for scaling and safety checks. |
+| **firmeware** | Folder with low-level board firmware helpers (typo for "firmware"): hardware glue code for precharge, PDUs, PWM, and board services. |
+| **ain scheduler** | Analog Input (AIN) scheduler: hardware/software that sequences ADC conversions across multiple input channels at configured times. |
+| **adc** | ADC subsystem and ISRs: performs conversions, provides trigger handlers, and forwards sampled values to sensor conversion routines. |
+| **pinout** | Pin mapping file — documents which MCU pins connect to sensors, drivers, PDUs and connectors on the PCB. |
+| **xbar** | Crossbar or event-routing configuration (hardware signal router). Used to route timer/trigger/ADC events between peripherals without CPU intervention. |
+
+
+
+
