@@ -27,9 +27,9 @@ void sensors::vdc::begin() {
   canzero_set_error_level_config_vdc_voltage(error_level_config{
       .m_info_thresh = 47,
       .m_info_timeout = 5,
-      .m_warning_thresh = 48,
+      .m_warning_thresh = 50,
       .m_warning_timeout = 1,
-      .m_error_thresh = 50,
+      .m_error_thresh = 51,
       .m_error_timeout = 1,
       .m_ignore_info = bool_t_FALSE,
       .m_ignore_warning = bool_t_FALSE,
