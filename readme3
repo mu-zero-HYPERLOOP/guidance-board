@@ -6,7 +6,6 @@ This file guides a reader through the `guidance-board/src` tree, highlights the 
 
 **Top-level flow**
 - **`main.cpp`**: Entry point and main loop.
-  - Key functions: `main()`.
   - Responsibilities: initialize CAN (`canzero_init()`), board hardware (`guidance_board::begin()`), ADC, PWM, sensors and FSM; call periodic `update()` functions in a fixed order: CAN poll, board update, sensors update, ADC/ISR update, `control::update()`, FSM update, and canzero timing service.
   - Relevance: shows the runtime order and which modules are called each loop — essential to understand timing and data flow.
 
